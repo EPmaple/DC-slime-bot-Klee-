@@ -1,0 +1,9 @@
+# TRACE:
+Traceback (most recent call last):
+  File "main.py", line 227, in message
+    await message.channel.send(
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord/abc.py", line 1065, in send
+    data = await state.http.send_message(channel.id, content, tts=tts, embed=embed,
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord/http.py", line 216, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: 429 Too Many Requests (error code: 0): You are being blocked from accessing our API temporarily due to exceeding our rate limits frequently. Please read our docs at https://discord.com/developers/docs/topics/rate-limits to prevent this moving forward.

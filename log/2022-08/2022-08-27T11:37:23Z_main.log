@@ -1,0 +1,12 @@
+2022-08-27T11:37:23Z Bot is starting up...
+2022-08-27T11:37:26Z Bot is ready.
+2022-08-27T11:37:31Z ERROR TRACE:
+Traceback (most recent call last):
+  File "main.py", line 618, in test
+    print(f'{utcTimestamp()} DEBUG ctx.id = {ctx.id}')
+AttributeError: 'Context' object has no attribute 'id'
+# TRACE END
+
+2022-08-27T11:38:06Z [add] variant-*: 1 collin
+2022-08-27T11:38:07Z [chat] variant-*: !add 1 collin
+2022-08-27T11:38:07Z [chat] Klee: Klee has added a slime to Collin! The number of slimes Collin has summoned has gone from 4 to 5

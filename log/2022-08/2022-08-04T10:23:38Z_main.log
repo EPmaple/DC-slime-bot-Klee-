@@ -1,0 +1,51 @@
+2022-08-04T10:23:38Z Bot is starting up...
+2022-08-04T10:23:41Z Bot is ready.
+2022-08-04T12:49:34Z [chat] Thaelon: !top_three
+2022-08-04T12:49:34Z [chat] Klee: The current first is ['traffyboi'] with 66 slimes! Second is ['Vent'] with 61 slimes, and third is ['Kenshin'] with 52 slimes! They are the best! ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾
+2022-08-04T13:19:02Z [chat] G̷̉̕u̷͑̚ǹ̴̕ẗ̴̕ḧ̵̏e̴͆́ṙ̵͝: Im gonna do the result in a bit. Currently sick in bed<:borryDed:888008371276501052>
+2022-08-04T13:23:28Z [chat] Kenshin: Oh no. Hope you feel better soon!
+2022-08-04T13:27:07Z [chat] G̷̉̕u̷͑̚ǹ̴̕ẗ̴̕ḧ̵̏e̴͆́ṙ̵͝: Thx, after all this time i got the covid for the first time. Luckily only light symptoms
+2022-08-04T14:55:33Z [chat] G̷̉̕u̷͑̚ǹ̴̕ẗ̴̕ḧ̵̏e̴͆́ṙ̵͝: !total
+2022-08-04T14:55:33Z [chat] Klee: For the current season, we have summoned 684 slimes so far! Dear RNG God, please help us summon more slime! ٩(๑•̀ω•́๑)۶
+2022-08-04T15:11:49Z [chat] Thaelon: wish you the best of luck man I just got it for the first time and I'm still dealing with symptoms almost a month later
+2022-08-04T15:13:19Z [chat] G̷̉̕u̷͑̚ǹ̴̕ẗ̴̕ḧ̵̏e̴͆́ṙ̵͝: thank you! you got long term symptoms?
+2022-08-04T15:34:06Z [chat] G̷̉̕u̷͑̚ǹ̴̕ẗ̴̕ḧ̵̏e̴͆́ṙ̵͝: <@&887894985398157363> 
+
+I am hereby announcing the next Slime King / Slime Queen!
+
+Since I'm mostly only doing the slime results nowadays, as always big thanks to <@930545751258447903> and ~~Bob~~ Bot the Builders!!<:awkward:887933018793201694> 
+
+Continuing on to the results, we have quite a few "almost" records this season (I will put the highest records in brackets like this):
+Over the course of the last 2 weeks there were a total of **684 Slimes** (S20 = 715) summoned with an average of **~11.60 Slimes** (S20 = 11.70) per Person.
+
+The Podium:
+3rd place goes to <@509805857425588224> again, with **52 Slimes** summoned, 11 more than last time!
+2nd place goes to <@207924668844212225> also again, keeping his second place with **61 Slimes** summoned, 17 more than last time!.
+1st place goes to <@120428736637173760> . I can see he is so comfortable with his first place, he already brought a couch and snacks to stay... He summoned a almost new record of **66 Slimes** (S25 (2) = 69)!!
+
+Welcome to all the newcomers this season, I hope you like it here and enjoy your nice slimey gold.<:slimeknife:887947273139519488> 
+Thank you all for summoning those Slime mountains and who knows, maybe next time we are able to break some records again. See you next ~~Slime ~~time!!<:yummy:887929818639913011>
+2022-08-04T15:34:06Z ERROR TRACE:
+Traceback (most recent call last):
+  File "main.py", line 262, in message
+    add_slime(member_id, 1)
+  File "main.py", line 138, in add_slime
+    AGE_members[member_id] += int(number)
+KeyError: '930545751258447903'
+# TRACE END
+
+2022-08-04T15:34:07Z [chat] G̷̉̕u̷͑̚ǹ̴̕ẗ̴̕ḧ̵̏e̴͆́ṙ̵͝: As always, you can check your own summoned slimes for this one and older seasons via the following link:
+https://docs.google.com/spreadsheets/d/1GBoC8fr8vQptpfUSjaZgLw4C20tyQRqz8ngshQ4FjtA/edit?usp=sharing
+2022-08-04T15:34:12Z [chat] G̷̉̕u̷͑̚ǹ̴̕ẗ̴̕ḧ̵̏e̴͆́ṙ̵͝: 
+2022-08-04T15:34:17Z [chat] G̷̉̕u̷͑̚ǹ̴̕ẗ̴̕ḧ̵̏e̴͆́ṙ̵͝: 
+2022-08-04T15:36:47Z [chat] G̷̉̕u̷͑̚ǹ̴̕ẗ̴̕ḧ̵̏e̴͆́ṙ̵͝: thats my work of the day lol. im going back to bed <:borryDed:888008371276501052>
+2022-08-04T15:37:55Z [chat] Tachii: https://tenor.com/view/pet-dog-adorable-cute-gif-14614095
+2022-08-04T15:41:39Z [chat] variant-*: Have a nice rest Gunt (and Klee)
+2022-08-04T15:42:05Z [chat] G̷̉̕u̷͑̚ǹ̴̕ẗ̴̕ḧ̵̏e̴͆́ṙ̵͝: i could use that right now <:pepeblushpoint:887948569087193099>  thanks guys!
+2022-08-04T15:43:02Z [chat] Tachii: might have to yeet maori <:upsidedownpepescheme:716247718166659125>
+2022-08-04T15:43:32Z [chat] Tachii: new person joins slime group and doesnt contribute for 2 ragnas <:upsidedownpepescheme:716247718166659125>
+2022-08-04T15:44:49Z [chat] G̷̉̕u̷͑̚ǹ̴̕ẗ̴̕ḧ̵̏e̴͆́ṙ̵͝: yeah i thought that as well when making the list
+2022-08-04T15:45:07Z [chat] G̷̉̕u̷͑̚ǹ̴̕ẗ̴̕ḧ̵̏e̴͆́ṙ̵͝: new person and no slimes at all. are they joining others?
+2022-08-04T15:57:02Z [chat] Tachii: dont think so either lol
+2022-08-04T16:04:48Z [chat] donuts: Way to go all and hope you have a quick recovery Gunth
+2022-08-04T19:46:02Z [chat] Vent (Aile): <:slimeknife:887947273139519488>  comin' for ya traff

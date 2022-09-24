@@ -1,0 +1,5 @@
+# TRACE:
+Traceback (most recent call last):
+  File "main.py", line 465, in add
+    original = AGE_members[member_id]
+UnboundLocalError: local variable 'member_id' referenced before assignment

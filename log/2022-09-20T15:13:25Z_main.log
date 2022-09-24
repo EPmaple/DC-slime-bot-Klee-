@@ -1,0 +1,27 @@
+2022-09-20T15:13:25Z Bot is starting up...
+2022-09-20T15:13:28Z Bot is ready.
+2022-09-20T15:13:57Z [add] traffyboi: 1 peng
+2022-09-20T15:13:57Z [chat] traffyboi: !add 1 peng
+2022-09-20T15:13:57Z [chat] Klee: Klee has added a slime to Pengest! The number of slimes Pengest has summoned has gone from 3 to 4
+2022-09-20T15:14:08Z [add] traffyboi: 1 me
+2022-09-20T15:14:08Z [chat] traffyboi: !add 1 me
+2022-09-20T15:14:08Z [chat] Klee: Klee has added a slime to traffyboi! The number of slimes traffyboi has summoned has gone from 20 to 21
+2022-09-20T15:14:18Z [add] traffyboi: 1 doujin
+2022-09-20T15:14:18Z [chat] traffyboi: !add 1 doujin
+2022-09-20T15:14:18Z [chat] Klee: Klee has added a slime to DoujinKAMI! The number of slimes DoujinKAMI has summoned has gone from 15 to 16
+2022-09-20T15:14:30Z [add] traffyboi: 1 tatumi
+2022-09-20T15:14:30Z [chat] traffyboi: !add 1 tatumi
+2022-09-20T15:14:30Z [chat] Klee: Klee has added a slime to Tatumi! The number of slimes Tatumi has summoned has gone from 9 to 10
+2022-09-20T15:14:41Z [add] traffyboi: 1 kenshin
+2022-09-20T15:14:41Z [chat] traffyboi: !add 1 kenshin
+2022-09-20T15:14:41Z [chat] Klee: Klee has added a slime to Kenshin! The number of slimes Kenshin has summoned has gone from 20 to 21
+2022-09-20T15:14:51Z [add] traffyboi: - 1 ken
+2022-09-20T15:14:51Z ERROR TRACE:
+Traceback (most recent call last):
+  File "main.py", line 551, in add
+    original = AGE_members[member_id]
+UnboundLocalError: local variable 'member_id' referenced before assignment
+# TRACE END
+
+2022-09-20T15:14:51Z [chat] traffyboi: !add - 1 ken
+2022-09-20T15:15:07Z [chat] traffyboi: (that one was counted, whoops lol)

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Klee Status</title>
+      <script type = "text/javascript">
+function confirmReset() {
+  let key = prompt('Please enter your reset key:')
+  if (key != null) {
+    document.resetForm.key.value = key
+    document.resetForm.submit()
+  }
+}
+      </script>
+  </head>
+  <body>
+    <p>Hello. I think I'm alive!</p>
+    <form name="resetForm" action="reset" method="POST">
+      <p>Can I help you?
+        <input type="hidden" name="key"/>
+        <input type="button" onclick="confirmReset()" value="Reset"/>
+      </p>
+    </form>
+  </body>
+</html>

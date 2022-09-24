@@ -1,0 +1,5 @@
+# TRACE:
+Traceback (most recent call last):
+  File "main.py", line 430, in daily
+    msg = discord.utils.get(await ctx.channel.history(limit=10))
+TypeError: object HistoryIterator can't be used in 'await' expression

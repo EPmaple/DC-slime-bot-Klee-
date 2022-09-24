@@ -1,0 +1,125 @@
+2022-08-01T05:53:13Z Bot is starting up...
+2022-08-01T05:53:16Z Bot is ready.
+2022-08-01T06:06:56Z [chat] esyw: <@&887894985398157363> me
+2022-08-01T06:06:57Z [chat] Klee: Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted 10 slimes for esyw!
+2022-08-01T06:33:15Z [chat] esyw: <@&887894985398157363> ken
+2022-08-01T06:33:15Z [chat] Klee: Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted 43 slimes for Kenshin!
+2022-08-01T06:34:01Z [chat] Vent (Aile): !top_three
+2022-08-01T06:34:01Z [chat] Klee: The current first is ['traffyboi'] with 51 slimes! Second is ['Kenshin'] with 43 slimes, and third is ['Vent'] with 42 slimes! They are the best! ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾
+2022-08-01T06:34:06Z [chat] Vent (Aile): <:02ded:888123262373101569>
+2022-08-01T06:38:28Z [chat] DoujinKAMI: ded20
+2022-08-01T06:39:08Z [chat] esyw: Haha
+2022-08-01T06:39:52Z [chat] esyw: 6 minutes but great effort
+2022-08-01T06:40:05Z [chat] DoujinKAMI: <:1010:887934359909330994>
+2022-08-01T06:40:21Z [chat] DoujinKAMI: im like tryna multitask but failing lol
+2022-08-01T06:45:38Z [chat] Zerefsis: <@&887894985398157363> me
+2022-08-01T06:45:38Z [chat] Klee: Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted 8 slimes for Zerefsis!
+2022-08-01T06:48:14Z [chat] esyw: Gone
+2022-08-01T07:04:23Z [chat] Variant-2: <@&887894985398157363> variant
+2022-08-01T07:04:24Z [chat] Klee: Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted 8 slimes for virant (Variant-1)!
+2022-08-01T07:05:31Z [chat] Vent (Aile): dead
+2022-08-01T07:05:58Z [chat] Link2D3atH: i just got in
+2022-08-01T07:06:06Z [chat] Vent (Aile): 
+2022-08-01T07:06:16Z [chat] Vent (Aile): I wasn't able to see it on main
+2022-08-01T07:06:52Z [chat] Link2D3atH: i guess he forgot to pause
+2022-08-01T07:06:58Z [chat] Vent (Aile): he sniped the last one too
+2022-08-01T07:27:17Z [chat] traffyboi: a little late, but <@362102976581599241> too fast bruh
+2022-08-01T08:05:47Z [chat] CloudExt: sorry zoomed
+2022-08-01T08:32:41Z [chat] Link2D3atH: <@&887894985398157363> plain
+2022-08-01T08:32:41Z ERROR TRACE:
+Traceback (most recent call last):
+  File "main.py", line 271, in message
+    await message.channel.send(
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord/abc.py", line 1065, in send
+    data = await state.http.send_message(channel.id, content, tts=tts, embed=embed,
+  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord/http.py", line 216, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: 429 Too Many Requests (error code: 0): <!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en-US"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en-US"> <!--<![endif]-->
+<head>
+<title>Access denied | discord.com used Cloudflare to restrict access</title>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" id="cf_styles-css" href="/cdn-cgi/styles/main.css" />
+
+
+<script>
+(function(){if(document.addEventListener&&window.XMLHttpRequest&&JSON&&JSON.stringify){var e=function(a){var c=document.getElementById("error-feedback-survey"),d=document.getElementById("error-feedback-success"),b=new XMLHttpRequest;a={event:"feedback clicked",properties:{errorCode:1015,helpful:a,version:1}};b.open("POST","https://sparrow.cloudflare.com/api/v1/event");b.setRequestHeader("Content-Type","application/json");b.setRequestHeader("Sparrow-Source-Key","c771f0e4b54944bebf4261d44bd79a1e");
+b.send(JSON.stringify(a));c.classList.add("feedback-hidden");d.classList.remove("feedback-hidden")};document.addEventListener("DOMContentLoaded",function(){var a=document.getElementById("error-feedback"),c=document.getElementById("feedback-button-yes"),d=document.getElementById("feedback-button-no");"classList"in a&&(a.classList.remove("feedback-hidden"),c.addEventListener("click",function(){e(!0)}),d.addEventListener("click",function(){e(!1)}))})}})();
+</script>
+
+<script defer src="https://performance.radar.cloudflare.com/beacon.js"></script>
+<script async src='/cdn-cgi/bm/cv/669835187/api.js'></script></head>
+<body>
+  <div id="cf-wrapper">
+    <div class="cf-alert cf-alert-error cf-cookie-error hidden" id="cookie-alert" data-translate="enable_cookies">Please enable cookies.</div>
+    <div id="cf-error-details" class="p-0">
+      <header class="mx-auto pt-10 lg:pt-6 lg:px-8 w-240 lg:w-full mb-15 antialiased">
+         <h1 class="inline-block md:block mr-2 md:mb-2 font-light text-60 md:text-3xl text-black-dark leading-tight">
+           <span data-translate="error">Error</span>
+           <span>1015</span>
+         </h1>
+         <span class="inline-block md:block heading-ray-id font-mono text-15 lg:text-sm lg:leading-relaxed">Ray ID: 733d3982292a62fc &bull;</span>
+         <span class="inline-block md:block heading-ray-id font-mono text-15 lg:text-sm lg:leading-relaxed">2022-08-01 08:32:41 UTC</span>
+        <h2 class="text-gray-600 leading-1.3 text-3xl lg:text-2xl font-light">You are being rate limited</h2>
+      </header>
+
+      <section class="w-240 lg:w-full mx-auto mb-8 lg:px-8">
+          <div id="what-happened-section" class="w-1/2 md:w-full">
+            <h2 class="text-3xl leading-tight font-normal mb-4 text-black-dark antialiased" data-translate="what_happened">What happened?</h2>
+            <p>The owner of this website (discord.com) has banned you temporarily from accessing this website.</p>
+            
+          </div>
+
+          
+      </section>
+
+      <div class="feedback-hidden py-8 text-center" id="error-feedback">
+    <div id="error-feedback-survey" class="footer-line-wrapper">
+        Was this page helpful?
+        <button class="border border-solid bg-white cf-button cursor-pointer ml-4 px-4 py-2 rounded" id="feedback-button-yes" type="button">Yes</button>
+        <button class="border border-solid bg-white cf-button cursor-pointer ml-4 px-4 py-2 rounded" id="feedback-button-no" type="button">No</button>
+    </div>
+    <div class="feedback-success feedback-hidden" id="error-feedback-success">
+        Thank you for your feedback!
+    </div>
+</div>
+
+
+      <div class="cf-error-footer cf-wrapper w-240 lg:w-full py-10 sm:py-4 sm:px-8 mx-auto text-center sm:text-left border-solid border-0 border-t border-gray-300">
+  <p class="text-13">
+    <span class="cf-footer-item sm:block sm:mb-1">Cloudflare Ray ID: <strong class="font-semibold">733d3982292a62fc</strong></span>
+    <span class="cf-footer-separator sm:hidden">&bull;</span>
+    <span id="cf-footer-item-ip" class="cf-footer-item hidden sm:block sm:mb-1">
+      Your IP:
+      <button type="button" id="cf-footer-ip-reveal" class="cf-footer-ip-reveal-btn">Click to reveal</button>
+      <span class="hidden" id="cf-footer-ip">34.135.202.46</span>
+      <span class="cf-footer-separator sm:hidden">&bull;</span>
+    </span>
+    <span class="cf-footer-item sm:block sm:mb-1"><span>Performance &amp; security by</span> <a rel="noopener noreferrer" href="https://www.cloudflare.com/5xx-error-landing" id="brand_link" target="_blank">Cloudflare</a></span>
+    
+  </p>
+  <script>(function(){function d(){var b=a.getElementById("cf-footer-item-ip"),c=a.getElementById("cf-footer-ip-reveal");b&&"classList"in b&&(b.classList.remove("hidden"),c.addEventListener("click",function(){c.classList.add("hidden");a.getElementById("cf-footer-ip").classList.remove("hidden")}))}var a=document;document.addEventListener&&a.addEventListener("DOMContentLoaded",d)})();</script>
+</div><!-- /.error-footer -->
+
+
+    </div><!-- /#cf-error-details -->
+  </div><!-- /#cf-wrapper -->
+
+  <script>
+  window._cf_translation = {};
+  
+  
+</script>
+
+<script>(function(){window['__CF$cv$params']={r:'733d3982292a62fc',m:'B9ni0GnIamkYczLBVzFr9t9McJsxFSLldZPaTaVhgaI-1659342761-0-AS922ii+k2EFxACvRonG5XPf8gaNkNYM3YyWnTSQXDGQx1sdyd28i7OL8Xhf0lrCdLPcLUBueFAgv6CTAeWqqkaioC5c+Jiqrw9rLsz7PVuqIdB2e0rU3OASDdPV4wBDcqLJuM1t6MI/BIDl6PTNTNzuYi9QJoS7zktA0SEJshrO',s:[0x51ae258c9d,0xb762348625],}})();</script></body>
+</html>
+
+# TRACE END
+
