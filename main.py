@@ -112,25 +112,23 @@ for member_id in AGE_members:
             db[member_id] = 0
 
 
-#################################
-#creates a list for failed_msg
-failed_msg = []
 
-#opens the txt, which stores msg that failed to be send, and stores each line of the txt into the list created above
-with open("failed_msg.txt") as f:
-  for line in f:
-    failed_msg.append(line.strip())
-#txt is automatically closed by 'with open'
-#################################
 
 
 # HELPER METHODS #
 
+#################################
+#creates a list for failed_msg
+failed_msg = []
+
+#################################
 #reads the failed_msg.txt and stores it in a list called failed_msg
 def read_txt():
+#opens the txt, which stores msg that failed to be send, and stores each line of the txt into the list created above
   with open("failed_msg.txt") as f:
     for line in f:
       failed_msg.append(line.strip())
+#txt is automatically closed by 'with open'
 
 #helper method, takes in member id and the number of slimes want to be added
 #can use negative numbers to subtract slimes
@@ -265,11 +263,13 @@ async def message(message):
 
                 add_slime(member_id, 1)
 
+                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {id_name[member_id]}!'
                 try:
-                      reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {id_name[member_id]}!'
                       await message.channel.send(reply_msg)
+                  
                 except KeyError:
                       await message.channel.send(f"Klee has added the slime on {utcTimestamp()}. ( ๑>ᴗ<๑ ) Please private message maple to have this member added \n")
+                  
                 except discord.errors.HTTPException:
                       with open(f"failed_msg.txt", "a") as f:
                                  f.write(f"{reply_msg}\n")
@@ -283,10 +283,11 @@ async def message(message):
                 member_id = str(message.author.id)
 
                 add_slime(member_id, 1)
-
+                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {id_name[member_id]}!'
+                    
                 try:
-                      reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {id_name[member_id]}!'
                       await message.channel.send(reply_msg)
+                  
                 except KeyError:
                       await message.channel.send(f"Klee has added the slime on {utcTimestamp()}. ( ๑>ᴗ<๑ ) \n")
                 except discord.errors.HTTPException:
@@ -319,12 +320,14 @@ async def message(message):
                     return
 
                 add_slime(member_id, 1)
-
+                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {id_name[member_id]}!'
+              
                 try:
-                      reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {id_name[member_id]}!'
                       await message.channel.send(reply_msg)
+                  
                 except KeyError:
                       await message.channel.send(f"Klee has added the slime on {utcTimestamp()}. ( ๑>ᴗ<๑ ) \n")
+                  
                 except discord.errors.HTTPException:
                       with open(f"failed_msg.txt", "a") as f:
                                  f.write(f"{reply_msg}\n")
@@ -371,10 +374,12 @@ async def doubleping(ctx, *, member):
                 return
 
             minus_slime(member_id)
-
+          
+            reply_msg = f'Klee has subtracted a slime from {id_name[member_id]}! The number of slimes {id_name[member_id]} has summoned has gone from {int(AGE_members[member_id])+1} to {AGE_members[member_id]}'
+          
         try:
-           reply_msg = f'Klee has subtracted a slime from {id_name[member_id]}! The number of slimes {id_name[member_id]} has summoned has gone from {int(AGE_members[member_id])+1} to {AGE_members[member_id]}'
            await ctx.send(reply_msg)
+          
         except discord.errors.HTTPException:
            with open(f"failed_msg.txt", "a") as f:
                       f.write(f"{reply_msg}\n")
@@ -551,15 +556,17 @@ async def add(ctx, number, *, username):
             original = AGE_members[member_id]
             add_slime(member_id, number)
 
+        reply_msg = f'Klee has added a slime to {id_name[member_id]}! The number of slimes {id_name[member_id]} has summoned has gone from {original} to {AGE_members[member_id]}'
+
         try:
-                      reply_msg = f'Klee has added a slime to {id_name[member_id]}! The number of slimes {id_name[member_id]} has summoned has gone from {original} to {AGE_members[member_id]}'
-                      await ctx.send(reply_msg)
+            await ctx.send(reply_msg)
+          
         except discord.errors.HTTPException:
-                      with open(f"failed_msg.txt", "a") as f:
-                                 f.write(f"{reply_msg}\n")
-                      print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-                      os.system('kill 1')
-                      os.system("python restarter.py")
+            with open(f"failed_msg.txt", "a") as f:
+                f.write(f"{reply_msg}\n")
+            print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
+            os.system('kill 1')
+            os.system("python restarter.py")
 
   except Exception as err:
     print(f'{utcTimestamp()} ERROR in add(): {err}')
