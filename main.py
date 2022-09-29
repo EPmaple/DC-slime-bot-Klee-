@@ -483,9 +483,14 @@ async def member_total(ctx, user_id):
 def job():
     message = {}
 
-    for member_id in AGE_members:
-        message[id_name[member_id]] = AGE_members[member_id]
-    #creates a dictionary(message) with keys(names) to values(slime counts)
+    sorted_list = sorted(id_name.items(), key=lambda x:x[1])
+    #creates a list by sorting the values of the dictionary id_name in descending alphabetical order
+    sorted_dict = dict(sorted_list)
+    #change list to dictionary
+
+    for member_id in (sorted_dict):
+      message[id_name[member_id]] = AGE_members[member_id]
+      #in message dictioanry, setting name:slime_count
     return message
 
 
@@ -661,6 +666,7 @@ async def test(ctx):
 async def called_once_every12hour():
   try:
     daily_slime_result_channel = client.get_channel(950051638075334686)
+    
     message = job()
     timestamp = datetime.now(timezone.utc)
     await daily_slime_result_channel.send(f'UTC time: {timestamp}, \nslime record: {message}')
