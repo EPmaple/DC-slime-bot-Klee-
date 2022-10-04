@@ -196,7 +196,7 @@ def log(logMessage, consoleMessage=None):
 def handleError(e):
   try:
     logTimestamp = log(f'ERROR TRACE:\n{traceback.format_exc()}# TRACE END\n')
-    sendWebhook(f'Klee encountered an error :( Please check {logfile} at {logTimestamp} -> {type(e).__name__}. <@253994447782543361> <@579199616143327258>')
+    sendWebhook(f'Klee encountered an error :( Please check {logfile} at {logTimestamp} -> {type(e).__name__}.')
   except Exception as err:
     print(f'{utcTimestamp()} ERROR in handleError(): {err}')
 
