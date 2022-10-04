@@ -1,9 +1,0 @@
-# TRACE:
-Traceback (most recent call last):
-  File "main.py", line 295, in doubleping
-    await ctx.send(
-  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord/abc.py", line 1065, in send
-    data = await state.http.send_message(channel.id, content, tts=tts, embed=embed,
-  File "/opt/virtualenvs/python3/lib/python3.8/site-packages/discord/http.py", line 252, in request
-    raise DiscordServerError(r, data)
-discord.errors.DiscordServerError: 503 Service Unavailable (error code: 0): upstream connect error or disconnect/reset before headers. reset reason: connection failure

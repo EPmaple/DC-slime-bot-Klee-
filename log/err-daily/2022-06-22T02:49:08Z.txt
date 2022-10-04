@@ -1,5 +1,0 @@
-# TRACE:
-Traceback (most recent call last):
-  File "main.py", line 422, in daily
-    current = datetime.datetime.utcnow()
-AttributeError: type object 'datetime.datetime' has no attribute 'datetime'

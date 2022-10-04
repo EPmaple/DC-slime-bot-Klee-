@@ -1,9 +1,0 @@
-2022-08-27T11:52:27Z Bot is starting up...
-2022-08-27T11:52:30Z Bot is ready.
-2022-08-27T11:52:35Z ERROR TRACE:
-Traceback (most recent call last):
-  File "main.py", line 618, in test
-    print(f'{utcTimestamp()} DEBUG ctx.id = {ctx.id}')
-AttributeError: 'Context' object has no attribute 'id'
-# TRACE END
-

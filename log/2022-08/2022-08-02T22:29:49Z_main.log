@@ -1,9 +1,0 @@
-2022-08-02T22:29:49Z Bot is starting up...
-2022-08-02T22:29:51Z Bot is ready.
-2022-08-02T22:29:51Z ERROR TRACE:
-Traceback (most recent call last):
-  File "main.py", line 212, in on_ready
-    await channel.message.send(f'{msg}')
-AttributeError: 'TextChannel' object has no attribute 'message'
-# TRACE END
-
