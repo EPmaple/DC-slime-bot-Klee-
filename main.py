@@ -97,7 +97,10 @@ id_name = {'333666': 'zeta','720352409817186345':'LaVolpe', '433367046248595466'
 
 reply_msg = ''
 
-#creates a dicitonary with each id from id_name and the value is default slime number 0
+#creates a list for failed_msg
+failed_msg = []
+
+#creates a dicitonary with each key being id from id_name and the value is default slime number 0
 AGE_members = {}
 for x in id_name:
     AGE_members[x] = 0
@@ -112,16 +115,47 @@ for member_id in AGE_members:
             db[member_id] = 0
 
 
+          
+#zoom_dictionaries INIT construction
+zoom_member = {} # key=member_id, value=# of times zoomed
+zoom_time = {} # key=member_id, value=specific time for when the player zoomed
+
+#to initialize both zoom dictionaries from data store in replit db
+for db_member_id in member_count:
+  if db_member_id.endswith('z'):
+    zoom_member[db_member_id] = db[db_member_id]
+    print (zoom_member)
+
+for member_idz in zoom_member:
+  member_idzt = member_idz + 't'
+  for db_member_id in member_count:
+    if member_idzt == db_member_id:
+      zoom_time[member_idzt] = db[db_member_id]
+      print (zoom_time)
+
 
 
 
 # HELPER METHODS #
 
-#################################
-#creates a list for failed_msg
-failed_msg = []
+def command_namecheck(ctx, member):
+  if (member.lower() == 'me') or ('me' in member.lower()):
+    member_id = str(ctx.message.author.id)
 
-#################################
+  else:
+    member_id = 0
+      
+    if member.lower() == 'dan':
+      member_id = str(name_id['Dan'])
+    elif member.lower() == 'moon':
+      member_id = str(name_id['Moon'])
+    else:
+      for x in name_id:
+        if member.lower() in x.lower():
+          member_id = str(name_id[x])
+
+  return member_id
+
 #reads the failed_msg.txt and stores it in a list called failed_msg
 def read_txt():
 #opens the txt, which stores msg that failed to be send, and stores each line of the txt into the list created above
@@ -577,6 +611,41 @@ async def add(ctx, number, *, username):
     print(f'{utcTimestamp()} ERROR in add(): {err}')
     handleError(err)
 
+
+@client.command()
+async def zoom(ctx, *, member):
+  try:
+    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+
+      member_id = command_namecheck(ctx, member)
+
+      if member_id == 0:
+        await ctx.send ('Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone...')
+
+      member_idz = member_id + 'z'
+      #member_id has been gotten, added z at the end to distinguish from normal key values use for slime counting
+      if member_idz in zoom_member:
+        db[member_idz] += 1
+        zoom_member[member_idz] += 1
+
+        member_idzt = member_idz + 't'
+        db[member_idzt] += [f'{utcTimestamp()}']
+        zoom_time[member_idzt] += [f'{utcTimestamp()}']
+      else:
+        db[member_idz] = 1
+        zoom_member[member_idz] = 1
+
+        member_idzt = member_idz + 't'
+        db[member_idzt] = [f'{utcTimestamp()}']
+        zoom_time[member_idzt] = [f'{utcTimestamp()}']
+
+      replymsg = f'Klee has noticed {id_name[member_id]} zoomed a slime at {utcTimestamp()}! (◕︿◕✿) Zooming is bad. Please do not zoom again'
+      await ctx.send(replymsg)
+
+  except Exception as err:
+    print(f'{utcTimestamp()} ERROR in message(): {err}')
+    handleError(err)
+    
 
 
 #method for sending no-talking gif
