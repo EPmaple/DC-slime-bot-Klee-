@@ -122,16 +122,20 @@ zoom_time = {} # key=member_id, value=specific time for when the player zoomed
 
 #to initialize both zoom dictionaries from data store in replit db
 for db_member_id in member_count:
+  #for member_id that were from replit db
   if db_member_id.endswith('z'):
+    #if the member_id ends with substring z
     zoom_member[db_member_id] = db[db_member_id]
-    print (zoom_member)
+    #initialize a key-value pair for that member_id to the number of times s/he zoomed
 
 for member_idz in zoom_member:
+  #going off the zoom dictionary that was created above, which has all who have zoomed
   member_idzt = member_idz + 't'
+  #add a substring t for different condition check
   for db_member_id in member_count:
     if member_idzt == db_member_id:
       zoom_time[member_idzt] = db[db_member_id]
-      print (zoom_time)
+      #the value in this case is an array, which stores the specific times a player was reported zooming; and the key is the member_id + zt
 
 
 
@@ -140,6 +144,7 @@ for member_idz in zoom_member:
 
 def command_namecheck(ctx, member):
   if (member.lower() == 'me') or ('me' in member.lower()):
+    #if message in the form: !command me
     member_id = str(ctx.message.author.id)
 
   else:
@@ -153,8 +158,9 @@ def command_namecheck(ctx, member):
       for x in name_id:
         if member.lower() in x.lower():
           member_id = str(name_id[x])
+    #runs through the entire name_id dictionary to find the corresponding id
 
-  return member_id
+  return member_id #return the id
 
 #reads the failed_msg.txt and stores it in a list called failed_msg
 def read_txt():
@@ -381,47 +387,25 @@ async def message(message):
 async def doubleping(ctx, *, member):
   try:
     if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+      member_id = command_namecheck(ctx, member)
 
-        if (member.lower() == 'me') or ('me' in member.lower()):
-            member_id = str(ctx.message.author.id)
-
-            minus_slime(member_id)
-
-        else:
-            name_mentioned = member
-
-            member_id = 0
-
-            if name_mentioned.lower() == 'dan':
-                member_id = str(name_id['Dan'])
-            elif name_mentioned.lower() == 'moon':
-                member_id = str(name_id['Moon'])
-            else:
-                for x in name_id:
-                    if name_mentioned.lower() in x.lower():
-                        member_id = str(name_id[x])
-
-            if member_id == 0:
-                await ctx.send(
-                    'Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone...'
-                )
-                return
-
-            minus_slime(member_id)
-          
-            reply_msg = f'Klee has subtracted a slime from {id_name[member_id]}! The number of slimes {id_name[member_id]} has summoned has gone from {int(AGE_members[member_id])+1} to {AGE_members[member_id]}'
-          
-        try:
-           await ctx.send(reply_msg)
-          
-        except discord.errors.HTTPException:
-           with open(f"failed_msg.txt", "a") as f:
-                      f.write(f"{reply_msg}\n")
-           print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-           os.system('kill 1')
-           os.system("python restarter.py")
-
+      if member_id == 0:
+        await ctx.send('Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone... (๑•̆ ૩•̆)')
         return
+
+      minus_slime(member_id)
+      reply_msg = f'The number of slimes {id_name[member_id]} has summoned has been subtracted by Klee (๑‵●‿●‵๑), going from {int(AGE_members[member_id])+1} to {AGE_members[member_id]}'
+
+      try: 
+        await ctx.send(reply_msg)
+          
+      except discord.errors.HTTPException:
+        with open(f"failed_msg.txt", "a") as f:
+          f.write(f"{reply_msg}\n")
+        print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
+        os.system('kill 1')
+        os.system("python restarter.py")
+
 
   except Exception as err:
     print(f'{utcTimestamp()} ERROR in doubleping(): {err}')
@@ -571,41 +555,28 @@ async def daily(ctx):
 async def add(ctx, number, *, username):
   try:
     if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
-        log(f'[add] {ctx.message.author.display_name}: {number} {username}')
-        member = username.strip()
+      log(f'[add] {ctx.message.author.display_name}: {number} {username}')
+      member = username.strip()
+      member_id = command_namecheck(ctx, member)
 
-        if (member.lower() == 'me') or ('me' in member.lower()):
-            member_id = str(ctx.message.author.id)
+      if member_id == 0:
+        await ctx.send('Uh, Klee does not know this name, and therefore cannot add this slime from anyone... (๑•̆ ૩•̆)')
+        return
 
-            original = AGE_members[member_id]
-            add_slime(member_id, number)
+      original = AGE_members[member_id]
+      add_slime(member_id, number)
 
-        else:
-            name_mentioned = member
-            if name_mentioned.lower() == 'dan':
-                member_id = str(name_id['Dan'])
-            elif name_mentioned.lower() == 'moon':
-                member_id = str(name_id['Moon'])
-            else:
-                for x in name_id:
-                    if str(name_mentioned.lower()) in x.lower() or str(
-                            name_mentioned.lower()) == x.lower():
-                        member_id = str(name_id[x])
+      reply_msg = f'The number of slimes {id_name[member_id]} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]}'
 
-            original = AGE_members[member_id]
-            add_slime(member_id, number)
-
-        reply_msg = f'Klee has added a slime to {id_name[member_id]}! The number of slimes {id_name[member_id]} has summoned has gone from {original} to {AGE_members[member_id]}'
-
-        try:
-            await ctx.send(reply_msg)
+      try:
+        await ctx.send(reply_msg)
           
-        except discord.errors.HTTPException:
-            with open(f"failed_msg.txt", "a") as f:
-                f.write(f"{reply_msg}\n")
-            print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-            os.system('kill 1')
-            os.system("python restarter.py")
+      except discord.errors.HTTPException:
+        with open(f"failed_msg.txt", "a") as f:
+          f.write(f"{reply_msg}\n")
+        print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
+        os.system('kill 1')
+        os.system("python restarter.py")
 
   except Exception as err:
     print(f'{utcTimestamp()} ERROR in add(): {err}')
@@ -617,7 +588,7 @@ async def zoom(ctx, *, member):
   try:
     if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
 
-      member_id = command_namecheck(ctx, member)
+      member_id = command_namecheck(ctx, member) #gets the id corresponding to the member name entered
 
       if member_id == 0:
         await ctx.send ('Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone...')
@@ -625,19 +596,25 @@ async def zoom(ctx, *, member):
       member_idz = member_id + 'z'
       #member_id has been gotten, added z at the end to distinguish from normal key values use for slime counting
       if member_idz in zoom_member:
+        #if member has zoomed before
         db[member_idz] += 1
         zoom_member[member_idz] += 1
+        #increment number of times zoomed
 
         member_idzt = member_idz + 't'
         db[member_idzt] += [f'{utcTimestamp()}']
         zoom_time[member_idzt] += [f'{utcTimestamp()}']
+        #append to the specific key's value array the time of which the zoom was reported
       else:
+        #user has not zoomed before
         db[member_idz] = 1
         zoom_member[member_idz] = 1
+        #increment number of times zoomed
 
         member_idzt = member_idz + 't'
         db[member_idzt] = [f'{utcTimestamp()}']
         zoom_time[member_idzt] = [f'{utcTimestamp()}']
+        #append to the specific key's value array the time of which the zoom was reported
 
       replymsg = f'Klee has noticed {id_name[member_id]} zoomed a slime at {utcTimestamp()}! (◕︿◕✿) Zooming is bad. Please do not zoom again'
       await ctx.send(replymsg)
@@ -646,7 +623,51 @@ async def zoom(ctx, *, member):
     print(f'{utcTimestamp()} ERROR in message(): {err}')
     handleError(err)
     
+@client.command()
+async def zoomc(ctx, *, member):
+#return the number of times the player have zoomed this season
+  try:
+    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+      member_id = command_namecheck(ctx, member)
+      member_idz = member_id +'z'
 
+      #if the player has not zoomed yet
+      if zoom_member[member_idz] == 0:
+        replymsg = 'Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”'
+      else:
+        replymsg = f'Klee knows {id_name[member_id]} has zoomed {zoom_member[member_idz]} times this season. щ(゜ロ゜щ) Wahh! Why you zoomed!'
+
+      await ctx.send(replymsg)
+
+  except KeyError:
+    await ctx.send('Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”')
+  except Exception as err:
+    print(f'{utcTimestamp()} ERROR in message(): {err}')
+    handleError(err)
+
+@client.command()
+async def zoomt(ctx, *, member):
+#return the specific times the player was reported zooming
+  try:
+    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+      member_id = command_namecheck(ctx, member)
+      member_idzt = member_id +'zt'
+
+      #if the player has not zoomed yet
+      if zoom_time[member_idzt] == []:
+        replymsg = 'Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”'
+      else:
+        replymsg = f'Klee has written down with my crayolas that {id_name[member_id]} has zoomed at the follow times: \n'
+        for i in zoom_time[member_idzt]:
+          replymsg += f'{i} \n'
+
+      await ctx.send(replymsg)
+
+  except KeyError:
+    await ctx.send('Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”')
+  except Exception as err:
+    print(f'{utcTimestamp()} ERROR in message(): {err}')
+    handleError(err)
 
 #method for sending no-talking gif
 @client.command()
@@ -671,10 +692,22 @@ async def clear(ctx):
   try:
     if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
 
-        for member_id in AGE_members:
-            db[member_id] = 0
-            AGE_members[member_id] = 0
-        await ctx.send('slime record cleared')
+      for member_id in AGE_members:
+        #clear slime counts
+        db[member_id] = 0
+        AGE_members[member_id] = 0
+
+      for member_id in zoom_member:
+        #clear zoom counts
+        db[member_id] = 0
+        zoom_member[member_id] = 0
+
+      for member_id in zoom_time:
+        #clear zoom times
+        db[member_id] = []
+        zoom_time[member_id] = []
+          
+      await ctx.send('All slime related records cleared (❁๑ᵒ◡ᵒ๑)')
 
   except Exception as err:
     print(f'{utcTimestamp()} ERROR in clear(): {err}')
@@ -740,7 +773,6 @@ async def called_once_every12hour():
     timestamp = datetime.now(timezone.utc)
     await daily_slime_result_channel.send(f'UTC time: {timestamp}, \nslime record: {message}')
 
-    slime_ping_channel = client.get_channel(887894832708730881)
     read_txt()
     if len(failed_msg) != 0:
       channel = client.get_channel(887894832708730881)
