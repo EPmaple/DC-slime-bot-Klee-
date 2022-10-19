@@ -1,3 +1,5 @@
+from klee import const
+
 import os
 import discord
 from discord.ext import commands, tasks
@@ -201,14 +203,14 @@ def multiple_max(dictionary):
 
 #check whether the author's id is the same as the specified user's id
 def is_bot_admin(ctx):
-    return ctx.author.id == 253994447782543361
+    return ctx.author.id in const.BOT_ADMINS
 def is_slime_admin(ctx):
-    return ctx.author.id in (253994447782543361, 315112026093649920)
+    return ctx.author.id in const.DATA_ADMINS
 
 
 #check whether it's in the specified channel
 def in_slime_channel(ctx):
-    return ctx.channel.id in (887894832708730881, 887967982356148254)
+    return ctx.channel.id in const.BOT_CHANNELS
 
 
 #return formatted timestamp
@@ -262,7 +264,7 @@ async def on_ready():
 
     #if the failed_msg text is not empty, sends the msg to the corresponding channel, and then erase the txt file
     if len(failed_msg) != 0:
-      channel = client.get_channel(887894832708730881) 
+      channel = client.get_channel(const.MAIN_CHANNEL) 
       for msg in failed_msg:
         await channel.send(f'{msg}')
       open('failed_msg.txt', 'w').close()
@@ -275,7 +277,7 @@ async def on_ready():
 @client.event
 async def on_command_error(ctx, error):
   try:
-    if ctx.channel.id == 887894832708730881:
+    if ctx.channel.id in const.BOT_CHANNELS:
         if isinstance(error, commands.CommandNotFound):
             await ctx.send('Klee does not know this command... ヾ(⌒(_´･ㅅ･`)_ ')
         elif isinstance(error, commands.MissingRequiredArgument):
@@ -290,13 +292,13 @@ async def on_command_error(ctx, error):
 @client.listen('on_message')
 async def message(message):
   try:
-    if message.channel.id == 887894832708730881:  #make sure the @ is from the right channel
+    if message.channel.id in const.BOT_CHANNELS:  #make sure the @ is from the right channel
         log(f'[chat] {message.author.display_name}: {message.content}')
         if message.author == client.user:  #make sure is not responding to message from the bot
             return
 
-        if ('<@&887894985398157363>') in message.content or (
-                '<@&887915507804692511>') in message.content: #@ultra or @altra
+        if (const.MENTION_ULTRA_ROLE) in message.content or (
+                const.MENTION_ALTRA_ROLE) in message.content: #@ultra or @altra
 #if the message is '@ultra @user':
             if len(message.raw_mentions) != 0:
                 member_id = str(message.raw_mentions[0])
@@ -386,7 +388,7 @@ async def message(message):
 @client.command()
 async def doubleping(ctx, *, member):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
       member_id = command_namecheck(ctx, member)
 
       if member_id == 0:
@@ -415,7 +417,7 @@ async def doubleping(ctx, *, member):
 @client.command()
 async def total(ctx):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
 
         total = 0
         for member_id in AGE_members:  #for loop to get slime counts(values) of each member_id(key)
@@ -434,7 +436,7 @@ async def total(ctx):
 @client.command()
 async def top_three(ctx):  #change to AGE_members
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
 
         dictionary = {}
         for member_id in AGE_members:
@@ -486,7 +488,7 @@ async def top_three(ctx):  #change to AGE_members
 @commands.check(is_slime_admin)
 async def member_total(ctx, user_id):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
         target = await client.fetch_user(user_id)
         message = job()
 
@@ -516,7 +518,7 @@ def job():
 @client.command()
 async def sself(ctx):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
         self_member_id = str(ctx.author.id)
         await ctx.send(
             f'Klee knows that you have summoned {AGE_members[self_member_id]} slimes so far this season! You are the best!'
@@ -532,7 +534,7 @@ async def sself(ctx):
 @client.command()
 async def daily(ctx):
   try:
-    if ctx.channel.id == 887894832708730881:
+    if ctx.channel.id in const.BOT_CHANNELS:
         current = datetime.utcnow()
 
         hour_ago = timedelta(hours=24)
@@ -542,7 +544,7 @@ async def daily(ctx):
         counter = 0
 
         async for message in ctx.channel.history(limit=300, after=hour, before=current):
-            if ('<@&887894985398157363>') in message.content or ('<@&887915507804692511>') in message.content :
+            if (const.MENTION_ULTRA_ROLE) in message.content or (const.MENTION_ALTRA_ROLE) in message.content :
                 counter += 1
         await ctx.send(f'Klee has counted hand by hand, in the past 24 hours, we have summoned {counter} slimes! ٩(๑❛ᴗ❛๑)۶ ')
   except Exception as err:
@@ -554,7 +556,7 @@ async def daily(ctx):
 @client.command()
 async def add(ctx, number, *, username):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
       log(f'[add] {ctx.message.author.display_name}: {number} {username}')
       member = username.strip()
       member_id = command_namecheck(ctx, member)
@@ -586,7 +588,7 @@ async def add(ctx, number, *, username):
 @client.command()
 async def zoom(ctx, *, member):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
 
       member_id = command_namecheck(ctx, member) #gets the id corresponding to the member name entered
 
@@ -627,7 +629,7 @@ async def zoom(ctx, *, member):
 async def zoomc(ctx, *, member):
 #return the number of times the player have zoomed this season
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
       member_id = command_namecheck(ctx, member)
       member_idz = member_id +'z'
 
@@ -649,7 +651,7 @@ async def zoomc(ctx, *, member):
 async def zoomt(ctx, *, member):
 #return the specific times the player was reported zooming
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
       member_id = command_namecheck(ctx, member)
       member_idzt = member_id +'zt'
 
@@ -673,7 +675,7 @@ async def zoomt(ctx, *, member):
 @client.command()
 async def gif(ctx):
   try:
-    if ctx.channel.id == 887894832708730881:
+    if ctx.channel.id in const.BOT_CHANNELS:
         embed = discord.Embed(title='Channel not for talking',
                               color=discord.Colour.blue())
         embed.set_image(
@@ -690,7 +692,7 @@ async def gif(ctx):
 @commands.check(is_slime_admin)
 async def clear(ctx):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
 
       for member_id in AGE_members:
         #clear slime counts
@@ -718,7 +720,7 @@ async def clear(ctx):
 @client.command()
 async def restart(ctx):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
         print(f'{utcTimestamp()} INFO restart() is initiated...?')
         await ctx.send('command accepted, but Klee does not know what to do with this command... ヾ(⌒(_´･ㅅ･`)_ ')
 
@@ -767,7 +769,7 @@ async def test(ctx):
 @tasks.loop(hours=12)
 async def called_once_every12hour():
   try:
-    daily_slime_result_channel = client.get_channel(950051638075334686)
+    daily_slime_result_channel = client.get_channel(const.REPORT_CHANNEL)
     
     message = job()
     timestamp = datetime.now(timezone.utc)
@@ -775,7 +777,7 @@ async def called_once_every12hour():
 
     read_txt()
     if len(failed_msg) != 0:
-      channel = client.get_channel(887894832708730881)
+      channel = client.get_channel(const.MAIN_CHANNEL)
       for msg in failed_msg:
         await channel.send(f'{msg}')
       open('failed_msg.txt', 'w').close()
