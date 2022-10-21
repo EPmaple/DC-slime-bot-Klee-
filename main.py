@@ -347,7 +347,7 @@ async def member_total(ctx, user_id):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
         target = await client.fetch_user(user_id)
-        message = job()
+        message = list_member_slime_count()
 
         await target.send(f'{message}')
 
@@ -357,7 +357,7 @@ async def member_total(ctx, user_id):
 
 
 #helper method
-def job():
+def list_member_slime_count():
     message = {}
     for member_id in members.id_list():
         # set name:slime_count to message dict
@@ -622,7 +622,7 @@ async def called_once_every12hour():
   try:
     daily_slime_result_channel = client.get_channel(const.REPORT_CHANNEL)
     
-    message = job()
+    message = list_member_slime_count()
     timestamp = datetime.now(timezone.utc)
     await daily_slime_result_channel.send(f'UTC time: {timestamp}, \nslime record: {message}')
 
