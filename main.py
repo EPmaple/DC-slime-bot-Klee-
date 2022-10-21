@@ -1,5 +1,5 @@
 from klee import const
-from klee.members import name_id, id_name
+from klee.member_list import name_id, id_name
 
 import os
 import discord
