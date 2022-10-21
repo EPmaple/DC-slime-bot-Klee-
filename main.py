@@ -1,4 +1,4 @@
-from klee import const
+from klee import const, members
 from klee.member_list import name_id, id_name
 
 import os
@@ -229,7 +229,7 @@ async def message(message):
 
                 add_slime(member_id, 1)
 
-                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {id_name[member_id]}!'
+                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
                 try:
                       await message.channel.send(reply_msg)
                   
@@ -249,7 +249,7 @@ async def message(message):
                 member_id = str(message.author.id)
 
                 add_slime(member_id, 1)
-                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {id_name[member_id]}!'
+                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
                     
                 try:
                       await message.channel.send(reply_msg)
@@ -286,7 +286,7 @@ async def message(message):
                     return
 
                 add_slime(member_id, 1)
-                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {id_name[member_id]}!'
+                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
               
                 try:
                       await message.channel.send(reply_msg)
@@ -320,7 +320,7 @@ async def doubleping(ctx, *, member):
         return
 
       minus_slime(member_id)
-      reply_msg = f'The number of slimes {id_name[member_id]} has summoned has been subtracted by Klee (๑‵●‿●‵๑), going from {int(AGE_members[member_id])+1} to {AGE_members[member_id]}'
+      reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been subtracted by Klee (๑‵●‿●‵๑), going from {int(AGE_members[member_id])+1} to {AGE_members[member_id]}'
 
       try: 
         await ctx.send(reply_msg)
@@ -388,15 +388,15 @@ async def top_three(ctx):  #change to AGE_members
 
         first_name = []
         for x in first:
-            first_name += [id_name[x]]
+            first_name += [members.get_name(x)]
 
         second_name = []
         for y in second:
-            second_name += [id_name[y]]
+            second_name += [members.get_name(y)]
 
         third_name = []
         for z in third:
-            third_name += [id_name[z]]
+            third_name += [members.get_name(z)]
 
         await ctx.send(
             f'The current first is {first_name} with {AGE_members[x]} slimes! Second is {second_name} with {AGE_members[y]} slimes, and third is {third_name} with {AGE_members[z]} slimes! They are the best! ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾'
@@ -433,7 +433,7 @@ def job():
     #change list to dictionary
 
     for member_id in (sorted_dict):
-      message[id_name[member_id]] = AGE_members[member_id]
+      message[members.get_name(member_id)] = AGE_members[member_id]
       #in message dictioanry, setting name:slime_count
     return message
 
@@ -492,7 +492,7 @@ async def add(ctx, number, *, username):
       original = AGE_members[member_id]
       add_slime(member_id, number)
 
-      reply_msg = f'The number of slimes {id_name[member_id]} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]}'
+      reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]}'
 
       try:
         await ctx.send(reply_msg)
@@ -542,7 +542,7 @@ async def zoom(ctx, *, member):
         zoom_time[member_idzt] = [f'{utcTimestamp()}']
         #append to the specific key's value array the time of which the zoom was reported
 
-      replymsg = f'Klee has noticed {id_name[member_id]} zoomed a slime at {utcTimestamp()}! (◕︿◕✿) Zooming is bad. Please do not zoom again'
+      replymsg = f'Klee has noticed {members.get_name(member_id)} zoomed a slime at {utcTimestamp()}! (◕︿◕✿) Zooming is bad. Please do not zoom again'
       await ctx.send(replymsg)
 
   except Exception as err:
@@ -561,7 +561,7 @@ async def zoomc(ctx, *, member):
       if zoom_member[member_idz] == 0:
         replymsg = 'Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”'
       else:
-        replymsg = f'Klee knows {id_name[member_id]} has zoomed {zoom_member[member_idz]} times this season. щ(゜ロ゜щ) Wahh! Why you zoomed!'
+        replymsg = f'Klee knows {members.get_name(member_id)} has zoomed {zoom_member[member_idz]} times this season. щ(゜ロ゜щ) Wahh! Why you zoomed!'
 
       await ctx.send(replymsg)
 
@@ -583,7 +583,7 @@ async def zoomt(ctx, *, member):
       if zoom_time[member_idzt] == []:
         replymsg = 'Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”'
       else:
-        replymsg = f'Klee has written down with my crayolas that {id_name[member_id]} has zoomed at the follow times: \n'
+        replymsg = f'Klee has written down with my crayolas that {members.get_name(member_id)} has zoomed at the follow times: \n'
         for i in zoom_time[member_idzt]:
           replymsg += f'{i} \n'
 
