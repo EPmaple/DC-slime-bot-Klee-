@@ -342,10 +342,10 @@ async def top_three(ctx):  #change to AGE_members
 #sends the specific person the entire AGE_members dictionary, each person with their slime counts
 @client.command()
 @commands.check(is_slime_admin)
-async def member_total(ctx, user_id):
+async def member_total(ctx):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
-        target = await client.fetch_user(user_id)
+        target = ctx.author
         message = list_member_slime_count()
 
         await target.send(f'{message}')
