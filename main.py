@@ -1,5 +1,4 @@
 from klee import const, members
-from klee.member_list import id_name
 
 import os
 import discord
@@ -22,9 +21,9 @@ reply_msg = ''
 #creates a list for failed_msg
 failed_msg = []
 
-#creates a dicitonary with each key being id from id_name and the value is default slime number 0
+# initialize AGE_members slime count to 0
 AGE_members = {}
-for x in id_name:
+for x in members.id_list():
     AGE_members[x] = 0
 
 #valid_INIT_construction
@@ -360,15 +359,9 @@ async def member_total(ctx, user_id):
 #helper method
 def job():
     message = {}
-
-    sorted_list = sorted(id_name.items(), key=lambda x:x[1])
-    #creates a list by sorting the values of the dictionary id_name in descending alphabetical order
-    sorted_dict = dict(sorted_list)
-    #change list to dictionary
-
-    for member_id in (sorted_dict):
-      message[members.get_name(member_id)] = AGE_members[member_id]
-      #in message dictioanry, setting name:slime_count
+    for member_id in members.id_list():
+        # set name:slime_count to message dict
+        message[members.get_name(member_id)] = AGE_members[member_id]
     return message
 
 
