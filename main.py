@@ -1,5 +1,5 @@
 from klee import const, members
-from klee.member_list import name_id, id_name
+from klee.member_list import id_name
 
 import os
 import discord
@@ -203,83 +203,37 @@ async def message(message):
         #@ultra or @altra
         if is_string_contains_any_word(message.content, const.PING_MENTIONS):
 
-#if the message is '@ultra @user':
+            member_id = 0
+
+            #if the message is '@ultra @user'
             if len(message.raw_mentions) != 0:
                 member_id = str(message.raw_mentions[0])
 
-                add_slime(member_id, 1)
-
-                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
-                try:
-                      await message.channel.send(reply_msg)
-                  
-                except KeyError:
-                      await message.channel.send(f"Klee has added the slime on {utcTimestamp()}. ( ๑>ᴗ<๑ ) Please private message maple to have this member added \n")
-                  
-                except discord.errors.HTTPException:
-                      with open(f"failed_msg.txt", "a") as f:
-                                 f.write(f"{reply_msg}\n")
-                      print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-                      os.system('kill 1')
-                      os.system("python restarter.py")
-
-#if the message is '@ultra me':
-            elif (message.content.split()[1].lower()
-                  == 'me') or ('me' in message.content.split()[1].lower()):
-                member_id = str(message.author.id)
-
-                add_slime(member_id, 1)
-                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
-                    
-                try:
-                      await message.channel.send(reply_msg)
-                  
-                except KeyError:
-                      await message.channel.send(f"Klee has added the slime on {utcTimestamp()}. ( ๑>ᴗ<๑ ) \n")
-                except discord.errors.HTTPException:
-                      with open(f"failed_msg.txt", "a") as f:
-                                 f.write(f"{reply_msg}\n")
-                      print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-                      os.system('kill 1')
-                      os.system("python restarter.py")
-
-#if the message is '@ultra user':
+            #if the message is '@ultra me', or '@ultra user'
             else:
-                name_mentioned = message.content.split()[1]
+                words = message.content.split()
+                if len(words) > 1:
+                    second_word = words[1]
+                    member_id = members.id_search(message, second_word)
 
-                member_id = 0
-
-                if name_mentioned.lower() == 'dan':
-                    member_id = str(name_id['Dan'])
-                elif name_mentioned.lower() == 'moon':
-                    member_id = str(name_id['Moon'])
-                else:
-                    for x in name_id:
-                        if name_mentioned.lower() in x.lower():
-                            member_id = str(name_id[x])
-
-#case where the name may be incorrect:
-                if member_id == 0:
-                    await message.channel.send(
-                        'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
-                    )
-                    return
-
-                add_slime(member_id, 1)
-                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
-              
+            reply_msg = ''
+            if member_id == 0:
+                reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
+            else:
                 try:
-                      await message.channel.send(reply_msg)
-                  
+                    add_slime(member_id, 1)
+                    reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
                 except KeyError:
-                      await message.channel.send(f"Klee has added the slime on {utcTimestamp()}. ( ๑>ᴗ<๑ ) \n")
-                  
-                except discord.errors.HTTPException:
-                      with open(f"failed_msg.txt", "a") as f:
-                                 f.write(f"{reply_msg}\n")
-                      print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-                      os.system('kill 1')
-                      os.system("python restarter.py")
+                    reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
+
+            try:
+                  await message.channel.send(reply_msg)
+            except discord.errors.HTTPException:
+                  with open(f"failed_msg.txt", "a") as f:
+                             f.write(f"{reply_msg}\n")
+                  print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
+                  os.system('kill 1')
+                  os.system("python restarter.py")
 
   except Exception as err:
     print(f'{utcTimestamp()} ERROR in message(): {err}')
