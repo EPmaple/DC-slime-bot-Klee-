@@ -64,26 +64,6 @@ for member_idz in zoom_member:
 
 # HELPER METHODS #
 
-def command_namecheck(ctx, member):
-  if (member.lower() == 'me') or ('me' in member.lower()):
-    #if message in the form: !command me
-    member_id = str(ctx.message.author.id)
-
-  else:
-    member_id = 0
-      
-    if member.lower() == 'dan':
-      member_id = str(name_id['Dan'])
-    elif member.lower() == 'moon':
-      member_id = str(name_id['Moon'])
-    else:
-      for x in name_id:
-        if member.lower() in x.lower():
-          member_id = str(name_id[x])
-    #runs through the entire name_id dictionary to find the corresponding id
-
-  return member_id #return the id
-
 #reads the failed_msg.txt and stores it in a list called failed_msg
 def read_txt():
 #opens the txt, which stores msg that failed to be send, and stores each line of the txt into the list created above
@@ -313,7 +293,7 @@ async def message(message):
 async def doubleping(ctx, *, member):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
-      member_id = command_namecheck(ctx, member)
+      member_id = members.id_search(ctx, member)
 
       if member_id == 0:
         await ctx.send('Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone... (๑•̆ ૩•̆)')
@@ -483,7 +463,7 @@ async def add(ctx, number, *, username):
     if ctx.channel.id in const.BOT_CHANNELS:
       log(f'[add] {ctx.message.author.display_name}: {number} {username}')
       member = username.strip()
-      member_id = command_namecheck(ctx, member)
+      member_id = members.id_search(ctx, member)
 
       if member_id == 0:
         await ctx.send('Uh, Klee does not know this name, and therefore cannot add this slime from anyone... (๑•̆ ૩•̆)')
@@ -514,7 +494,7 @@ async def zoom(ctx, *, member):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
 
-      member_id = command_namecheck(ctx, member) #gets the id corresponding to the member name entered
+      member_id = members.id_search(ctx, member)
 
       if member_id == 0:
         await ctx.send ('Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone...')
@@ -554,7 +534,7 @@ async def zoomc(ctx, *, member):
 #return the number of times the player have zoomed this season
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
-      member_id = command_namecheck(ctx, member)
+      member_id = members.id_search(ctx, member)
       member_idz = member_id +'z'
 
       #if the player has not zoomed yet
@@ -576,7 +556,7 @@ async def zoomt(ctx, *, member):
 #return the specific times the player was reported zooming
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
-      member_id = command_namecheck(ctx, member)
+      member_id = members.id_search(ctx, member)
       member_idzt = member_id +'zt'
 
       #if the player has not zoomed yet
