@@ -111,9 +111,8 @@ def is_slime_admin(ctx):
 def in_slime_channel(ctx):
     return ctx.channel.id in const.BOT_CHANNELS
 
-#return string.contains(any(wordlist))
-def is_string_contains_any_word(astring, wordlist):
-    return any(map(lambda word: word in astring, wordlist))
+def is_any_word_in_string(wordlist, string):
+    return any(word in string for word in wordlist)
 
 #return formatted timestamp
 def utcTimestamp():
@@ -200,7 +199,7 @@ async def message(message):
             return
 
         #@ultra or @altra
-        if is_string_contains_any_word(message.content, const.PING_MENTIONS):
+        if is_any_word_in_string(const.PING_MENTIONS, message.content):
 
             member_id = 0
 
@@ -395,7 +394,7 @@ async def daily(ctx):
         counter = 0
 
         async for message in ctx.channel.history(limit=300, after=hour, before=current):
-            if is_string_contains_any_word(message.content, const.PING_MENTIONS):
+            if is_any_word_in_string(const.PING_MENTIONS, message.content):
                 counter += 1
         await ctx.send(f'Klee has counted hand by hand, in the past 24 hours, we have summoned {counter} slimes! ٩(๑❛ᴗ❛๑)۶ ')
   except Exception as err:
