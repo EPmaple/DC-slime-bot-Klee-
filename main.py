@@ -201,18 +201,7 @@ async def message(message):
         #@ultra or @altra
         if is_any_word_in_string(const.PING_MENTIONS, message.content):
 
-            member_id = 0
-
-            #if the message is '@ultra @user'
-            if len(message.raw_mentions) != 0:
-                member_id = str(message.raw_mentions[0])
-
-            #if the message is '@ultra me', or '@ultra user'
-            else:
-                words = message.content.split()
-                if len(words) > 1:
-                    second_word = words[1]
-                    member_id = members.id_search(message, second_word)
+            member_id = members.id_search(message)
 
             reply_msg = ''
             if member_id == 0:
@@ -245,7 +234,7 @@ async def message(message):
 async def doubleping(ctx, *, member):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
-      member_id = members.id_search(ctx, member)
+      member_id = members.id_search(ctx.message)
 
       if member_id == 0:
         await ctx.send('Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone... (๑•̆ ૩•̆)')
@@ -404,12 +393,11 @@ async def daily(ctx):
 
 #wrapper for add_slime method
 @client.command()
-async def add(ctx, number, *, username):
+async def add(ctx, number, *, member):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
-      log(f'[add] {ctx.message.author.display_name}: {number} {username}')
-      member = username.strip()
-      member_id = members.id_search(ctx, member)
+      log(f'[add] {ctx.message.author.display_name}: {number} {member}')
+      member_id = members.id_search(ctx.message)
 
       if member_id == 0:
         await ctx.send('Uh, Klee does not know this name, and therefore cannot add this slime from anyone... (๑•̆ ૩•̆)')
@@ -440,7 +428,7 @@ async def zoom(ctx, *, member):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
 
-      member_id = members.id_search(ctx, member)
+      member_id = members.id_search(ctx.message)
 
       if member_id == 0:
         await ctx.send ('Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone...')
@@ -480,7 +468,7 @@ async def zoomc(ctx, *, member):
 #return the number of times the player have zoomed this season
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
-      member_id = members.id_search(ctx, member)
+      member_id = members.id_search(ctx.message)
       member_idz = member_id +'z'
 
       #if the player has not zoomed yet
@@ -502,7 +490,7 @@ async def zoomt(ctx, *, member):
 #return the specific times the player was reported zooming
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
-      member_id = members.id_search(ctx, member)
+      member_id = members.id_search(ctx.message)
       member_idzt = member_id +'zt'
 
       #if the player has not zoomed yet
