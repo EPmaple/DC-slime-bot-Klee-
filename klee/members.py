@@ -27,7 +27,7 @@ def id_search(ctx: Union[commands.Context, discord.Message], name_part: str):
 
 def _id_list_sorted_by_name():
     sorted_name = sorted(id_name.items(), key=lambda kv: kv[1])
-    return dict(sorted_name).keys()
+    return [id for id, name in sorted_name]
 
 _cached_id_list_sorted_by_name = _id_list_sorted_by_name()
 
