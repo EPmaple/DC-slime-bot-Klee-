@@ -1,3 +1,5 @@
+from klee import const, members
+
 import os
 import discord
 from discord.ext import commands, tasks
@@ -14,95 +16,14 @@ nest_asyncio.apply()
 
 client = commands.Bot(command_prefix='!')
 
-name_id = {'AGELaVolpe': '720352409817186345', 'AGE_Atomsk': '433367046248595466',\
-           'AGE_Cats': '359361962414440449', 'Cats On Mars': '359361962414440449',\
-           'AGE_Leofar': '328108124953247746', 'Leofarr': '328108124953247746',\
-           'AGE_Lux': '400768894521966604', 'luxury777': '400768894521966604',\
-           'AGE_Solid': '222808023255613440','SolidD': '222808023255613440',\
-           'AGE_Vent': '207924668844212225', 'Vent': '207924668844212225',\
-           'Ainthe': '234077877958606849', 'Angel': '563787164987686925',\
-           'Apeks': '139662285089013760', 'Aquarios':'342895832057643018',\
-           'Ben': '281087273418752001', 'traffyboi': '120428736637173760',\
-           'CloudExt': '362102976581599241', 'Collin': '884080970666504202',\
-           'Collin still PURE F2P': '884080970666504202', 'Consutron': '153660394349658112',\
-           'Dan': '274133775917645824','Dante': '270699806949638144',\
-           'Evian': '591897303573331978', 'GoldHunter': '926128198574547024', \
-           'Gunther': '315112026093649920', 'G̷̉̕u̷͑̚ǹ̴̕ẗ̴̕ḧ̵̏e̴͆́ṙ̵͝': '315112026093649920', \
-           'Ioni': '202635850599759873', 'JAV_Dostic': '312642855330119681',\
-           'JAV_Eolf ': '162171044566794240','JAV_Moss': '207111511410212865',\
-           'JAV_booyah': '211679799867998218', 'eph || booyah': '211679799867998218',\
-           'KENSHIN': '509805857425588224', 'Levi': '223398953549299712',\
-           'Link2D3atH': '139262103214227456', 'Maori':'944366152648372266',\
-           'Mixer': '201177323293114368', 'MoonMan': '250779681257684992',\
-           'Moose': '571291284480851979', 'Neostep':'248297824477773825',\
-           'Odyn': '553055447469522944', 'Pengest':'364344681129312257',\
-           'PlainDoe': '189350494328586240','ReddlsRow': '274682038970482688',\
-           'SenorTonto': '130852537199886337', 'Spikeman': '134863783444086784',\
-           'Spike/Chitoge': '134863783444086784', 'Tachii': '176147192719998977',\
-           'Tedo': '826618819191242792', 'Thaelon': '197085461624127488',\
-           'ULTRA_Foxs': '396398521462554624', 'Foxcolt': '396398521462554624',\
-           'Ultra_Moon': '497120107819040768', 'Moon': '497120107819040768',\
-           'Unihorn':'355906565422841867', 'virant (Variant-1)': '579199616143327258',\
-           'WindaRB': '673517909125103619', 'Daedalus': '210041889414447105',\
-           'latvice': '281088989610377216', 'mUmU': '500124144755671040',\
-           'zero00': '563082215198556211', '17maple': '253994447782543361',\
-           'GonBu': '465942228791984149', 'aile': '123456789', 'zeta': '333666',\
-           'Zerefsis': '215506389353758720', 'Tympest': '292615553942683648',\
-           'leafa1244': '187764065131560960', 'Tatumi': '394763425777057794',\
-           'Firis': '323444581033050113', 'Ciaosuh': '218659635513524224',\
-           'donuts':'506124628188594181', 'fiE':'961291207210856448',\
-           'mantis3175':'560576301149192203', 'rocketeer':'238091448073846784',\
-           'esyw':'847443895327785030', 'RenTrout':'332846967971512322',\
-           'umbrella':'926128198574547024',\
-           'Sunscream':'779788554259660814', 'Ophianne':'203492157158326273',\
-           'DoujinKAMI':'509185049346834453','pawpaw':'589670090752917524',\
-           'feindishly2 (Bulbasaur)':'949595232448679976'}
-
-id_name = {'333666': 'zeta','720352409817186345':'LaVolpe', '433367046248595466': 'Atomsk',\
-           '359361962414440449': 'Cats On Mars', '328108124953247746': 'Leofarr',\
-           '400768894521966604': 'luxury777', '222808023255613440': 'SolidD',\
-           '207924668844212225': 'Vent','234077877958606849': 'Ainthe',\
-           '563787164987686925': 'Angel', '139662285089013760': 'Apeks',\
-           '342895832057643018':'Aquarios','281087273418752001': 'Ben',\
-           '120428736637173760': 'traffyboi','362102976581599241': 'CloudExt',\
-           '884080970666504202': 'Collin', '153660394349658112': 'Consutron',\
-           '274133775917645824': 'Dan', '270699806949638144': 'Dante',\
-           '591897303573331978': 'Evian','926128198574547024': 'GoldHunter',\
-           '315112026093649920': 'Gunther', '202635850599759873': 'Ioni',\
-           '312642855330119681': 'Dostic', '162171044566794240': 'Eolf',\
-           '207111511410212865': 'Moss', '211679799867998218': 'eph | booyah',\
-           '509805857425588224': 'Kenshin','223398953549299712': 'Levi',\
-           '139262103214227456': 'Link2D3atH', '944366152648372266':'Maori',\
-           '201177323293114368': 'Mixer','250779681257684992': 'MoonMan',\
-           '571291284480851979':'Moose', '248297824477773825':'Neostep',\
-           '553055447469522944': 'Odyn', '364344681129312257':'Pengest',\
-           '274682038970482688': 'ReddlsRow', '130852537199886337': 'SenorTonto',\
-           '134863783444086784': 'Spike/Chitoge','176147192719998977': 'Tachii',\
-           '826618819191242792': 'Tedo','197085461624127488': 'Thaelon',\
-           '396398521462554624': 'Foxcolt', '497120107819040768': 'Moon',\
-           '355906565422841867':'Unihorn','579199616143327258': 'virant (Variant-1)',\
-           '673517909125103619': 'WindaRB', '210041889414447105': 'Daedalus',\
-           '281088989610377216': 'latvice','500124144755671040': 'mUmU',\
-           '563082215198556211': 'zero00', '253994447782543361': '17maple',\
-           '465942228791984149':'GonBu', '123456789': 'aile', '189350494328586240': 'PlainDoe',\
-           '215506389353758720': 'Zerefsis', '292615553942683648': 'Tympest',\
-           '394763425777057794': 'Tatumi', '187764065131560960': 'leafa',\
-           '323444581033050113': 'Firis', '218659635513524224': 'Ciaosuh',\
-           '506124628188594181':'donuts', '961291207210856448':'fiE',\
-           '560576301149192203':'mantis', '238091448073846784':'rocketeer',\
-           '847443895327785030':'esyw', '332846967971512322':'RenTrout',\
-           '779788554259660814':'Sunscream', '203492157158326273':'Ophianne',\
-           '509185049346834453':'DoujinKAMI', '589670090752917524':'pawpaw',\
-           '949595232448679976':'Bulbasaur'}
-
 reply_msg = ''
 
 #creates a list for failed_msg
 failed_msg = []
 
-#creates a dicitonary with each key being id from id_name and the value is default slime number 0
+# initialize AGE_members slime count to 0
 AGE_members = {}
-for x in id_name:
+for x in members.id_list():
     AGE_members[x] = 0
 
 #valid_INIT_construction
@@ -141,26 +62,6 @@ for member_idz in zoom_member:
 
 
 # HELPER METHODS #
-
-def command_namecheck(ctx, member):
-  if (member.lower() == 'me') or ('me' in member.lower()):
-    #if message in the form: !command me
-    member_id = str(ctx.message.author.id)
-
-  else:
-    member_id = 0
-      
-    if member.lower() == 'dan':
-      member_id = str(name_id['Dan'])
-    elif member.lower() == 'moon':
-      member_id = str(name_id['Moon'])
-    else:
-      for x in name_id:
-        if member.lower() in x.lower():
-          member_id = str(name_id[x])
-    #runs through the entire name_id dictionary to find the corresponding id
-
-  return member_id #return the id
 
 #reads the failed_msg.txt and stores it in a list called failed_msg
 def read_txt():
@@ -201,15 +102,17 @@ def multiple_max(dictionary):
 
 #check whether the author's id is the same as the specified user's id
 def is_bot_admin(ctx):
-    return ctx.author.id == 253994447782543361
+    return ctx.author.id in const.BOT_ADMINS
 def is_slime_admin(ctx):
-    return ctx.author.id in (253994447782543361, 315112026093649920)
+    return ctx.author.id in const.DATA_ADMINS
 
 
 #check whether it's in the specified channel
 def in_slime_channel(ctx):
-    return ctx.channel.id in (887894832708730881, 887967982356148254)
+    return ctx.channel.id in const.BOT_CHANNELS
 
+def is_any_word_in_string(wordlist, string):
+    return any(word in string for word in wordlist)
 
 #return formatted timestamp
 def utcTimestamp():
@@ -262,7 +165,7 @@ async def on_ready():
 
     #if the failed_msg text is not empty, sends the msg to the corresponding channel, and then erase the txt file
     if len(failed_msg) != 0:
-      channel = client.get_channel(887894832708730881) 
+      channel = client.get_channel(const.MAIN_CHANNEL) 
       for msg in failed_msg:
         await channel.send(f'{msg}')
       open('failed_msg.txt', 'w').close()
@@ -275,7 +178,7 @@ async def on_ready():
 @client.event
 async def on_command_error(ctx, error):
   try:
-    if ctx.channel.id == 887894832708730881:
+    if ctx.channel.id in const.BOT_CHANNELS:
         if isinstance(error, commands.CommandNotFound):
             await ctx.send('Klee does not know this command... ヾ(⌒(_´･ㅅ･`)_ ')
         elif isinstance(error, commands.MissingRequiredArgument):
@@ -290,90 +193,45 @@ async def on_command_error(ctx, error):
 @client.listen('on_message')
 async def message(message):
   try:
-    if message.channel.id == 887894832708730881:  #make sure the @ is from the right channel
+    if message.channel.id in const.BOT_CHANNELS:  #make sure the @ is from the right channel
         log(f'[chat] {message.author.display_name}: {message.content}')
         if message.author == client.user:  #make sure is not responding to message from the bot
             return
 
-        if ('<@&887894985398157363>') in message.content or (
-                '<@&887915507804692511>') in message.content: #@ultra or @altra
-#if the message is '@ultra @user':
+        #@ultra or @altra
+        if is_any_word_in_string(const.PING_MENTIONS, message.content):
+
+            member_id = 0
+
+            #if the message is '@ultra @user'
             if len(message.raw_mentions) != 0:
                 member_id = str(message.raw_mentions[0])
 
-                add_slime(member_id, 1)
-
-                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {id_name[member_id]}!'
-                try:
-                      await message.channel.send(reply_msg)
-                  
-                except KeyError:
-                      await message.channel.send(f"Klee has added the slime on {utcTimestamp()}. ( ๑>ᴗ<๑ ) Please private message maple to have this member added \n")
-                  
-                except discord.errors.HTTPException:
-                      with open(f"failed_msg.txt", "a") as f:
-                                 f.write(f"{reply_msg}\n")
-                      print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-                      os.system('kill 1')
-                      os.system("python restarter.py")
-
-#if the message is '@ultra me':
-            elif (message.content.split()[1].lower()
-                  == 'me') or ('me' in message.content.split()[1].lower()):
-                member_id = str(message.author.id)
-
-                add_slime(member_id, 1)
-                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {id_name[member_id]}!'
-                    
-                try:
-                      await message.channel.send(reply_msg)
-                  
-                except KeyError:
-                      await message.channel.send(f"Klee has added the slime on {utcTimestamp()}. ( ๑>ᴗ<๑ ) \n")
-                except discord.errors.HTTPException:
-                      with open(f"failed_msg.txt", "a") as f:
-                                 f.write(f"{reply_msg}\n")
-                      print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-                      os.system('kill 1')
-                      os.system("python restarter.py")
-
-#if the message is '@ultra user':
+            #if the message is '@ultra me', or '@ultra user'
             else:
-                name_mentioned = message.content.split()[1]
+                words = message.content.split()
+                if len(words) > 1:
+                    second_word = words[1]
+                    member_id = members.id_search(message, second_word)
 
-                member_id = 0
-
-                if name_mentioned.lower() == 'dan':
-                    member_id = str(name_id['Dan'])
-                elif name_mentioned.lower() == 'moon':
-                    member_id = str(name_id['Moon'])
-                else:
-                    for x in name_id:
-                        if name_mentioned.lower() in x.lower():
-                            member_id = str(name_id[x])
-
-#case where the name may be incorrect:
-                if member_id == 0:
-                    await message.channel.send(
-                        'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
-                    )
-                    return
-
-                add_slime(member_id, 1)
-                reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {id_name[member_id]}!'
-              
+            reply_msg = ''
+            if member_id == 0:
+                reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
+            else:
                 try:
-                      await message.channel.send(reply_msg)
-                  
+                    add_slime(member_id, 1)
+                    reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
                 except KeyError:
-                      await message.channel.send(f"Klee has added the slime on {utcTimestamp()}. ( ๑>ᴗ<๑ ) \n")
-                  
-                except discord.errors.HTTPException:
-                      with open(f"failed_msg.txt", "a") as f:
-                                 f.write(f"{reply_msg}\n")
-                      print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-                      os.system('kill 1')
-                      os.system("python restarter.py")
+                    reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
+
+            try:
+                  await message.channel.send(reply_msg)
+            except discord.errors.HTTPException:
+                  with open(f"failed_msg.txt", "a") as f:
+                             f.write(f"{reply_msg}\n")
+                  print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
+                  os.system('kill 1')
+                  os.system("python restarter.py")
 
   except Exception as err:
     print(f'{utcTimestamp()} ERROR in message(): {err}')
@@ -386,15 +244,15 @@ async def message(message):
 @client.command()
 async def doubleping(ctx, *, member):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
-      member_id = command_namecheck(ctx, member)
+    if ctx.channel.id in const.BOT_CHANNELS:
+      member_id = members.id_search(ctx, member)
 
       if member_id == 0:
         await ctx.send('Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone... (๑•̆ ૩•̆)')
         return
 
       minus_slime(member_id)
-      reply_msg = f'The number of slimes {id_name[member_id]} has summoned has been subtracted by Klee (๑‵●‿●‵๑), going from {int(AGE_members[member_id])+1} to {AGE_members[member_id]}'
+      reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been subtracted by Klee (๑‵●‿●‵๑), going from {int(AGE_members[member_id])+1} to {AGE_members[member_id]}'
 
       try: 
         await ctx.send(reply_msg)
@@ -415,7 +273,7 @@ async def doubleping(ctx, *, member):
 @client.command()
 async def total(ctx):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
 
         total = 0
         for member_id in AGE_members:  #for loop to get slime counts(values) of each member_id(key)
@@ -434,7 +292,7 @@ async def total(ctx):
 @client.command()
 async def top_three(ctx):  #change to AGE_members
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
 
         dictionary = {}
         for member_id in AGE_members:
@@ -462,15 +320,15 @@ async def top_three(ctx):  #change to AGE_members
 
         first_name = []
         for x in first:
-            first_name += [id_name[x]]
+            first_name += [members.get_name(x)]
 
         second_name = []
         for y in second:
-            second_name += [id_name[y]]
+            second_name += [members.get_name(y)]
 
         third_name = []
         for z in third:
-            third_name += [id_name[z]]
+            third_name += [members.get_name(z)]
 
         await ctx.send(
             f'The current first is {first_name} with {AGE_members[x]} slimes! Second is {second_name} with {AGE_members[y]} slimes, and third is {third_name} with {AGE_members[z]} slimes! They are the best! ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾'
@@ -486,9 +344,9 @@ async def top_three(ctx):  #change to AGE_members
 @commands.check(is_slime_admin)
 async def member_total(ctx, user_id):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
         target = await client.fetch_user(user_id)
-        message = job()
+        message = list_member_slime_count()
 
         await target.send(f'{message}')
 
@@ -498,17 +356,11 @@ async def member_total(ctx, user_id):
 
 
 #helper method
-def job():
+def list_member_slime_count():
     message = {}
-
-    sorted_list = sorted(id_name.items(), key=lambda x:x[1])
-    #creates a list by sorting the values of the dictionary id_name in descending alphabetical order
-    sorted_dict = dict(sorted_list)
-    #change list to dictionary
-
-    for member_id in (sorted_dict):
-      message[id_name[member_id]] = AGE_members[member_id]
-      #in message dictioanry, setting name:slime_count
+    for member_id in members.id_list():
+        # set name:slime_count to message dict
+        message[members.get_name(member_id)] = AGE_members[member_id]
     return message
 
 
@@ -516,7 +368,7 @@ def job():
 @client.command()
 async def sself(ctx):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
         self_member_id = str(ctx.author.id)
         await ctx.send(
             f'Klee knows that you have summoned {AGE_members[self_member_id]} slimes so far this season! You are the best!'
@@ -532,7 +384,7 @@ async def sself(ctx):
 @client.command()
 async def daily(ctx):
   try:
-    if ctx.channel.id == 887894832708730881:
+    if ctx.channel.id in const.BOT_CHANNELS:
         current = datetime.utcnow()
 
         hour_ago = timedelta(hours=24)
@@ -542,7 +394,7 @@ async def daily(ctx):
         counter = 0
 
         async for message in ctx.channel.history(limit=300, after=hour, before=current):
-            if ('<@&887894985398157363>') in message.content or ('<@&887915507804692511>') in message.content :
+            if is_any_word_in_string(const.PING_MENTIONS, message.content):
                 counter += 1
         await ctx.send(f'Klee has counted hand by hand, in the past 24 hours, we have summoned {counter} slimes! ٩(๑❛ᴗ❛๑)۶ ')
   except Exception as err:
@@ -554,10 +406,10 @@ async def daily(ctx):
 @client.command()
 async def add(ctx, number, *, username):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
       log(f'[add] {ctx.message.author.display_name}: {number} {username}')
       member = username.strip()
-      member_id = command_namecheck(ctx, member)
+      member_id = members.id_search(ctx, member)
 
       if member_id == 0:
         await ctx.send('Uh, Klee does not know this name, and therefore cannot add this slime from anyone... (๑•̆ ૩•̆)')
@@ -566,7 +418,7 @@ async def add(ctx, number, *, username):
       original = AGE_members[member_id]
       add_slime(member_id, number)
 
-      reply_msg = f'The number of slimes {id_name[member_id]} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]}'
+      reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]}'
 
       try:
         await ctx.send(reply_msg)
@@ -586,9 +438,9 @@ async def add(ctx, number, *, username):
 @client.command()
 async def zoom(ctx, *, member):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
 
-      member_id = command_namecheck(ctx, member) #gets the id corresponding to the member name entered
+      member_id = members.id_search(ctx, member)
 
       if member_id == 0:
         await ctx.send ('Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone...')
@@ -616,7 +468,7 @@ async def zoom(ctx, *, member):
         zoom_time[member_idzt] = [f'{utcTimestamp()}']
         #append to the specific key's value array the time of which the zoom was reported
 
-      replymsg = f'Klee has noticed {id_name[member_id]} zoomed a slime at {utcTimestamp()}! (◕︿◕✿) Zooming is bad. Please do not zoom again'
+      replymsg = f'Klee has noticed {members.get_name(member_id)} zoomed a slime at {utcTimestamp()}! (◕︿◕✿) Zooming is bad. Please do not zoom again'
       await ctx.send(replymsg)
 
   except Exception as err:
@@ -627,15 +479,15 @@ async def zoom(ctx, *, member):
 async def zoomc(ctx, *, member):
 #return the number of times the player have zoomed this season
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
-      member_id = command_namecheck(ctx, member)
+    if ctx.channel.id in const.BOT_CHANNELS:
+      member_id = members.id_search(ctx, member)
       member_idz = member_id +'z'
 
       #if the player has not zoomed yet
       if zoom_member[member_idz] == 0:
         replymsg = 'Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”'
       else:
-        replymsg = f'Klee knows {id_name[member_id]} has zoomed {zoom_member[member_idz]} times this season. щ(゜ロ゜щ) Wahh! Why you zoomed!'
+        replymsg = f'Klee knows {members.get_name(member_id)} has zoomed {zoom_member[member_idz]} times this season. щ(゜ロ゜щ) Wahh! Why you zoomed!'
 
       await ctx.send(replymsg)
 
@@ -649,15 +501,15 @@ async def zoomc(ctx, *, member):
 async def zoomt(ctx, *, member):
 #return the specific times the player was reported zooming
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
-      member_id = command_namecheck(ctx, member)
+    if ctx.channel.id in const.BOT_CHANNELS:
+      member_id = members.id_search(ctx, member)
       member_idzt = member_id +'zt'
 
       #if the player has not zoomed yet
       if zoom_time[member_idzt] == []:
         replymsg = 'Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”'
       else:
-        replymsg = f'Klee has written down with my crayolas that {id_name[member_id]} has zoomed at the follow times: \n'
+        replymsg = f'Klee has written down with my crayolas that {members.get_name(member_id)} has zoomed at the follow times: \n'
         for i in zoom_time[member_idzt]:
           replymsg += f'{i} \n'
 
@@ -673,7 +525,7 @@ async def zoomt(ctx, *, member):
 @client.command()
 async def gif(ctx):
   try:
-    if ctx.channel.id == 887894832708730881:
+    if ctx.channel.id in const.BOT_CHANNELS:
         embed = discord.Embed(title='Channel not for talking',
                               color=discord.Colour.blue())
         embed.set_image(
@@ -690,7 +542,7 @@ async def gif(ctx):
 @commands.check(is_slime_admin)
 async def clear(ctx):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
 
       for member_id in AGE_members:
         #clear slime counts
@@ -718,7 +570,7 @@ async def clear(ctx):
 @client.command()
 async def restart(ctx):
   try:
-    if ctx.channel.id == 887894832708730881 or ctx.channel.id == 887967982356148254:
+    if ctx.channel.id in const.BOT_CHANNELS:
         print(f'{utcTimestamp()} INFO restart() is initiated...?')
         await ctx.send('command accepted, but Klee does not know what to do with this command... ヾ(⌒(_´･ㅅ･`)_ ')
 
@@ -767,15 +619,15 @@ async def test(ctx):
 @tasks.loop(hours=12)
 async def called_once_every12hour():
   try:
-    daily_slime_result_channel = client.get_channel(950051638075334686)
+    daily_slime_result_channel = client.get_channel(const.REPORT_CHANNEL)
     
-    message = job()
+    message = list_member_slime_count()
     timestamp = datetime.now(timezone.utc)
     await daily_slime_result_channel.send(f'UTC time: {timestamp}, \nslime record: {message}')
 
     read_txt()
     if len(failed_msg) != 0:
-      channel = client.get_channel(887894832708730881)
+      channel = client.get_channel(const.MAIN_CHANNEL)
       for msg in failed_msg:
         await channel.send(f'{msg}')
       open('failed_msg.txt', 'w').close()
