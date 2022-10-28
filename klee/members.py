@@ -17,8 +17,8 @@ def id_search(ctx: Union[commands.Context, discord.Message], name_part: str):
     else:
         if name_part_lower == 'dan':
             member_id = str(name_id['Dan'])
-        elif name_part_lower == 'moon':
-            member_id = str(name_id['Moon'])
+        elif name_part_lower == 'tra':
+            member_id = str(name_id['tra20012'])
         else:
             for name in name_id:
                 if name_part_lower in name.lower():
