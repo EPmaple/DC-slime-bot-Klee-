@@ -290,7 +290,7 @@ async def total(ctx):
 
 #returns who are in first, second and third in slime spawns for the current season
 @client.command()
-async def top_three(ctx):  #change to AGE_members
+async def top_three(ctx):  
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
 
@@ -439,8 +439,7 @@ async def add(ctx, number, *, username):
 async def zoom(ctx, *, member):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
-
-      member_id = members.id_search(ctx, member)
+      member_id = str(members.id_search(ctx, member))
 
       if member_id == 0:
         await ctx.send ('Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone...')
@@ -480,7 +479,7 @@ async def zoomc(ctx, *, member):
 #return the number of times the player have zoomed this season
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
-      member_id = members.id_search(ctx, member)
+      member_id = str(members.id_search(ctx, member))
       member_idz = member_id +'z'
 
       #if the player has not zoomed yet
@@ -502,7 +501,7 @@ async def zoomt(ctx, *, member):
 #return the specific times the player was reported zooming
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
-      member_id = members.id_search(ctx, member)
+      member_id = str(members.id_search(ctx, member))
       member_idzt = member_id +'zt'
 
       #if the player has not zoomed yet
@@ -521,6 +520,54 @@ async def zoomt(ctx, *, member):
     print(f'{utcTimestamp()} ERROR in message(): {err}')
     handleError(err)
 
+
+#to decrement the requested time(s) of zoom and the corresponding zoom time(s)
+@client.command()
+async def dec_zoom(ctx, number, *, username):
+  try:
+    if ctx.channel.id in const.BOT_CHANNELS:
+      member = username.strip() 
+      member_id = members.id_search(ctx, member)
+
+      if member_id == 0:
+        await ctx.send('Uh, Klee does not know this name, and therefore cannot add this slime from anyone... (๑•̆ ૩•̆)')
+        return
+
+      member_idz = member_id + 'z'
+      original = zoom_member[member_idz]
+      zoom_member[member_idz] -= int(number)
+      db[member_idz] -= int(number)
+
+      member_idzt = member_idz + 't'
+      for i in range(int(number)):
+        del zoom_time[member_idzt][-1]
+        del db[member_idzt][-1]
+
+      reply_msg = f'The number of times {members.get_name(member_id)} zoomed has been decremented from {original} to {zoom_member[member_idz]} '
+
+      await ctx.send(reply_msg)
+
+  except Exception as err:
+    print(f'{utcTimestamp()} ERROR in add(): {err}')
+    handleError(err)
+    
+    
+#helper function
+#return zoom_sum [int], total # of zoom
+#       top_zoom_names [list], list containing strings of playernames
+#       zoom_number [int], number of times the top zoomer zoomed
+def total_zoom():
+  zoom_sum = sum(zoom_member.values())
+  
+  top_zoom_ids = multiple_max(zoom_member)
+  top_zoom_names = []
+  for string_ids in top_zoom_ids:
+    top_zoom_names += [members.get_name(string_ids[0:-1])]
+  zoom_number = zoom_member[string_ids]
+  
+  return (zoom_sum, top_zoom_names, zoom_number)
+
+  
 #method for sending no-talking gif
 @client.command()
 async def gif(ctx):
@@ -620,10 +667,12 @@ async def test(ctx):
 async def called_once_every12hour():
   try:
     daily_slime_result_channel = client.get_channel(const.REPORT_CHANNEL)
-    
+
+    zoom_sum, top_zoom_names, zoom_number = total_zoom()
     message = list_member_slime_count()
     timestamp = datetime.now(timezone.utc)
-    await daily_slime_result_channel.send(f'UTC time: {timestamp}, \nslime record: {message}')
+    
+    await daily_slime_result_channel.send(f'-------\nUTC time: {timestamp}, \nSeasonal Slime Record: {message}, \nSeasonal Total Zoom Count: {zoom_sum}, and the top zoomer/s is/are: {top_zoom_names}, having zoomed {zoom_number} times.\n-------')
 
     read_txt()
     if len(failed_msg) != 0:
