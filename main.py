@@ -241,18 +241,21 @@ async def message(message):
 # BOT COMMANDS #
 
 #method name doubleping, simply wrapper for minus_slime
-@client.command(aliases=['doubleping'])
-async def slime_doubleping(ctx, *, member):
+@client.command()
+async def doubleping(ctx, *, username):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
+      log(f'[add] {ctx.message.author.display_name}: {-1} {username}')
+      member = username.strip()
       member_id = members.id_search(ctx, member)
 
       if member_id == 0:
         await ctx.send('Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone... (๑•̆ ૩•̆)')
         return
 
-      minus_slime(member_id)
-      reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been subtracted by Klee (๑‵●‿●‵๑), going from {int(AGE_members[member_id])+1} to {AGE_members[member_id]}'
+      original = AGE_members[member_id]
+      add_slime(member_id, -1)
+      reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been subtracted by Klee (๑‵●‿●‵๑), going from {original} to {AGE_members[member_id]}'
 
       try: 
         await ctx.send(reply_msg)
@@ -270,27 +273,10 @@ async def slime_doubleping(ctx, *, member):
     handleError(err)
 
 
-@client.command(aliases=['total'])
-async def slime_total(ctx):
-  try:
-    if ctx.channel.id in const.BOT_CHANNELS:
-
-        total = 0
-        for member_id in AGE_members:  #for loop to get slime counts(values) of each member_id(key)
-            total += AGE_members[member_id]
-
-        await ctx.send(
-            f'For the current season, we have summoned {total} slimes so far! Dear RNG God, please help us summon more slime! ٩(๑•̀ω•́๑)۶'
-        )
-
-  except Exception as err:
-    print(f'{utcTimestamp()} ERROR in total(): {err}')
-    handleError(err)
-
 
 #returns who are in first, second and third in slime spawns for the current season
-@client.command(aliases=['top_three'])
-async def slime_top_three(ctx):  
+@client.command(aliases=['top_three','rank'])
+async def slimerank(ctx):  
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
 
@@ -339,22 +325,6 @@ async def slime_top_three(ctx):
     handleError(err)
 
 
-#sends the specific person the entire AGE_members dictionary, each person with their slime counts
-@client.command()
-@commands.check(is_slime_admin)
-async def member_total(ctx):
-  try:
-    if ctx.channel.id in const.BOT_CHANNELS:
-        target = ctx.author
-        message = list_member_slime_count()
-
-        await target.send(f'{message}')
-
-  except Exception as err:
-    print(f'{utcTimestamp()} ERROR in member_total(): {err}')
-    handleError(err)
-
-
 #helper method
 def list_member_slime_count():
     slime_sum = sum(AGE_members.values())
@@ -367,7 +337,7 @@ def list_member_slime_count():
 
 #use to check number of slime counts for self
 @client.command(aliases=['sself','me'])
-async def slime_self(ctx):
+async def slimeinfo(ctx):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
         self_member_id = str(ctx.author.id)
@@ -383,7 +353,7 @@ async def slime_self(ctx):
 #use to get the approximate number of slimes summoned in the past 24 hours
 #not working correctly
 @client.command(aliases=['daily'])
-async def slime_daily(ctx):
+async def slimedaily(ctx):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
         current = datetime.utcnow()
@@ -405,7 +375,7 @@ async def slime_daily(ctx):
 
 #wrapper for add_slime method
 @client.command(aliases=['add','sadd'])
-async def slime_add(ctx, username, number = None):
+async def slimeadd(ctx, number, *, username):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
       log(f'[add] {ctx.message.author.display_name}: {number} {username}')
@@ -417,10 +387,7 @@ async def slime_add(ctx, username, number = None):
         return
 
       original = AGE_members[member_id]
-      if number == None:
-        add_slime(member_id, 1)
-      else:
-        add_slime(member_id, number)
+      add_slime(member_id, number)
 
       reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]}'
 
@@ -508,7 +475,7 @@ async def zoominfo(ctx, member = 'me'):
     
 #to increment or decrement the number of times the member has zoomed, and change the timelog of zooms accordingly    
 @client.command(aliases=['zadd'])
-async def zoom_add(ctx, number, *, username):
+async def zoomadd(ctx, number, *, username):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
       member = username.strip() 
