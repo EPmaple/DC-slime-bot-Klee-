@@ -491,10 +491,12 @@ async def zoomadd(ctx, number, *, username):
 
       #to decrement number of times zoomed
       if int(number) < 0:
-        zoom_member[member_idz] -= int(number)
-        db[member_idz] -= int(number)
+        # clamp to 0 if subtracting more than the actual current count
+        new_count = max(0, zoom_member[member_idz] + int(number))
+        zoom_member[member_idz] = new_count
+        db[member_idz] = new_count
         #first-in, last-out; deleting the last zoom info
-        for i in range(int(number)):
+        while len(zoom_time) > zoom_member[member_idz]:
           del zoom_time[member_idzt][-1]
           del db[member_idzt][-1]
       #to increment number of times zoomed
