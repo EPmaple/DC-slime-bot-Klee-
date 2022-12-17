@@ -96,7 +96,6 @@ def add_zoom(member_id, number):
     try:
         # clamp to 0 if subtracting more than the actual current count
         new_count = max(0, original_count + number)
-        print(f"new_count = {new_count}")
 
         new_zoom_times = original_zoom_times.value.copy()
         # add timestamps if new zooms were added
