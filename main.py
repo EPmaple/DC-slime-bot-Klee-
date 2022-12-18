@@ -9,6 +9,7 @@ from keep_alive import keep_alive
 import nest_asyncio
 import requests
 import traceback
+from operator import itemgetter
 
 # INIT PART 1 #
 
@@ -548,36 +549,38 @@ async def zoomadd(ctx, number, *, username):
         handleError(err)
 
 
+@client.command(aliases=['zooms'])
+async def zoomseason(ctx):
+  try:
+    if ctx.channel.id in const.BOT_CHANNELS:
+      zoom_sum, zoom_message = total_zoom()
+      await ctx.send(f'Seasonal zoom count: {zoom_sum}.\n\nMember zoom counts: {zoom_message}')
+  except Exception as err:
+    print(f'{utcTimestamp()} ERROR in add(): {err}')
+    handleError(err)
+
+
+
 #helper function
 #return zoom_sum [int], total # of zoom
 #       zoom_message [dict], list the top zoomers along with their corresponding # of zooms
 def total_zoom():
-    zoom_sum = sum(zoom_member.values())
+    # transform to list of tuples of the form (name, count)
+    name_transform = ((members.get_name(k[:-1]), v) for k, v in zoom_member.items() if k[:-1] != '0')
+    
+    # secondary key sort: sort by name
+    name_sort = sorted(name_transform, key=itemgetter(0))
 
-    #to get the top zoomer(s)
-    top_zoom_ids = multiple_max(zoom_member)
+    # primary key sort: sort by count, descending
+    value_sort = sorted(name_sort, key=itemgetter(1), reverse=True)
 
-    #to get second highest zoomer(s)
-    copy = dict(zoom_member)
-    for x in zoom_member:
-        for y in top_zoom_ids:
-            if x == y:
-                del copy[x]
-    top_zoom_ids += multiple_max(copy)
+    # at this point the list will be sorted by count first.
+    # for any members with matching counts, the members will be in alphabetical order.
+    # for example: [('traffyboi', 3), ('aile', 2), ('vent', 2)]
 
-    #to get third highest zoomer(s)
-    copy1 = dict(zoom_member)
-    for x in zoom_member:
-        for y in top_zoom_ids:
-            if x == y:
-                del copy1[x]
-    top_zoom_ids += multiple_max(copy1)
-
-    zoom_message = {}
-    #for the zoomer_id's we got from above, iterate through them to produce a dict of [zoomer_name: # of times zoomed] (key:value)
-    for member_idz in top_zoom_ids:
-        member_id = member_idz[0:-1]
-        zoom_message[members.get_name(member_id)] = zoom_member[member_idz]
+    # back to dictionary
+    zoom_message = {k: v for k, v in value_sort}
+    zoom_sum = sum(zoom_message.values())
 
     return (zoom_sum, zoom_message)
 
@@ -691,7 +694,7 @@ async def called_once_every12hour():
         timestamp = datetime.now(timezone.utc)
 
         await daily_slime_result_channel.send(
-            f'-------\nUTC time: {timestamp}, \nSeasonal Slime Count: {slime_sum}, and Seasonal Slime Record: {slime_message}, \n\nSeasonal Zoom Count: {zoom_sum}, and Seasonal Top Zoomers:{zoom_message}\n-------'
+            f'-------\nUTC time: {timestamp}, \nSeasonal Slime Count: {slime_sum}, and Seasonal Slime Record: {slime_message}, \n\nSeasonal Zoom Count: {zoom_sum}, and Seasonal Zoom Record: {zoom_message}\n-------'
         )
 
         read_txt()
