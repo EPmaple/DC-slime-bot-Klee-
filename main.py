@@ -4,7 +4,7 @@ import os
 import discord
 from discord.ext import commands, tasks
 from datetime import datetime, timezone, timedelta
-from replit import db
+from replit import db, database
 from keep_alive import keep_alive
 import nest_asyncio
 import requests
@@ -97,7 +97,10 @@ def add_zoom(member_id, number):
         # clamp to 0 if subtracting more than the actual current count
         new_count = max(0, original_count + number)
 
-        new_zoom_times = original_zoom_times.value.copy()
+        # database.to_primitive will convert an ObservedList to a list
+        # and leave a list as a list
+        new_zoom_times = database.to_primitive(original_zoom_times).copy()
+
         # add timestamps if new zooms were added
         while len(new_zoom_times) < new_count:
             new_zoom_times += [f'{utcTimestamp()}']
@@ -107,9 +110,16 @@ def add_zoom(member_id, number):
 
         # perform the actual updates
         db[member_idz] = new_count
-        zoom_member[member_idz] = new_count
-        db[member_idzt].set_value(new_zoom_times)
-        zoom_time[member_idzt].set_value(new_zoom_times)
+        zoom_member[member_idz] = db[member_idz]
+        if member_idzt in db:
+          # If the value is in the db, it is of type ObservedList.
+          # The type we are setting is a list. In order to override
+          # the underlying list of an ObservedList, we must call
+          # ObservedList.set_value
+          db[member_idzt].set_value(new_zoom_times)
+        else:
+          db[member_idzt] = new_zoom_times
+        zoom_time[member_idzt] = db[member_idzt]
 
     except Exception as err:
         print(f'{utcTimestamp()} ERROR in message(): {err}')
@@ -117,9 +127,16 @@ def add_zoom(member_id, number):
 
         # update failed, reset back to original
         db[member_idz] = original_count
-        zoom_member[member_idz] = original_count
-        db[member_idzt].set_value(original_zoom_times)
-        zoom_time[member_idzt].set_value(original_zoom_times)
+        zoom_member[member_idz] = db[member_idz]
+        if member_idzt in db:
+          # If the value is in the db, it is of type ObservedList.
+          # The type we are setting is a list. In order to override
+          # the underlying list of an ObservedList, we must call
+          # ObservedList.set_value
+          db[member_idzt].set_value(original_zoom_times)
+        else:
+          db[member_idzt] = original_zoom_times
+        zoom_time[member_idzt] = db[member_idzt]
 
         return f'Klee failed to modify zoom count (◕︿◕✿), {members.get_name(member_id)} remains at {original_count} zooms.'
 
