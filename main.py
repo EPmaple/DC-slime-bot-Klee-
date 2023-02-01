@@ -342,7 +342,7 @@ async def doubleping(ctx, *, username):
         if ctx.channel.id in const.BOT_CHANNELS:
             log(f'[add] {ctx.message.author.display_name}: {-1} {username}')
             member = username.strip()
-            member_id = members.id_search(ctx, member)
+            member_id = members.id_search(ctx.message, member)
 
             if member_id == members.UNKNOWN:
                 await ctx.send(
@@ -480,7 +480,7 @@ async def slimeadd(ctx, number, *, username):
             log(f'[add] {ctx.message.author.display_name}: {number} {username}'
                 )
             member = username.strip()
-            member_id = members.id_search(ctx, member)
+            member_id = members.id_search(ctx.message, member)
 
             if member_id == members.UNKNOWN:
                 await ctx.send(
@@ -513,7 +513,7 @@ async def slimeadd(ctx, number, *, username):
 async def zoom(ctx, *, member):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
-            member_id = members.id_search(ctx, member)
+            member_id = members.id_search(ctx.message, member)
             reply_msg = add_zoom(member_id, 1)
             await ctx.send(reply_msg)
 
@@ -527,7 +527,7 @@ async def zoom(ctx, *, member):
 async def zoominfo(ctx, member='me'):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
-            member_id = members.id_search(ctx, member)
+            member_id = members.id_search(ctx.message, member)
             member_idz = member_id + 'z'
             member_idzt = member_id + 'zt'
 
@@ -557,7 +557,7 @@ async def zoomadd(ctx, number, *, username):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
             member = username.strip()
-            member_id = members.id_search(ctx, member)
+            member_id = members.id_search(ctx.message, member)
             reply_msg = add_zoom(member_id, int(number))
             await ctx.send(reply_msg)
 
