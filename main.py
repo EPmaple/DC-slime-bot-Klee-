@@ -295,7 +295,7 @@ async def message(message):
             #@ultra or @altra
             if is_any_word_in_string(const.PING_MENTIONS, message.content):
 
-                member_id = 0
+                member_id = members.UNKNOWN
 
                 #if the message is '@ultra @user'
                 if len(message.raw_mentions) != 0:
@@ -309,7 +309,7 @@ async def message(message):
                         member_id = members.id_search(message, second_word)
 
                 reply_msg = ''
-                if member_id == 0:
+                if member_id == members.UNKNOWN:
                     reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
                 else:
                     try:
@@ -344,7 +344,7 @@ async def doubleping(ctx, *, username):
             member = username.strip()
             member_id = members.id_search(ctx, member)
 
-            if member_id == 0:
+            if member_id == members.UNKNOWN:
                 await ctx.send(
                     'Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone... (๑•̆ ૩•̆)'
                 )
@@ -482,7 +482,7 @@ async def slimeadd(ctx, number, *, username):
             member = username.strip()
             member_id = members.id_search(ctx, member)
 
-            if member_id == 0:
+            if member_id == members.UNKNOWN:
                 await ctx.send(
                     'Uh, Klee does not know this name, and therefore cannot add this slime from anyone... (๑•̆ ૩•̆)'
                 )
@@ -513,7 +513,7 @@ async def slimeadd(ctx, number, *, username):
 async def zoom(ctx, *, member):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
-            member_id = str(members.id_search(ctx, member))
+            member_id = members.id_search(ctx, member)
             reply_msg = add_zoom(member_id, 1)
             await ctx.send(reply_msg)
 
@@ -527,7 +527,7 @@ async def zoom(ctx, *, member):
 async def zoominfo(ctx, member='me'):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
-            member_id = str(members.id_search(ctx, member))
+            member_id = members.id_search(ctx, member)
             member_idz = member_id + 'z'
             member_idzt = member_id + 'zt'
 
