@@ -10,6 +10,14 @@ def id_list():
     return _cached_id_list_sorted_by_name
 
 def id_search(message: discord.Message, name_part: str):
+
+    # Accepts discord @mention, but only if it is in name_part (i.e. the first word before/after @ultra; currently irrelevant for other commands)
+    if len(message.raw_mentions) != 0:
+        mention_id = str(message.raw_mentions[0])
+        if mention_id in name_part:
+            return mention_id
+
+    # Map free text to a known user
     member_id = UNKNOWN
     name_part_lower = name_part.lower()
     if (name_part_lower == 'me') or ('me' in name_part_lower):

@@ -297,16 +297,11 @@ async def message(message):
 
                 member_id = members.UNKNOWN
 
-                #if the message is '@ultra @user'
-                if len(message.raw_mentions) != 0:
-                    member_id = str(message.raw_mentions[0])
-
-                #if the message is '@ultra me', or '@ultra user', or 'me @ultra', or 'user @ultra'
-                else:
-                    words = message.content.split()
-                    if len(words) > 1:
-                        name_part = words[1] if is_any_word_in_string(const.PING_MENTIONS, words[0]) else words[0]
-                        member_id = members.id_search(message, name_part)
+                # Accepts message in the form '@ultra user', or 'user @ultra'; where 'user' can also be in the form of 'me', or @mention
+                words = message.content.split()
+                if len(words) > 1:
+                    name_part = words[1] if is_any_word_in_string(const.PING_MENTIONS, words[0]) else words[0]
+                    member_id = members.id_search(message, name_part)
 
                 reply_msg = ''
                 if member_id == members.UNKNOWN:
