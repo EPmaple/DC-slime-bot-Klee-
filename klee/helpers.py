@@ -1,8 +1,10 @@
 from main import failed_msg, db, AGE_members, zoom_member, zoom_time, utcTimestamp, handleError, members, dt_from_timestamp
 from datetime import datetime, timezone, timedelta
 from replit import database
+from operator import itemgetter
+import discord
 
-########################################################################
+#########################################################################
 #reads the failed_msg.txt and stores it in a list called failed_msg
 def read_txt():
   #opens the txt, which stores msg that failed to be send, and stores each line of the txt into the list created above
@@ -10,9 +12,9 @@ def read_txt():
   with open("failed_msg.txt") as f:
     for line in f:
       failed_msg.append(line.strip())
-########################################################################
 
-########################################################################
+#########################################################################
+
 def add_slime(member_id, number):
     if member_id in db:  #if member id already in replit database,
         db[member_id] += int(number)
@@ -20,9 +22,9 @@ def add_slime(member_id, number):
     else:  #if member id was not in replit database
         db[member_id] = int(number)
         AGE_members[member_id] = int(number)
-########################################################################
 
-########################################################################
+#########################################################################
+
 #helper method, takes in member id and the number of slimes want to be added
 #can use negative numbers to subtract slimes
 def add_zoom(member_id, number):
@@ -97,10 +99,39 @@ def add_zoom(member_id, number):
       ret += '\nヽ( `д´*)ノ Why did you zoom ?!'
 
     return ret
-########################################################################
 
+#########################################################################
 
-#helper method, knowing this member id is already in db, subtract one slime count
-def minus_slime(member_id):
-    db[member_id] -= 1
-    AGE_members[member_id] -= 1
+#helper method
+def list_member_slime_count():
+    slime_sum = sum(AGE_members.values())
+    slime_message = {}
+    for member_id in members.id_list():
+        # set name:slime_count to message dict
+        slime_message[members.get_name(member_id)] = AGE_members[member_id]
+    return (slime_sum, slime_message)
+
+#########################################################################
+
+#helper function
+#return zoom_sum [int], total # of zoom
+#       zoom_message [dict], list the top zoomers along with their corresponding # of zooms
+def total_zoom():
+    # transform to list of tuples of the form (name, count)
+    name_transform = ((members.get_name(k[:-1]), v) for k, v in zoom_member.items() if k[:-1] != '0')
+    
+    # secondary key sort: sort by name
+    name_sort = sorted(name_transform, key=itemgetter(0))
+
+    # primary key sort: sort by count, descending
+    value_sort = sorted(name_sort, key=itemgetter(1), reverse=True)
+
+    # at this point the list will be sorted by count first.
+    # for any members with matching counts, the members will be in alphabetical order.
+    # for example: [('traffyboi', 3), ('aile', 2), ('vent', 2)]
+
+    # back to dictionary
+    zoom_message = {k: v for k, v in value_sort}
+    zoom_sum = sum(zoom_message.values())
+
+    return (zoom_sum, zoom_message)
