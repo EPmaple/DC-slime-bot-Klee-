@@ -706,7 +706,10 @@ async def called_once_every12hour():
         timestamp = datetime.now(timezone.utc)
 
         await daily_slime_result_channel.send(
-            f'-------\nUTC time: {timestamp}, \nSeasonal Slime Count: {slime_sum}, and Seasonal Slime Record: {slime_message}, \n\nSeasonal Zoom Count: {zoom_sum}, and Seasonal Zoom Record: {zoom_message}\n-------'
+            f'-------\nUTC time: {timestamp}, \nSeasonal Slime Count: {slime_sum}, and Seasonal Slime Record: {slime_message},'
+        )
+        await daily_slime_result_channel.send(
+            f'Seasonal Zoom Count: {zoom_sum}, and Seasonal Zoom Record: {zoom_message}\n-------'
         )
 
         read_txt()
