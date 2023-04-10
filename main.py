@@ -1,4 +1,4 @@
-from klee import const, members
+from klee import const, members, helpers
 
 import os
 import discord
@@ -60,121 +60,6 @@ for member_idz in zoom_member:
             #the value in this case is an array, which stores the specific times a player was reported zooming; and the key is the member_id + zt
 
 # HELPER METHODS #
-
-
-#reads the failed_msg.txt and stores it in a list called failed_msg
-def read_txt():
-    #opens the txt, which stores msg that failed to be send, and stores each line of the txt into the list created above
-    with open("failed_msg.txt") as f:
-        for line in f:
-            failed_msg.append(line.strip())
-
-
-#txt is automatically closed by 'with open'
-
-
-#helper method, takes in member id and the number of slimes want to be added
-#can use negative numbers to subtract slimes
-def add_slime(member_id, number):
-    if member_id in db:  #if member id already in replit database,
-        db[member_id] += int(number)
-        AGE_members[member_id] += int(number)
-    else:  #if member id was not in replit database
-        db[member_id] = int(number)
-        AGE_members[member_id] = int(number)
-
-
-def add_zoom(member_id, number):
-    if member_id == 0:
-        return 'Uh, Klee does not know this name...(◕︿◕✿)'
-
-    member_idz = member_id + 'z'
-    member_idzt = member_idz + 't'
-
-    original_count = zoom_member.get(member_idz, 0)
-    original_zoom_times = zoom_time.get(member_idzt, [])
-
-    try:
-        # clamp to 0 if subtracting more than the actual current count
-        new_count = max(0, original_count + number)
-
-        # database.to_primitive will convert an ObservedList to a list
-        # and leave a list as a list
-        new_zoom_times = database.to_primitive(original_zoom_times).copy()
-
-        # add timestamps if new zooms were added
-        while len(new_zoom_times) < new_count:
-            new_zoom_times += [f'{utcTimestamp()}']
-        # remove timestamps if zooms were subtracted
-        while len(new_zoom_times) > new_count:
-            del new_zoom_times[-1]
-
-        # perform the actual updates
-        db[member_idz] = new_count
-        zoom_member[member_idz] = db[member_idz]
-        if member_idzt in db:
-          # If the value is in the db, it is of type ObservedList.
-          # The type we are setting is a list. In order to override
-          # the underlying list of an ObservedList, we must call
-          # ObservedList.set_value
-          db[member_idzt].set_value(new_zoom_times)
-        else:
-          db[member_idzt] = new_zoom_times
-        zoom_time[member_idzt] = db[member_idzt]
-
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in message(): {err}')
-        handleError(err)
-
-        # update failed, reset back to original
-        db[member_idz] = original_count
-        zoom_member[member_idz] = db[member_idz]
-        if member_idzt in db:
-          # If the value is in the db, it is of type ObservedList.
-          # The type we are setting is a list. In order to override
-          # the underlying list of an ObservedList, we must call
-          # ObservedList.set_value
-          db[member_idzt].set_value(original_zoom_times)
-        else:
-          db[member_idzt] = original_zoom_times
-        zoom_time[member_idzt] = db[member_idzt]
-
-        return f'Klee failed to modify zoom count (◕︿◕✿), {members.get_name(member_id)} remains at {original_count} zooms.'
-
-    # rolling 7 day window for punish-ability
-    days = 7
-    window = datetime.utcnow().replace(microsecond=0) - timedelta(days=days)
-    count_in_window = sum(dt_from_timestamp(d) >= window for d in zoom_time[member_idzt])
-
-    ret = f'The number of times {members.get_name(member_id)} zoomed has been changed from {original_count} to {new_count}.'
-    ret += f'\nZooms in the last {days} days: {count_in_window}.'
-    if new_count == 0:
-      ret += '\nGood job not zooming this season!! ヾ(๑ㆁᗜㆁ๑)ﾉ”'
-    elif count_in_window == 0:
-      ret += '\nYou\'re remedying your zooming ways, way to go!! ヾ(๑ㆁᗜㆁ๑)ﾉ”'
-    else:
-      ret += '\nヽ( `д´*)ノ Why did you zoom ?!'
-
-    return ret
-
-
-#helper method, knowing this member id is already in db, subtract one slime count
-def minus_slime(member_id):
-    db[member_id] -= 1
-    AGE_members[member_id] -= 1
-
-
-#helper method, in case there are multiple greatest key-value pairs with the same value
-def multiple_max(dictionary):
-    max_key = max(dictionary, key=dictionary.get)
-    first = [max_key]
-
-    for x in dictionary:
-        if x != max_key:
-            if dictionary[x] == dictionary[max_key]:
-                first += [x]
-    return first
-
 
 #check whether the author's id is the same as the specified user's id
 def is_bot_admin(ctx):
@@ -275,8 +160,7 @@ async def on_command_error(ctx, error):
                     'Klee does not know this command... ヾ(⌒(_´･ㅅ･`)_ ')
             elif isinstance(error, commands.MissingRequiredArgument):
                 await ctx.send(
-                    'Klee thinks you are missing one or more arguments... ヾ(⌒(_´･ㅅ･`)_ '
-                )
+                    'Klee thinks you are missing one or more arguments... ヾ(⌒(_´･ㅅ･`)_ ')
 
     except Exception as err:
         print(f'{utcTimestamp()} ERROR in on_command_error(): {err}')
@@ -308,7 +192,7 @@ async def message(message):
                     reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
                 else:
                     try:
-                        add_slime(member_id, 1)
+                        helpers.add_slime(member_id, 1)
                         reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
                     except KeyError:
                         reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
@@ -329,90 +213,15 @@ async def message(message):
 
 # BOT COMMANDS #
 
-
 #method name doubleping, simply wrapper for minus_slime
 @client.command()
 async def doubleping(ctx, *, username):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-            log(f'[add] {ctx.message.author.display_name}: {-1} {username}')
-            member = username.strip()
-            member_id = members.id_search(ctx.message, member)
-
-            if member_id == members.UNKNOWN:
-                await ctx.send(
-                    'Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone... (๑•̆ ૩•̆)'
-                )
-                return
-
-            original = AGE_members[member_id]
-            add_slime(member_id, -1)
-            reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been subtracted by Klee (๑‵●‿●‵๑), going from {original} to {AGE_members[member_id]}'
-
-            try:
-                await ctx.send(reply_msg)
-
-            except discord.errors.HTTPException:
-                with open(f"failed_msg.txt", "a") as f:
-                    f.write(f"{reply_msg}\n")
-                print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-                os.system('kill 1')
-                os.system("python restarter.py")
-
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in doubleping(): {err}')
-        handleError(err)
-
+  await commands.doubleping(ctx, *username)
 
 #returns who are in first, second and third in slime spawns for the current season
 @client.command(aliases=['top_three', 'rank'])
 async def slimerank(ctx):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-
-            dictionary = {}
-            for member_id in AGE_members:
-                dictionary[member_id] = AGE_members[member_id]
-
-            copy = dict(dictionary)
-
-            first = multiple_max(copy)
-
-            copy1 = dict(dictionary)
-            for x in copy1:
-                for y in first:
-                    if x == y:
-                        del copy[x]
-
-            second = multiple_max(copy)
-
-            copy2 = dict(copy1)
-            for x in copy2:
-                for y in second:
-                    if x == y:
-                        del copy[x]
-
-            third = multiple_max(copy)
-
-            first_name = []
-            for x in first:
-                first_name += [members.get_name(x)]
-
-            second_name = []
-            for y in second:
-                second_name += [members.get_name(y)]
-
-            third_name = []
-            for z in third:
-                third_name += [members.get_name(z)]
-
-            await ctx.send(
-                f'The current first is {first_name} with {AGE_members[x]} slimes! Second is {second_name} with {AGE_members[y]} slimes, and third is {third_name} with {AGE_members[z]} slimes! They are the best! ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾'
-            )
-
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in first(): {err}')
-        handleError(err)
+  await commands.slimerank(ctx)
 
 
 #helper method
@@ -484,7 +293,7 @@ async def slimeadd(ctx, number, *, username):
                 return
 
             original = AGE_members[member_id]
-            add_slime(member_id, number)
+            helpers.add_slime(member_id, number)
 
             reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]}'
 
@@ -509,7 +318,7 @@ async def zoom(ctx, *, member):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
             member_id = members.id_search(ctx.message, member)
-            reply_msg = add_zoom(member_id, 1)
+            reply_msg = helpers.add_zoom(member_id, 1)
             await ctx.send(reply_msg)
 
     except Exception as err:
@@ -553,7 +362,7 @@ async def zoomadd(ctx, number, *, username):
         if ctx.channel.id in const.BOT_CHANNELS:
             member = username.strip()
             member_id = members.id_search(ctx.message, member)
-            reply_msg = add_zoom(member_id, int(number))
+            reply_msg = helpers.add_zoom(member_id, int(number))
             await ctx.send(reply_msg)
 
     except Exception as err:
@@ -691,6 +500,25 @@ async def test(ctx):
         print(f'{utcTimestamp()} ERROR in test(): {err}')
         handleError(err)
 
+#the function is limited to be used in slime related channels only
+#and whereever the command is requested, the message is send back
+#to that specific channel only
+@client.command()
+@commands.check(in_slime_channel)
+async def total(ctx):
+  try:
+    #slime_sum refers to the current total number of slimes summoned
+    #slime_message consists of a dictionary having pairs of string:int, 
+    #string is the player's name 
+    #int is the number of slimes the corresponding player has summoned and recorded
+    slime_sum, slime_message = list_member_slime_count()
+    await ctx.send(f'Seasonal Slime Count: {slime_sum}, and Seasonal Slime Record: {slime_message}')
+    
+  except Exception as err:
+    print(f'{utcTimestamp()} ERROR in total(): {err}')
+    raise err
+
+    
 
 # TASKS #
 
@@ -709,7 +537,7 @@ async def called_once_every12hour():
             f'-------\nUTC time: {timestamp}, \nSeasonal Slime Count: {slime_sum}, and Seasonal Slime Record: {slime_message}, \n\nSeasonal Zoom Count: {zoom_sum}, and Seasonal Zoom Record: {zoom_message}\n-------'
         )
 
-        read_txt()
+        helpers.read_txt()
         if len(failed_msg) != 0:
             channel = client.get_channel(const.MAIN_CHANNEL)
             for msg in failed_msg:
