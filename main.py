@@ -21,9 +21,6 @@ client = commands.Bot(command_prefix='!')
 
 reply_msg = ''
 
-#creates a list for failed_msg
-failed_msg = []
-
 # initialize AGE_members slime count to 0
 AGE_members = {}
 for x in members.id_list():
@@ -138,6 +135,7 @@ async def on_ready():
         #print(f'{utcTimestamp()} INFO Bot is ready.')
         log('Bot is ready.', 'INFO Bot is ready.')
 
+        failed_msg = helpers.read_txt()
         #if the failed_msg text is not empty, sends the msg to the corresponding channel, and then erase the txt file
         if len(failed_msg) != 0:
             channel = client.get_channel(const.MAIN_CHANNEL)
@@ -314,7 +312,7 @@ async def called_once_every12hour():
             f'-------\nUTC time: {timestamp}, \nSeasonal Slime Count: {slime_sum}, and Seasonal Slime Record: {slime_message}, \n\nSeasonal Zoom Count: {zoom_sum}, and Seasonal Zoom Record: {zoom_message}\n-------'
         )
 
-        helpers.read_txt()
+        failed_msg = helpers.read_txt()
         if len(failed_msg) != 0:
             channel = client.get_channel(const.MAIN_CHANNEL)
             for msg in failed_msg:

@@ -1,4 +1,4 @@
-from main import failed_msg, db, AGE_members, zoom_member, zoom_time, utcTimestamp, handleError, members, dt_from_timestamp
+from main import db, AGE_members, zoom_member, zoom_time, utcTimestamp, handleError, members, dt_from_timestamp
 from datetime import datetime, timezone, timedelta
 from replit import database
 from operator import itemgetter
@@ -7,11 +7,13 @@ import discord
 #########################################################################
 #reads the failed_msg.txt and stores it in a list called failed_msg
 def read_txt():
+  failed_msg = []
   #opens the txt, which stores msg that failed to be send, and stores each line of the txt into the list created above
   #txt is automatically closed by 'with open'
   with open("failed_msg.txt") as f:
     for line in f:
       failed_msg.append(line.strip())
+  return failed_msg
 
 #########################################################################
 
