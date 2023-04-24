@@ -1,249 +1,40 @@
-from klee import const, members
-
-import os
-import discord
-from discord.ext import commands, tasks
-from datetime import datetime, timezone, timedelta
-from replit import db, database
+from klee import const, members, kommands, helpers
+from klee.helpers import is_any_word_in_string, utcTimestamp
+from klee.logging import log, handleError
+from klee.stats import AGE_members
 from keep_alive import keep_alive
-import nest_asyncio
-import requests
-import traceback
-from operator import itemgetter
 
+from datetime import datetime, timezone
+from discord.ext import commands, tasks
+import discord
+import nest_asyncio
+import os
+
+######################################################
 # INIT PART 1 #
+######################################################
 
 nest_asyncio.apply()
 
 client = commands.Bot(command_prefix='!')
 
-reply_msg = ''
-
-#creates a list for failed_msg
-failed_msg = []
-
-# initialize AGE_members slime count to 0
-AGE_members = {}
-for x in members.id_list():
-    AGE_members[x] = 0
-
-#valid_INIT_construction
-member_count = db.keys(
-)  #member_count is a dictionary containing all ids (string) of the members
-for member_id in AGE_members:
-    for db_member_id in member_count:
-        if member_id == db_member_id:  #if both ids match
-            AGE_members[member_id] = db[
-                db_member_id]  #AGE_members is now a dictionary with keys(ids) to values(slimes counts)
-        elif member_id not in member_count:
-            db[member_id] = 0
-
-#zoom_dictionaries INIT construction
-zoom_member = {}  # key=member_id, value=# of times zoomed
-zoom_time = {}  # key=member_id, value=specific time for when the player zoomed
-
-#to initialize both zoom dictionaries from data store in replit db
-for db_member_id in member_count:
-    #for member_id that were from replit db
-    if db_member_id.endswith('z'):
-        #if the member_id ends with substring z
-        zoom_member[db_member_id] = db[db_member_id]
-        #initialize a key-value pair for that member_id to the number of times s/he zoomed
-
-for member_idz in zoom_member:
-    #going off the zoom dictionary that was created above, which has all who have zoomed
-    member_idzt = member_idz + 't'
-    #add a substring t for different condition check
-    for db_member_id in member_count:
-        if member_idzt == db_member_id:
-            zoom_time[member_idzt] = db[db_member_id]
-            #the value in this case is an array, which stores the specific times a player was reported zooming; and the key is the member_id + zt
-
 # HELPER METHODS #
-
-
-#reads the failed_msg.txt and stores it in a list called failed_msg
-def read_txt():
-    #opens the txt, which stores msg that failed to be send, and stores each line of the txt into the list created above
-    with open("failed_msg.txt") as f:
-        for line in f:
-            failed_msg.append(line.strip())
-
-
-#txt is automatically closed by 'with open'
-
-
-#helper method, takes in member id and the number of slimes want to be added
-#can use negative numbers to subtract slimes
-def add_slime(member_id, number):
-    if member_id in db:  #if member id already in replit database,
-        db[member_id] += int(number)
-        AGE_members[member_id] += int(number)
-    else:  #if member id was not in replit database
-        db[member_id] = int(number)
-        AGE_members[member_id] = int(number)
-
-
-def add_zoom(member_id, number):
-    if member_id == 0:
-        return 'Uh, Klee does not know this name...(◕︿◕✿)'
-
-    member_idz = member_id + 'z'
-    member_idzt = member_idz + 't'
-
-    original_count = zoom_member.get(member_idz, 0)
-    original_zoom_times = zoom_time.get(member_idzt, [])
-
-    try:
-        # clamp to 0 if subtracting more than the actual current count
-        new_count = max(0, original_count + number)
-
-        # database.to_primitive will convert an ObservedList to a list
-        # and leave a list as a list
-        new_zoom_times = database.to_primitive(original_zoom_times).copy()
-
-        # add timestamps if new zooms were added
-        while len(new_zoom_times) < new_count:
-            new_zoom_times += [f'{utcTimestamp()}']
-        # remove timestamps if zooms were subtracted
-        while len(new_zoom_times) > new_count:
-            del new_zoom_times[-1]
-
-        # perform the actual updates
-        db[member_idz] = new_count
-        zoom_member[member_idz] = db[member_idz]
-        if member_idzt in db:
-          # If the value is in the db, it is of type ObservedList.
-          # The type we are setting is a list. In order to override
-          # the underlying list of an ObservedList, we must call
-          # ObservedList.set_value
-          db[member_idzt].set_value(new_zoom_times)
-        else:
-          db[member_idzt] = new_zoom_times
-        zoom_time[member_idzt] = db[member_idzt]
-
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in message(): {err}')
-        handleError(err)
-
-        # update failed, reset back to original
-        db[member_idz] = original_count
-        zoom_member[member_idz] = db[member_idz]
-        if member_idzt in db:
-          # If the value is in the db, it is of type ObservedList.
-          # The type we are setting is a list. In order to override
-          # the underlying list of an ObservedList, we must call
-          # ObservedList.set_value
-          db[member_idzt].set_value(original_zoom_times)
-        else:
-          db[member_idzt] = original_zoom_times
-        zoom_time[member_idzt] = db[member_idzt]
-
-        return f'Klee failed to modify zoom count (◕︿◕✿), {members.get_name(member_id)} remains at {original_count} zooms.'
-
-    # rolling 7 day window for punish-ability
-    days = 7
-    window = datetime.utcnow().replace(microsecond=0) - timedelta(days=days)
-    count_in_window = sum(dt_from_timestamp(d) >= window for d in zoom_time[member_idzt])
-
-    ret = f'The number of times {members.get_name(member_id)} zoomed has been changed from {original_count} to {new_count}.'
-    ret += f'\nZooms in the last {days} days: {count_in_window}.'
-    if new_count == 0:
-      ret += '\nGood job not zooming this season!! ヾ(๑ㆁᗜㆁ๑)ﾉ”'
-    elif count_in_window == 0:
-      ret += '\nYou\'re remedying your zooming ways, way to go!! ヾ(๑ㆁᗜㆁ๑)ﾉ”'
-    else:
-      ret += '\nヽ( `д´*)ノ Why did you zoom ?!'
-
-    return ret
-
-
-#helper method, knowing this member id is already in db, subtract one slime count
-def minus_slime(member_id):
-    db[member_id] -= 1
-    AGE_members[member_id] -= 1
-
-
-#helper method, in case there are multiple greatest key-value pairs with the same value
-def multiple_max(dictionary):
-    max_key = max(dictionary, key=dictionary.get)
-    first = [max_key]
-
-    for x in dictionary:
-        if x != max_key:
-            if dictionary[x] == dictionary[max_key]:
-                first += [x]
-    return first
-
 
 #check whether the author's id is the same as the specified user's id
 def is_bot_admin(ctx):
     return ctx.author.id in const.BOT_ADMINS
 
-
 def is_slime_admin(ctx):
     return ctx.author.id in const.DATA_ADMINS
-
 
 #check whether it's in the specified channel
 def in_slime_channel(ctx):
     return ctx.channel.id in const.BOT_CHANNELS
 
 
-def is_any_word_in_string(wordlist, string):
-    return any(word in string for word in wordlist)
-
-
-#return formatted timestamp
-def utcTimestamp():
-    return f'{datetime.utcnow().replace(microsecond=0).isoformat()}Z'
-
-
-def dt_from_timestamp(timestamp):
-    return datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ')
-
-
-#logging
-logfileTimestamp = utcTimestamp()
-logfile = f'log/{logfileTimestamp}_main.log'
-
-
-#chatlogfile = f'log/{logfileTimestamp}_chat.log'
-def log(logMessage, consoleMessage=None):
-    timestamp = utcTimestamp()
-    if consoleMessage is not None:
-        print(f'{timestamp} {consoleMessage}')
-    try:
-        with open(f'{logfile}', 'a') as outfile:
-            outfile.write(f'{timestamp} {logMessage}\n')
-    except Exception as err:
-        print(f'{timestamp} ERROR in log(): {err}')
-    return timestamp
-
-
-#error handler helper
-def handleError(e):
-    try:
-        logTimestamp = log(
-            f'ERROR TRACE:\n{traceback.format_exc()}# TRACE END\n')
-        sendWebhook(
-            f'Klee encountered an error :( Please check {logfile} at {logTimestamp} -> {type(e).__name__}.'
-        )
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in handleError(): {err}')
-
-
-#helper to call discord webhook API
-def sendWebhook(msg):
-    webhookUrl = 'https://discord.com/api/webhooks/' + os.getenv(
-        'WEBHOOK_ID_TOKEN')
-    r = requests.post(webhookUrl, data={'content': msg})
-    print(f'{utcTimestamp()} DEBUG Webhook response code: {r.status_code}')
-    r.raise_for_status()  #raise error if response status_code is 4XX or 5XX
-
-
+######################################################
 # BOT EVENTS #
-
+######################################################
 
 #gets the bot online
 @client.event
@@ -254,6 +45,7 @@ async def on_ready():
         #print(f'{utcTimestamp()} INFO Bot is ready.')
         log('Bot is ready.', 'INFO Bot is ready.')
 
+        failed_msg = helpers.read_txt()
         #if the failed_msg text is not empty, sends the msg to the corresponding channel, and then erase the txt file
         if len(failed_msg) != 0:
             channel = client.get_channel(const.MAIN_CHANNEL)
@@ -275,8 +67,7 @@ async def on_command_error(ctx, error):
                     'Klee does not know this command... ヾ(⌒(_´･ㅅ･`)_ ')
             elif isinstance(error, commands.MissingRequiredArgument):
                 await ctx.send(
-                    'Klee thinks you are missing one or more arguments... ヾ(⌒(_´･ㅅ･`)_ '
-                )
+                    'Klee thinks you are missing one or more arguments... ヾ(⌒(_´･ㅅ･`)_ ')
 
     except Exception as err:
         print(f'{utcTimestamp()} ERROR in on_command_error(): {err}')
@@ -308,7 +99,7 @@ async def message(message):
                     reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
                 else:
                     try:
-                        add_slime(member_id, 1)
+                        helpers.add_slime(member_id, 1)
                         reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
                     except KeyError:
                         reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
@@ -327,373 +118,95 @@ async def message(message):
         handleError(err)
 
 
-# BOT COMMANDS #
 
+######################################################
+# BOT COMMANDS #
+######################################################
 
 #method name doubleping, simply wrapper for minus_slime
 @client.command()
-async def doubleping(ctx, *, username):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-            log(f'[add] {ctx.message.author.display_name}: {-1} {username}')
-            member = username.strip()
-            member_id = members.id_search(ctx.message, member)
-
-            if member_id == members.UNKNOWN:
-                await ctx.send(
-                    'Uh, Klee does not know this name, and therefore cannot subtract this slime from anyone... (๑•̆ ૩•̆)'
-                )
-                return
-
-            original = AGE_members[member_id]
-            add_slime(member_id, -1)
-            reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been subtracted by Klee (๑‵●‿●‵๑), going from {original} to {AGE_members[member_id]}'
-
-            try:
-                await ctx.send(reply_msg)
-
-            except discord.errors.HTTPException:
-                with open(f"failed_msg.txt", "a") as f:
-                    f.write(f"{reply_msg}\n")
-                print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-                os.system('kill 1')
-                os.system("python restarter.py")
-
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in doubleping(): {err}')
-        handleError(err)
-
+async def doubleping(ctx, username):
+  await kommands.doubleping(ctx, username)
 
 #returns who are in first, second and third in slime spawns for the current season
-@client.command(aliases=['top_three', 'rank'])
+@client.command(aliases=['top_three', 'rank', 'srank'])
 async def slimerank(ctx):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-
-            dictionary = {}
-            for member_id in AGE_members:
-                dictionary[member_id] = AGE_members[member_id]
-
-            copy = dict(dictionary)
-
-            first = multiple_max(copy)
-
-            copy1 = dict(dictionary)
-            for x in copy1:
-                for y in first:
-                    if x == y:
-                        del copy[x]
-
-            second = multiple_max(copy)
-
-            copy2 = dict(copy1)
-            for x in copy2:
-                for y in second:
-                    if x == y:
-                        del copy[x]
-
-            third = multiple_max(copy)
-
-            first_name = []
-            for x in first:
-                first_name += [members.get_name(x)]
-
-            second_name = []
-            for y in second:
-                second_name += [members.get_name(y)]
-
-            third_name = []
-            for z in third:
-                third_name += [members.get_name(z)]
-
-            await ctx.send(
-                f'The current first is {first_name} with {AGE_members[x]} slimes! Second is {second_name} with {AGE_members[y]} slimes, and third is {third_name} with {AGE_members[z]} slimes! They are the best! ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾'
-            )
-
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in first(): {err}')
-        handleError(err)
-
-
-#helper method
-def list_member_slime_count():
-    slime_sum = sum(AGE_members.values())
-    slime_message = {}
-    for member_id in members.id_list():
-        # set name:slime_count to message dict
-        slime_message[members.get_name(member_id)] = AGE_members[member_id]
-    return (slime_sum, slime_message)
-
+  await kommands.slimerank(ctx)
 
 #use to check number of slime counts for self
-@client.command(aliases=['sself', 'me'])
+@client.command(aliases=['sself', 'me', 'sinfo'])
 async def slimeinfo(ctx):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-            self_member_id = str(ctx.author.id)
-            await ctx.send(
-                f'Klee knows that you have summoned {AGE_members[self_member_id]} slimes so far this season! You are the best!'
-            )
-
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in sself(): {err}')
-        handleError(err)
-
+    await kommands.slimeinfo(ctx)
 
 #use to get the approximate number of slimes summoned in the past 24 hours
 #not working correctly
-@client.command(aliases=['daily'])
+@client.command(aliases=['daily', 'sdaily'])
 async def slimedaily(ctx):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-            current = datetime.utcnow()
-
-            hour_ago = timedelta(hours=24)
-
-            hour = current - hour_ago
-
-            counter = 0
-
-            async for message in ctx.channel.history(limit=300,
-                                                     after=hour,
-                                                     before=current):
-                if is_any_word_in_string(const.PING_MENTIONS, message.content):
-                    counter += 1
-            await ctx.send(
-                f'Klee has counted hand by hand, in the past 24 hours, we have summoned {counter} slimes! ٩(๑❛ᴗ❛๑)۶ '
-            )
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in daily(): {err}')
-        handleError(err)
-
+    await kommands.slimedaily(ctx)
 
 #wrapper for add_slime method
 @client.command(aliases=['add', 'sadd'])
-async def slimeadd(ctx, number, *, username):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-            log(f'[add] {ctx.message.author.display_name}: {number} {username}'
-                )
-            member = username.strip()
-            member_id = members.id_search(ctx.message, member)
+async def slimeadd(ctx, number, username):
+    await kommands.slimeadd(ctx, number, username)
 
-            if member_id == members.UNKNOWN:
-                await ctx.send(
-                    'Uh, Klee does not know this name, and therefore cannot add this slime from anyone... (๑•̆ ૩•̆)'
-                )
-                return
-
-            original = AGE_members[member_id]
-            add_slime(member_id, number)
-
-            reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]}'
-
-            try:
-                await ctx.send(reply_msg)
-
-            except discord.errors.HTTPException:
-                with open(f"failed_msg.txt", "a") as f:
-                    f.write(f"{reply_msg}\n")
-                print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-                os.system('kill 1')
-                os.system("python restarter.py")
-
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in add(): {err}')
-        handleError(err)
-
-
+"""
+ex.) !slimeadd 5 john doe
+number parameter will be "5" and the *username parameter 
+will be a tuple containing the strings "john" and "doe"
+"""
 #for the specified member, add 1 zoom and store the time this zoom was reported
 @client.command()
-async def zoom(ctx, *, member):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-            member_id = members.id_search(ctx.message, member)
-            reply_msg = add_zoom(member_id, 1)
-            await ctx.send(reply_msg)
-
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in message(): {err}')
-        handleError(err)
-
+async def zoom(ctx, member='me'):
+    await kommands.zoom(ctx, member)
 
 #for the specified member, send the number of times the player has zoomed along w/ the timelog of zooms
-@client.command()
+@client.command(aliases=['zinfo'])
 async def zoominfo(ctx, member='me'):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-            member_id = members.id_search(ctx.message, member)
-            member_idz = member_id + 'z'
-            member_idzt = member_id + 'zt'
-
-            if zoom_member[member_idz] == 0:
-                replymsg = 'Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”'
-                await ctx.send(replymsg)
-            #after checking that the member has zoomed
-            else:
-                replymsg = f'Klee has written down with my crayolas that {members.get_name(member_id)} has zoomed {zoom_member[member_idz]} times this season, and at the following times:\n'
-                for i in zoom_time[member_idzt]:
-                    replymsg += f'{i} \n'
-                replymsg += 'щ(゜ロ゜щ) Wahh! Why you zoomed!'
-                await ctx.send(replymsg)
-
-    except KeyError:
-        await ctx.send(
-            'Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”'
-        )
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in message(): {err}')
-        handleError(err)
-
+    await kommands.zoominfo(ctx, member)
 
 #to increment or decrement the number of times the member has zoomed, and change the timelog of zooms accordingly
 @client.command(aliases=['zadd'])
-async def zoomadd(ctx, number, *, username):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-            member = username.strip()
-            member_id = members.id_search(ctx.message, member)
-            reply_msg = add_zoom(member_id, int(number))
-            await ctx.send(reply_msg)
+async def zoomadd(ctx, number, username):
+    await kommands.zoomadd(ctx, number, username)
 
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in add(): {err}')
-        handleError(err)
-
-
-@client.command(aliases=['zooms'])
+@client.command(aliases=['zooms', 'ztotal'])
 async def zoomseason(ctx):
-  try:
-    if ctx.channel.id in const.BOT_CHANNELS:
-      zoom_sum, zoom_message = total_zoom()
-      await ctx.send(f'Seasonal zoom count: {zoom_sum}.\n\nMember zoom counts: {zoom_message}')
-  except Exception as err:
-    print(f'{utcTimestamp()} ERROR in add(): {err}')
-    handleError(err)
-
-
-
-#helper function
-#return zoom_sum [int], total # of zoom
-#       zoom_message [dict], list the top zoomers along with their corresponding # of zooms
-def total_zoom():
-    # transform to list of tuples of the form (name, count)
-    name_transform = ((members.get_name(k[:-1]), v) for k, v in zoom_member.items() if k[:-1] != '0')
-    
-    # secondary key sort: sort by name
-    name_sort = sorted(name_transform, key=itemgetter(0))
-
-    # primary key sort: sort by count, descending
-    value_sort = sorted(name_sort, key=itemgetter(1), reverse=True)
-
-    # at this point the list will be sorted by count first.
-    # for any members with matching counts, the members will be in alphabetical order.
-    # for example: [('traffyboi', 3), ('aile', 2), ('vent', 2)]
-
-    # back to dictionary
-    zoom_message = {k: v for k, v in value_sort}
-    zoom_sum = sum(zoom_message.values())
-
-    return (zoom_sum, zoom_message)
-
+    await kommands.zoomseason(ctx)
 
 #method for sending no-talking gif
-@client.command()
+@client.command(aliases=['silence'])
 async def gif(ctx):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-            embed = discord.Embed(title='Channel not for talking',
-                                  color=discord.Colour.blue())
-            embed.set_image(
-                url='https://c.tenor.com/EwX63Uf2_x0AAAAC/sml-jackie-chu.gif')
-            await ctx.send(embed=embed)
+    await kommands.gif(ctx)
 
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in gif(): {err}')
-        handleError(err)
-
-
-#only allows me and gunther to clear slime records (by setting slime counts to 0)
+#only allow Maple, Gun, Var, Traf to reset data (by setting slime counts to 0)
 @client.command()
 @commands.check(is_slime_admin)
 async def clear(ctx):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-
-            for member_id in AGE_members:
-                #clear slime counts
-                db[member_id] = 0
-                AGE_members[member_id] = 0
-
-            for member_id in zoom_member:
-                #clear zoom counts
-                db[member_id] = 0
-                zoom_member[member_id] = 0
-
-            for member_id in zoom_time:
-                #clear zoom times
-                db[member_id] = []
-                zoom_time[member_id] = []
-
-            await ctx.send('All slime related records cleared (❁๑ᵒ◡ᵒ๑)')
-
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in clear(): {err}')
-        handleError(err)
-
+    await kommands.clear(ctx)
 
 #command to restart bot to try to reclaim new IP. WIP, not working yet.
 @client.command()
 async def restart(ctx):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-            print(f'{utcTimestamp()} INFO restart() is initiated...?')
-            await ctx.send(
-                'command accepted, but Klee does not know what to do with this command... ヾ(⌒(_´･ㅅ･`)_ '
-            )
-
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in restart(): {err}')
-        handleError(err)
-
+    await kommands.restart(ctx)
 
 #test bot response
 @client.command()
 @commands.check(in_slime_channel)
 async def ping(ctx):
-    try:
-        await ctx.send('pong!')
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in ping(): {err}')
-        handleError(err)
+    await kommands.ping(ctx)
 
-
-@client.command()
+#the function is limited to be used in slime related channels only
+#and whereever the command is requested, the message is send back
+#to that specific channel only
+@client.command(aliases=['slimes', 'total', 'stotal'])
 @commands.check(in_slime_channel)
-async def test(ctx):
-    try:
-        #if msg_id is not None:
-        #    print(f'{utcTimestamp()} DEBUG msg_id is not None')
-        #    print(f'{utcTimestamp()} DEBUG msg_id = {msg_id}')
-        #    partialMsg = ctx.channel.get_partial_message(msg_id)
-        #else:
-        #print(f'{utcTimestamp()} DEBUG msg_id is None')
-        print(f'{utcTimestamp()} DEBUG ctx.id = {ctx.message.id}')
-        msgId = ctx.message.id
-        print(f'{utcTimestamp()} DEBUG ctx.channel.id = {ctx.channel.id}')
-        channelId = ctx.channel.id
-        channelObj = client.get_channel(channelId)
-        print(f'{utcTimestamp()} DEBUG channelObj = {channelObj}')
-        partialMsg = channelObj.get_partial_message(msgId)
-        print(f'{utcTimestamp()} DEBUG partialMsg = {partialMsg}')
-        await ctx.send('ok', reference=partialMsg)
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in test(): {err}')
-        handleError(err)
+async def slimeseason(ctx):
+  await kommands.slimeseason(ctx)
 
 
+######################################################
 # TASKS #
-
+######################################################
 
 #for a time loop, sends out the dictionary representing the replit db with names and slime counts
 @tasks.loop(hours=12)
@@ -701,8 +214,8 @@ async def called_once_every12hour():
     try:
         daily_slime_result_channel = client.get_channel(const.REPORT_CHANNEL)
 
-        zoom_sum, zoom_message = total_zoom()
-        slime_sum, slime_message = list_member_slime_count()
+        zoom_sum, zoom_message = helpers.total_zoom()
+        slime_sum, slime_message = helpers.list_member_slime_count()
         timestamp = datetime.now(timezone.utc)
 
         await daily_slime_result_channel.send(
@@ -712,7 +225,7 @@ async def called_once_every12hour():
             f'Seasonal Zoom Count: {zoom_sum}, and Seasonal Zoom Record: {zoom_message}\n-------'
         )
 
-        read_txt()
+        failed_msg = helpers.read_txt()
         if len(failed_msg) != 0:
             channel = client.get_channel(const.MAIN_CHANNEL)
             for msg in failed_msg:
