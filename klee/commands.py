@@ -301,29 +301,6 @@ async def ping(ctx):
 
 #########################################################################
 
-async def test(ctx):
-    try:
-        #if msg_id is not None:
-        #    print(f'{utcTimestamp()} DEBUG msg_id is not None')
-        #    print(f'{utcTimestamp()} DEBUG msg_id = {msg_id}')
-        #    partialMsg = ctx.channel.get_partial_message(msg_id)
-        #else:
-        #print(f'{utcTimestamp()} DEBUG msg_id is None')
-        print(f'{utcTimestamp()} DEBUG ctx.id = {ctx.message.id}')
-        msgId = ctx.message.id
-        print(f'{utcTimestamp()} DEBUG ctx.channel.id = {ctx.channel.id}')
-        channelId = ctx.channel.id
-        channelObj = client.get_channel(channelId)
-        print(f'{utcTimestamp()} DEBUG channelObj = {channelObj}')
-        partialMsg = channelObj.get_partial_message(msgId)
-        print(f'{utcTimestamp()} DEBUG partialMsg = {partialMsg}')
-        await ctx.send('ok', reference=partialMsg)
-    except Exception as err:
-        print(f'{utcTimestamp()} ERROR in test(): {err}')
-        handleError(err)
-    
-#########################################################################
-
 async def total(ctx):
   try:
     #slime_sum refers to the current total number of slimes summoned

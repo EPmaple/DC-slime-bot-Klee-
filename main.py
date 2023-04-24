@@ -287,11 +287,6 @@ async def restart(ctx):
 async def ping(ctx):
     await commands.ping(ctx)
 
-@client.command()
-@commands.check(in_slime_channel)
-async def test(ctx):
-    await commands.test(ctx)
-
 #the function is limited to be used in slime related channels only
 #and whereever the command is requested, the message is send back
 #to that specific channel only
