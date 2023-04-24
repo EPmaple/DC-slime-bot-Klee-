@@ -1,8 +1,10 @@
-from helpers import utcTimestamp
-
+from datetime import datetime
 import os
 import requests
 import traceback
+
+def utcTimestamp():
+    return f'{datetime.utcnow().replace(microsecond=0).isoformat()}Z'
 
 #logging
 
