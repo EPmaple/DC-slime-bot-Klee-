@@ -1,8 +1,9 @@
-from main import db, AGE_members, zoom_member, zoom_time, members
+from main import members
 from logging import log, handleError
+from stats import AGE_members, zoom_member, zoom_time
 
 from datetime import datetime, timezone, timedelta
-from replit import database
+from replit import db, database
 from operator import itemgetter
 import discord
 
