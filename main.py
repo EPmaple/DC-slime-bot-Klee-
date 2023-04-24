@@ -2,16 +2,13 @@ from klee import const, members, helpers
 from klee.helpers import is_any_word_in_string, utcTimestamp
 from klee.logging import log, handleError
 from klee.stats import AGE_members
-
-import os
-import discord
-from discord.ext import commands, tasks
-from datetime import datetime, timezone, timedelta
 from keep_alive import keep_alive
+
+from datetime import datetime, timezone
+from discord.ext import commands, tasks
+import discord
 import nest_asyncio
-import requests
-import traceback
-from operator import itemgetter
+import os
 
 ######################################################
 # INIT PART 1 #

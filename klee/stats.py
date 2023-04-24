@@ -1,4 +1,4 @@
-import members
+from . import members
 
 from replit import db
 

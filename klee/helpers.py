@@ -1,11 +1,10 @@
-from main import members
-from logging import log, handleError
-from stats import AGE_members, zoom_member, zoom_time
+from . import members
+from .logging import log, handleError
+from .stats import AGE_members, zoom_member, zoom_time
 
-from datetime import datetime, timezone, timedelta
-from replit import db, database
+from datetime import datetime, timedelta
 from operator import itemgetter
-import discord
+from replit import db, database
 
 #########################################################################
 #reads the failed_msg.txt and stores it in a list called failed_msg
