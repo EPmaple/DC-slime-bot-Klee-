@@ -1,7 +1,8 @@
-from main import AGE_members, handleError, members, log, zoom_member, zoom_time
+from main import AGE_members, members, zoom_member, zoom_time
 import const
 import helpers
 from helpers import is_any_word_in_string, utcTimestamp
+from logging import log, handleError
 
 from datetime import datetime, timezone, timedelta
 import discord

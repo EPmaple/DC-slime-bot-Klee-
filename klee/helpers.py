@@ -1,4 +1,5 @@
-from main import db, AGE_members, zoom_member, zoom_time, handleError, members
+from main import db, AGE_members, zoom_member, zoom_time, members
+from logging import log, handleError
 
 from datetime import datetime, timezone, timedelta
 from replit import database
