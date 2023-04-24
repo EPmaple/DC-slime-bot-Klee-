@@ -127,8 +127,8 @@ async def message(message):
 
 #method name doubleping, simply wrapper for minus_slime
 @client.command()
-async def doubleping(ctx, *, username):
-  await kommands.doubleping(ctx, *username)
+async def doubleping(ctx, username):
+  await kommands.doubleping(ctx, username)
 
 #returns who are in first, second and third in slime spawns for the current season
 @client.command(aliases=['top_three', 'rank'])
@@ -148,8 +148,8 @@ async def slimedaily(ctx):
 
 #wrapper for add_slime method
 @client.command(aliases=['add', 'sadd'])
-async def slimeadd(ctx, number, *, username):
-    await kommands.slimeadd(ctx, number, *username)
+async def slimeadd(ctx, number, username):
+    await kommands.slimeadd(ctx, number, username)
 
 """
 ex.) !slimeadd 5 john doe
@@ -158,8 +158,8 @@ will be a tuple containing the strings "john" and "doe"
 """
 #for the specified member, add 1 zoom and store the time this zoom was reported
 @client.command()
-async def zoom(ctx, *, member):
-    await kommands.zoom(ctx, *member)
+async def zoom(ctx, member):
+    await kommands.zoom(ctx, member)
 
 #for the specified member, send the number of times the player has zoomed along w/ the timelog of zooms
 @client.command()
@@ -168,8 +168,8 @@ async def zoominfo(ctx, member='me'):
 
 #to increment or decrement the number of times the member has zoomed, and change the timelog of zooms accordingly
 @client.command(aliases=['zadd'])
-async def zoomadd(ctx, number, *, username):
-    await kommands.zoomadd(ctx, number, *username)
+async def zoomadd(ctx, number, username):
+    await kommands.zoomadd(ctx, number, username)
 
 @client.command(aliases=['zooms'])
 async def zoomseason(ctx):

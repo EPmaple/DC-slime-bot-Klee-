@@ -72,7 +72,7 @@ async def slimerank(ctx):
 
 #########################################################################
 
-async def doubleping(ctx, *, username):
+async def doubleping(ctx, username):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
             log(f'[add] {ctx.message.author.display_name}: {-1} {username}')
@@ -144,7 +144,7 @@ async def slimedaily(ctx):
 
 #########################################################################
 
-async def slimeadd(ctx, number, *, username):
+async def slimeadd(ctx, number, username):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
             log(f'[add] {ctx.message.author.display_name}: {number} {username}'
@@ -171,7 +171,7 @@ async def slimeadd(ctx, number, *, username):
 
 #########################################################################
 
-async def zoom(ctx, *, member):
+async def zoom(ctx, member):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
             member_id = members.id_search(ctx.message, member)
@@ -212,7 +212,7 @@ async def zoominfo(ctx, member='me'):
 
 #########################################################################
 
-async def zoomadd(ctx, number, *, username):
+async def zoomadd(ctx, number, username):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
             member = username.strip()
