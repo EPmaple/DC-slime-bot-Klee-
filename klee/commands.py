@@ -1,8 +1,9 @@
-from main import AGE_members, utcTimestamp, handleError, members, log, is_any_word_in_string, zoom_member, zoom_time
+from main import AGE_members, handleError, members, log, zoom_member, zoom_time
 import const
 import helpers
+from helpers import is_any_word_in_string, utcTimestamp
+
 from datetime import datetime, timezone, timedelta
-from helpers import total_zoom
 import discord
 from replit import db, database
 
@@ -228,7 +229,7 @@ async def zoomadd(ctx, number, *, username):
 async def zoomseason(ctx):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
-      zoom_sum, zoom_message = total_zoom()
+      zoom_sum, zoom_message = helpers.total_zoom()
       await ctx.send(f'Seasonal zoom count: {zoom_sum}.\n\nMember zoom counts: {zoom_message}')
   except Exception as err:
     print(f'{utcTimestamp()} ERROR in add(): {err}')

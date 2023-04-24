@@ -1,4 +1,5 @@
 from klee import const, members, helpers
+from klee.helpers import is_any_word_in_string, utcTimestamp
 
 import os
 import discord
@@ -70,16 +71,6 @@ def is_slime_admin(ctx):
 #check whether it's in the specified channel
 def in_slime_channel(ctx):
     return ctx.channel.id in const.BOT_CHANNELS
-
-def is_any_word_in_string(wordlist, string):
-    return any(word in string for word in wordlist)
-
-#return formatted timestamp
-def utcTimestamp():
-    return f'{datetime.utcnow().replace(microsecond=0).isoformat()}Z'
-
-def dt_from_timestamp(timestamp):
-    return datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ')
 
 
 #logging
@@ -304,7 +295,7 @@ async def called_once_every12hour():
     try:
         daily_slime_result_channel = client.get_channel(const.REPORT_CHANNEL)
 
-        zoom_sum, zoom_message = total_zoom()
+        zoom_sum, zoom_message = helpers.total_zoom()
         slime_sum, slime_message = helpers.list_member_slime_count()
         timestamp = datetime.now(timezone.utc)
 

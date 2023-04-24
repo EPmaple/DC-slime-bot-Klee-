@@ -1,4 +1,5 @@
-from main import db, AGE_members, zoom_member, zoom_time, utcTimestamp, handleError, members, dt_from_timestamp
+from main import db, AGE_members, zoom_member, zoom_time, handleError, members
+
 from datetime import datetime, timezone, timedelta
 from replit import database
 from operator import itemgetter
@@ -137,3 +138,20 @@ def total_zoom():
     zoom_sum = sum(zoom_message.values())
 
     return (zoom_sum, zoom_message)
+
+#########################################################################
+
+def is_any_word_in_string(wordlist, string):
+    return any(word in string for word in wordlist)
+
+#########################################################################
+
+#return formatted timestamp
+
+def utcTimestamp():
+    return f'{datetime.utcnow().replace(microsecond=0).isoformat()}Z'
+
+def dt_from_timestamp(timestamp):
+    return datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ')
+
+#########################################################################
