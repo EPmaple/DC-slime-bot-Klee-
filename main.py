@@ -1,4 +1,4 @@
-from klee import const, members, helpers
+from klee import const, members, kommands, helpers
 from klee.helpers import is_any_word_in_string, utcTimestamp
 from klee.logging import log, handleError
 from klee.stats import AGE_members
@@ -128,28 +128,28 @@ async def message(message):
 #method name doubleping, simply wrapper for minus_slime
 @client.command()
 async def doubleping(ctx, *, username):
-  await commands.doubleping(ctx, *username)
+  await kommands.doubleping(ctx, *username)
 
 #returns who are in first, second and third in slime spawns for the current season
 @client.command(aliases=['top_three', 'rank'])
 async def slimerank(ctx):
-  await commands.slimerank(ctx)
+  await kommands.slimerank(ctx)
 
 #use to check number of slime counts for self
 @client.command(aliases=['sself', 'me'])
 async def slimeinfo(ctx):
-    await commands.slimeinfo(ctx)
+    await kommands.slimeinfo(ctx)
 
 #use to get the approximate number of slimes summoned in the past 24 hours
 #not working correctly
 @client.command(aliases=['daily'])
 async def slimedaily(ctx):
-    await commands.slimedaily(ctx)
+    await kommands.slimedaily(ctx)
 
 #wrapper for add_slime method
 @client.command(aliases=['add', 'sadd'])
 async def slimeadd(ctx, number, *, username):
-    await commands.slimeadd(ctx, number, *username)
+    await kommands.slimeadd(ctx, number, *username)
 
 """
 ex.) !slimeadd 5 john doe
@@ -159,43 +159,43 @@ will be a tuple containing the strings "john" and "doe"
 #for the specified member, add 1 zoom and store the time this zoom was reported
 @client.command()
 async def zoom(ctx, *, member):
-    await commands.zoom(ctx, *member)
+    await kommands.zoom(ctx, *member)
 
 #for the specified member, send the number of times the player has zoomed along w/ the timelog of zooms
 @client.command()
 async def zoominfo(ctx, member='me'):
-    await commands.zoominfo(ctx, member)
+    await kommands.zoominfo(ctx, member)
 
 #to increment or decrement the number of times the member has zoomed, and change the timelog of zooms accordingly
 @client.command(aliases=['zadd'])
 async def zoomadd(ctx, number, *, username):
-    await commands.zoomadd(ctx, number, *username)
+    await kommands.zoomadd(ctx, number, *username)
 
 @client.command(aliases=['zooms'])
 async def zoomseason(ctx):
-    await commands.zoomseason(ctx)
+    await kommands.zoomseason(ctx)
 
 #method for sending no-talking gif
 @client.command()
 async def gif(ctx):
-    await commands.gif(ctx)
+    await kommands.gif(ctx)
 
 #only allow Maple, Gun, Var, Traf to reset data (by setting slime counts to 0)
 @client.command()
 @commands.check(is_slime_admin)
 async def clear(ctx):
-    await commands.clear(ctx)
+    await kommands.clear(ctx)
 
 #command to restart bot to try to reclaim new IP. WIP, not working yet.
 @client.command()
 async def restart(ctx):
-    await commands.restart(ctx)
+    await kommands.restart(ctx)
 
 #test bot response
 @client.command()
 @commands.check(in_slime_channel)
 async def ping(ctx):
-    await commands.ping(ctx)
+    await kommands.ping(ctx)
 
 #the function is limited to be used in slime related channels only
 #and whereever the command is requested, the message is send back
@@ -203,7 +203,7 @@ async def ping(ctx):
 @client.command()
 @commands.check(in_slime_channel)
 async def total(ctx):
-  await commands.total(ctx)
+  await kommands.total(ctx)
 
     
 ######################################################
