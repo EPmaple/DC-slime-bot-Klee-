@@ -156,7 +156,7 @@ will be a tuple containing the strings "john" and "doe"
 """
 #for the specified member, add 1 zoom and store the time this zoom was reported
 @client.command()
-async def zoom(ctx, member):
+async def zoom(ctx, member='me'):
     await kommands.zoom(ctx, member)
 
 #for the specified member, send the number of times the player has zoomed along w/ the timelog of zooms
