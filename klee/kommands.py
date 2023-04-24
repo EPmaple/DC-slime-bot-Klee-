@@ -9,7 +9,7 @@ import discord
 
 #########################################################################
 async def slimerank(ctx):
-  try: 
+  try:
     if ctx.channel.id in const.BOT_CHANNELS:
 
       #dict is made up of pairs of id:count
@@ -302,7 +302,7 @@ async def ping(ctx):
 
 #########################################################################
 
-async def total(ctx):
+async def slimeseason(ctx):
   try:
     #slime_sum refers to the current total number of slimes summoned
     #slime_message consists of a dictionary having pairs of string:int, 

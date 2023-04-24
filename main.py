@@ -129,18 +129,18 @@ async def doubleping(ctx, username):
   await kommands.doubleping(ctx, username)
 
 #returns who are in first, second and third in slime spawns for the current season
-@client.command(aliases=['top_three', 'rank'])
+@client.command(aliases=['top_three', 'rank', 'srank'])
 async def slimerank(ctx):
   await kommands.slimerank(ctx)
 
 #use to check number of slime counts for self
-@client.command(aliases=['sself', 'me'])
+@client.command(aliases=['sself', 'me', 'sinfo'])
 async def slimeinfo(ctx):
     await kommands.slimeinfo(ctx)
 
 #use to get the approximate number of slimes summoned in the past 24 hours
 #not working correctly
-@client.command(aliases=['daily'])
+@client.command(aliases=['daily', 'sdaily'])
 async def slimedaily(ctx):
     await kommands.slimedaily(ctx)
 
@@ -160,7 +160,7 @@ async def zoom(ctx, member='me'):
     await kommands.zoom(ctx, member)
 
 #for the specified member, send the number of times the player has zoomed along w/ the timelog of zooms
-@client.command()
+@client.command(aliases=['zinfo'])
 async def zoominfo(ctx, member='me'):
     await kommands.zoominfo(ctx, member)
 
@@ -169,12 +169,12 @@ async def zoominfo(ctx, member='me'):
 async def zoomadd(ctx, number, username):
     await kommands.zoomadd(ctx, number, username)
 
-@client.command(aliases=['zooms'])
+@client.command(aliases=['zooms', 'ztotal'])
 async def zoomseason(ctx):
     await kommands.zoomseason(ctx)
 
 #method for sending no-talking gif
-@client.command()
+@client.command(aliases=['silence'])
 async def gif(ctx):
     await kommands.gif(ctx)
 
@@ -198,12 +198,12 @@ async def ping(ctx):
 #the function is limited to be used in slime related channels only
 #and whereever the command is requested, the message is send back
 #to that specific channel only
-@client.command()
+@client.command(aliases=['slimes', 'total', 'stotal'])
 @commands.check(in_slime_channel)
-async def total(ctx):
-  await kommands.total(ctx)
+async def slimeseason(ctx):
+  await kommands.slimeseason(ctx)
 
-    
+
 ######################################################
 # TASKS #
 ######################################################
