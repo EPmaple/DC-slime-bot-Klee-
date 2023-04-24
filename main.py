@@ -18,8 +18,6 @@ nest_asyncio.apply()
 
 client = commands.Bot(command_prefix='!')
 
-reply_msg = ''
-
 # HELPER METHODS #
 
 #check whether the author's id is the same as the specified user's id
