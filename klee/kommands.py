@@ -25,31 +25,30 @@ async def slimerank(ctx):
       second = []
       third = []
       topValues = 0
-      recordValue = max(sorted_dict.values())
+      recordValue = max(count for (id, count) in sorted_dict)
 
-      while topValues < 3:
-          for (id, count) in sorted_dict:
-              if topValues == 0:
-                  if recordValue != count:
-                      topValues += 1
-                      recordValue = count
-                      second += id
-                  else:
-                      first += id
-              elif topValues == 1:
-                  if recordValue != count:
-                      topValues += 1
-                      recordValue = count
-                      third += id
-                  else:
-                      second += id
-              elif topValues == 2:
-                  if recordValue != count:
-                      topValues += 1
-                      recordValue = count
-                      break
-                  else:
-                      third += id
+      for (id, count) in sorted_dict:
+          if topValues == 0:
+              if recordValue != count:
+                  topValues += 1
+                  recordValue = count
+                  second += [id]
+              else:
+                  first += [id]
+          elif topValues == 1:
+              if recordValue != count:
+                  topValues += 1
+                  recordValue = count
+                  third += [id]
+              else:
+                  second += [id]
+          elif topValues == 2:
+              if recordValue != count:
+                  topValues += 1
+                  recordValue = count
+                  break
+              else:
+                  third += [id]
 
       first_name = []
       for x in first:
