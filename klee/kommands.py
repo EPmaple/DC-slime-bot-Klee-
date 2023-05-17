@@ -66,7 +66,7 @@ async def slimerank(ctx):
                 f'The current first is {first_name} with {AGE_members[x]} slimes! Second is {second_name} with {AGE_members[y]} slimes, and third is {third_name} with {AGE_members[z]} slimes! They are the best! ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾'
             )
   except Exception as err:
-    log(f'{utcTimestamp()} ERROR in slimerank(): {err}')
+    log(f'ERROR in slimerank(): {err}')
     handleError(err)
 
 #########################################################################
@@ -91,7 +91,7 @@ async def doubleping(ctx, username):
             await ctx.send(reply_msg)
 
     except Exception as err:
-        log(f'{utcTimestamp()} ERROR in doubleping(): {err}')
+        log(f'ERROR in doubleping(): {err}')
         handleError(err)
 
 #########################################################################
@@ -105,7 +105,7 @@ async def slimeinfo(ctx):
             )
 
     except Exception as err:
-        log(f'{utcTimestamp()} ERROR in sself(): {err}')
+        log(f'ERROR in sself(): {err}')
         handleError(err)
 
 #########################################################################
@@ -130,7 +130,7 @@ async def slimedaily(ctx):
                 f'Klee has counted hand by hand, in the past 24 hours, we have summoned {counter} slimes! ٩(๑❛ᴗ❛๑)۶ '
             )
     except Exception as err:
-        log(f'{utcTimestamp()} ERROR in daily(): {err}')
+        log(f'ERROR in daily(): {err}')
         handleError(err)
 
 #########################################################################
@@ -157,7 +157,7 @@ async def slimeadd(ctx, number, username):
             await ctx.send(reply_msg)
 
     except Exception as err:
-        log(f'{utcTimestamp()} ERROR in add(): {err}')
+        log(f'ERROR in add(): {err}')
         handleError(err)
 
 #########################################################################
@@ -170,7 +170,7 @@ async def zoom(ctx, member):
             await ctx.send(reply_msg)
 
     except Exception as err:
-        log(f'{utcTimestamp()} ERROR in message(): {err}')
+        log(f'ERROR in message(): {err}')
         handleError(err)
 
 #########################################################################
@@ -198,7 +198,7 @@ async def zoominfo(ctx, member='me'):
             'Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”'
         )
     except Exception as err:
-        log(f'{utcTimestamp()} ERROR in message(): {err}')
+        log(f'ERROR in message(): {err}')
         handleError(err)
 
 #########################################################################
@@ -212,7 +212,7 @@ async def zoomadd(ctx, number, username):
             await ctx.send(reply_msg)
 
     except Exception as err:
-        log(f'{utcTimestamp()} ERROR in add(): {err}')
+        log(f'ERROR in add(): {err}')
         handleError(err)
 
 #########################################################################
@@ -223,7 +223,7 @@ async def zoomseason(ctx):
       zoom_sum, zoom_message = helpers.total_zoom()
       await ctx.send(f'Seasonal zoom count: {zoom_sum}.\n\nMember zoom counts: {zoom_message}')
   except Exception as err:
-    log(f'{utcTimestamp()} ERROR in add(): {err}')
+    log(f'ERROR in add(): {err}')
     handleError(err)
 
 #########################################################################
@@ -238,7 +238,7 @@ async def gif(ctx):
             await ctx.send(embed=embed)
 
     except Exception as err:
-        log(f'{utcTimestamp()} ERROR in gif(): {err}')
+        log(f'ERROR in gif(): {err}')
         handleError(err)
 
 #########################################################################
@@ -265,7 +265,7 @@ async def clear(ctx):
             await ctx.send('All slime related records cleared (❁๑ᵒ◡ᵒ๑)')
 
     except Exception as err:
-        log(f'{utcTimestamp()} ERROR in clear(): {err}')
+        log(f'ERROR in clear(): {err}')
         handleError(err)
 
 #########################################################################
@@ -273,13 +273,13 @@ async def clear(ctx):
 async def restart(ctx):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
-            log(f'{utcTimestamp()} INFO restart() is initiated...?')
+            log(f'INFO restart() is initiated...?')
             await ctx.send(
                 'command accepted, but Klee does not know what to do with this command... ヾ(⌒(_´･ㅅ･`)_ '
             )
 
     except Exception as err:
-        log(f'{utcTimestamp()} ERROR in restart(): {err}')
+        log(f'ERROR in restart(): {err}')
         handleError(err)
 
 #########################################################################
@@ -288,7 +288,7 @@ async def ping(ctx):
     try:
         await ctx.send('pong!')
     except Exception as err:
-        log(f'{utcTimestamp()} ERROR in ping(): {err}')
+        log(f'ERROR in ping(): {err}')
         handleError(err)
 
 #########################################################################
@@ -303,5 +303,5 @@ async def slimeseason(ctx):
     await ctx.send(f'Seasonal Slime Count: {slime_sum}, and Seasonal Slime Record: {slime_message}')
     
   except Exception as err:
-    log(f'{utcTimestamp()} ERROR in total(): {err}')
+    log(f'ERROR in total(): {err}')
     raise err
