@@ -70,7 +70,7 @@ def add_zoom(member_id, number):
         zoom_time[member_idzt] = db[member_idzt]
 
     except Exception as err:
-        log(f'{utcTimestamp()} ERROR in message(): {err}')
+        log(f'ERROR in message(): {err}')
         handleError(err)
 
         # update failed, reset back to original
