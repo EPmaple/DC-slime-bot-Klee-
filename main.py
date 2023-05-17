@@ -54,7 +54,8 @@ async def on_ready():
             open('failed_msg.txt', 'w').close()
 
     except Exception as err:
-        print(f'{utcTimestamp()} ERROR in on_ready(): {err}')
+        #handleError uses the log function
+        log(f'{utcTimestamp()} ERROR in on_ready(): {err}')
         handleError(err)
 
 
@@ -70,7 +71,7 @@ async def on_command_error(ctx, error):
                     'Klee thinks you are missing one or more arguments... ヾ(⌒(_´･ㅅ･`)_ ')
 
     except Exception as err:
-        print(f'{utcTimestamp()} ERROR in on_command_error(): {err}')
+        log(f'{utcTimestamp()} ERROR in on_command_error(): {err}')
         handleError(err)
 
 
@@ -114,7 +115,7 @@ async def message(message):
                     os.system("python restarter.py")
 
     except Exception as err:
-        print(f'{utcTimestamp()} ERROR in message(): {err}')
+        log(f'{utcTimestamp()} ERROR in message(): {err}')
         handleError(err)
 
 
@@ -233,7 +234,7 @@ async def called_once_every12hour():
             open('failed_msg.txt', 'w').close()
 
     except Exception as err:
-        print(f'{utcTimestamp()} ERROR in called_once_every12hour(): {err}')
+        log(f'{utcTimestamp()} ERROR in called_once_every12hour(): {err}')
         raise err
 
 
@@ -241,10 +242,9 @@ async def called_once_every12hour():
 async def before():
     try:
         await client.wait_until_ready()
-        #print('Finished waiting')
 
     except Exception as err:
-        print(
+        log(
             f'{utcTimestamp()} ERROR in called_once_every12hour.before_loop(): {err}'
         )
         raise err
@@ -264,14 +264,11 @@ keep_alive()
 try:
     client.run(os.getenv('TOKEN'))
 except Exception as err:
-    print(f'{utcTimestamp()} ERROR on client.run(): {err}')
-    print(f'{utcTimestamp()} ERROR initializing discord bot.')
+    log(f'{utcTimestamp()} ERROR on client.run(): {err}')
+    log(f'{utcTimestamp()} ERROR initializing discord bot.')
     handleError(err)
     if isinstance(err, discord.errors.HTTPException):
         log('FATAL - BLOCKED BY RATE LIMITS, RESTARTING NOW...')
-        print(
-            f'{utcTimestamp()} FATAL - BLOCKED BY RATE LIMITS, RESTARTING NOW...'
-        )
         os.system('kill 1')
         os.system("python restarter.py")
 
