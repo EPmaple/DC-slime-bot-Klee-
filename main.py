@@ -43,7 +43,7 @@ async def on_ready():
         await client.change_presence(status = discord.Status.online, \
                             activity = discord.Game(f'counting slimes since {utcTimestamp()} (UTC)'))
         #print(f'{utcTimestamp()} INFO Bot is ready.')
-        log('Bot is ready.', 'INFO Bot is ready.')
+        log('INFO Bot is ready.')
 
         failed_msg = helpers.read_txt()
         #if the failed_msg text is not empty, sends the msg to the corresponding channel, and then erase the txt file
@@ -54,7 +54,7 @@ async def on_ready():
             open('failed_msg.txt', 'w').close()
 
     except Exception as err:
-        print(f'{utcTimestamp()} ERROR in on_ready(): {err}')
+        log(f'{utcTimestamp()} ERROR in on_ready(): {err}')
         handleError(err)
 
 
@@ -70,7 +70,7 @@ async def on_command_error(ctx, error):
                     'Klee thinks you are missing one or more arguments... ヾ(⌒(_´･ㅅ･`)_ ')
 
     except Exception as err:
-        print(f'{utcTimestamp()} ERROR in on_command_error(): {err}')
+        log(f'{utcTimestamp()} ERROR in on_command_error(): {err}')
         handleError(err)
 
 
@@ -114,7 +114,7 @@ async def message(message):
                     os.system("python restarter.py")
 
     except Exception as err:
-        print(f'{utcTimestamp()} ERROR in message(): {err}')
+        log(f'{utcTimestamp()} ERROR in message(): {err}')
         handleError(err)
 
 
@@ -233,7 +233,7 @@ async def called_once_every12hour():
             open('failed_msg.txt', 'w').close()
 
     except Exception as err:
-        print(f'{utcTimestamp()} ERROR in called_once_every12hour(): {err}')
+        log(f'{utcTimestamp()} ERROR in called_once_every12hour(): {err}')
         raise err
 
 
@@ -244,8 +244,7 @@ async def before():
         #print('Finished waiting')
 
     except Exception as err:
-        print(
-            f'{utcTimestamp()} ERROR in called_once_every12hour.before_loop(): {err}'
+        log(f'ERROR in called_once_every12hour.before_loop(): {err}'
         )
         raise err
 
@@ -264,14 +263,11 @@ keep_alive()
 try:
     client.run(os.getenv('TOKEN'))
 except Exception as err:
-    print(f'{utcTimestamp()} ERROR on client.run(): {err}')
-    print(f'{utcTimestamp()} ERROR initializing discord bot.')
+    log(f'ERROR on client.run(): {err}')
+    log(f'ERROR initializing discord bot.')
     handleError(err)
     if isinstance(err, discord.errors.HTTPException):
         log('FATAL - BLOCKED BY RATE LIMITS, RESTARTING NOW...')
-        print(
-            f'{utcTimestamp()} FATAL - BLOCKED BY RATE LIMITS, RESTARTING NOW...'
-        )
         os.system('kill 1')
         os.system("python restarter.py")
 

@@ -12,25 +12,23 @@ logfileTimestamp = utcTimestamp()
 logfile = f'log/{logfileTimestamp}_main.log'
 #chatlogfile = f'log/{logfileTimestamp}_chat.log'
 
-def log(logMessage, consoleMessage=None):
-    timestamp = utcTimestamp()
-    if consoleMessage is not None:
-        print(f'{timestamp} {consoleMessage}')
-    try:
-        with open(f'{logfile}', 'a') as outfile:
-            outfile.write(f'{timestamp} {logMessage}\n')
-    except Exception as err:
-        print(f'{timestamp} ERROR in log(): {err}')
-    return timestamp
+#modified version of log, input: message of string type
+#prints to console and also logs the message to a file
+def log(message):
+  timestamp = utcTimestamp()
+  print(f'{timestamp} {message}')
+  try:
+    with open(f'{logfile}', 'a') as outfile:
+      outfile.write(f'{timestamp} {message}\n')
+  except Exception as err:
+    print(f'{timestamp} ERROR in log(): {err}')
+  return timestamp
 
 #error handler helper
 def handleError(e):
     try:
-        logTimestamp = log(
-            f'ERROR TRACE:\n{traceback.format_exc()}# TRACE END\n')
-        sendWebhook(
-            f'Klee encountered an error :( Please check {logfile} at {logTimestamp} -> {type(e).__name__}.'
-        )
+        logTimestamp = log(f'ERROR TRACE:\n{traceback.format_exc()}# TRACE END\n')
+        sendWebhook(f'Klee encountered an error (T⌓T). Please check log at https://replit.com/@traffyboi/Slime-bot-for-DC#{logfile} at time {logTimestamp} -> {type(e).__name__}.')
     except Exception as err:
         print(f'{utcTimestamp()} ERROR in handleError(): {err}')
 
