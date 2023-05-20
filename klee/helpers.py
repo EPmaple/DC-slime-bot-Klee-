@@ -175,7 +175,7 @@ async def checkHistory(client):
     #change to slimeping channel after testing
     #CID_SLIMEPING_CHANNEL
     #CID_BOTTESTING_CHANNEL
-    channel = client.get_channel(const.CID_BOTTESTING_CHANNEL)
+    channel = client.get_channel(const.CID_SLIMEPING_CHANNEL)
     if channel:
       async for message in channel.history(limit=300, after=time_obj, before=current):
           #for now, only set to catch all pings
@@ -189,25 +189,25 @@ async def checkHistory(client):
           command, *params = message.content.split()
           number = int(params[0])
           username = params[1]
-          
+
+          #slimeadd itself calls log function to print the message to console and to log the message to file
           await kommands.slimeadd(ctx, number, username)
-          print('slimeadded')
     else:
       # Handle the case when the channel was not found
-      print(f"Channel with ID {channel_id} not found")
+      log(f"Channel with ID {channel_id} not found")
           
   except KeyError:
     #we will have a KeyError only when we have not ran this function before; therefore, this is a step of initialization
     #Circular reference error: trying to set a date to replit db, which is not json serializable => do str of the datetime instead
     db["timeOfLastMessage"] = str(datetime.utcnow())
-    channel = client.get_channel(const.CID_BOTTESTING_CHANNEL)
+    channel = client.get_channel(const.CID_SLIMEPING_CHANNEL)
     if channel:
-      await channel.send('test')
+      await channel.send('checkHistory function initialized')
     else:
       # Handle the case when the channel was not found
-      print(f"Channel with ID {channel_id} not found")
+      log(f"Channel with ID {channel_id} not found")
     
   except Exception as err:
-    #log(f'ERROR in checkHistory(): {err}')
+    log(f'ERROR in checkHistory(): {err}')
     handleError(err)
   
