@@ -1,4 +1,4 @@
-from . import members
+from . import members, const, kommands
 from .logging import log, handleError
 from .stats import AGE_members, zoom_member, zoom_time
 
@@ -156,3 +156,58 @@ def dt_from_timestamp(timestamp):
     return datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ')
 
 #########################################################################
+
+######
+#Potential issue resolved: let's say that right after Klee has processed the histories and she gets disconnected, we may need to worry about Klee re-processing those same histories again. But since Klee itself will await a message to discord to show that those histories are taken care of, db["timeOfLastMessage"] is updated, so we have updated our considering range and avoid the issue of double counting those messages again
+######
+#because we want to access a channel of which the client is in, thus take in a parameter, the client object, as an argument
+async def checkHistory(client):
+  try:
+    #to get timeOfLastMessage from replit db
+    timeOfLastMessage = db["timeOfLastMessage"]
+    
+    # Convert the string to a datetime object
+    # "%Y-%m-%d %H:%M:%S" is the format specifier that matches the string representation of UTC time
+    time_obj = datetime.strptime(timeOfLastMessage, "%Y-%m-%d %H:%M:%S.%f")
+    
+    current = datetime.utcnow()
+
+    #change to slimeping channel after testing
+    #CID_SLIMEPING_CHANNEL
+    #CID_BOTTESTING_CHANNEL
+    channel = client.get_channel(const.CID_BOTTESTING_CHANNEL)
+    if channel:
+      async for message in channel.history(limit=300, after=time_obj, before=current):
+          #for now, only set to catch all pings
+          #may expand to catch zooms as well
+        if is_any_word_in_string(const.PING_MENTIONS, message.content):
+
+          #because we only have the message, we can get_context(message) to obtain ctx
+          ctx = await client.get_context(message)
+
+          #to break down the message.content to get the number and username parameters to be passed into slimeadd
+          command, *params = message.content.split()
+          number = int(params[0])
+          username = params[1]
+          
+          await kommands.slimeadd(ctx, number, username)
+          print('slimeadded')
+    else:
+      # Handle the case when the channel was not found
+      print(f"Channel with ID {channel_id} not found")
+          
+  except KeyError:
+    #we will have a KeyError only when we have not ran this function before; therefore, this is a step of initialization
+    #Circular reference error: trying to set a date to replit db, which is not json serializable => do str of the datetime instead
+    db["timeOfLastMessage"] = str(datetime.utcnow())
+    channel = client.get_channel(const.CID_BOTTESTING_CHANNEL)
+    if channel:
+      await channel.send('test')
+    else:
+      # Handle the case when the channel was not found
+      print(f"Channel with ID {channel_id} not found")
+    
+  except Exception as err:
+    #log(f'ERROR in checkHistory(): {err}')
+    handleError(err)
+  
