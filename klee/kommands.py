@@ -156,11 +156,13 @@ async def slimeadd(ctx, number, username):
 
             reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]}'
 
-            await ctx.send(reply_msg)
+            await ctx.message.reply(reply_msg, mention_author=False)
+            #await ctx.send(reply_msg)
 
     except Exception as err:
         log(f'ERROR in add(): {err}')
         handleError(err)
+
 
 #########################################################################
 
