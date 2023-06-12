@@ -185,12 +185,6 @@ async def checkHistory(client):
           #because we only have the message, we can get_context(message) to obtain ctx
           ctx = await client.get_context(message)
 
-          #to break down the message.content to get the number and username parameters to be passed into slimeadd
-          """
-          command, *params = message.content.split()
-          number = int(params[0])
-          username = params[1]
-          """
           # Accepts message in the form '@ultra user', or 'user @ultra'; where 'user' can also be in the form of 'me', or @mention
           words = message.content.split()
           if len(words) > 1:
