@@ -175,7 +175,7 @@ async def checkHistory(client):
     #change to slimeping channel after testing
     #CID_SLIMEPING_CHANNEL
     #CID_BOTTESTING_CHANNEL
-    channel = client.get_channel(const.CID_SLIMEPING_CHANNEL)
+    channel = client.get_channel(const.CID_BOTTESTING_CHANNEL)
     if channel:
       async for message in channel.history(limit=300, after=time_obj, before=current):
           #for now, only set to catch all pings
@@ -186,12 +186,29 @@ async def checkHistory(client):
           ctx = await client.get_context(message)
 
           #to break down the message.content to get the number and username parameters to be passed into slimeadd
+          """
           command, *params = message.content.split()
           number = int(params[0])
           username = params[1]
+          """
+          # Accepts message in the form '@ultra user', or 'user @ultra'; where 'user' can also be in the form of 'me', or @mention
+          words = message.content.split()
+          if len(words) > 1:
+              name_part = words[1] if is_any_word_in_string(const.PING_MENTIONS, words[0]) else words[0]
+              member_id = members.id_search(message, name_part)
 
-          #slimeadd itself calls log function to print the message to console and to log the message to file
-          await kommands.slimeadd(ctx, number, username)
+          reply_msg = ''
+          if member_id == members.UNKNOWN:
+              reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
+          else:
+              try:
+                  add_slime(member_id, 1)
+                  reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
+              except KeyError:
+                  reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
+
+          await ctx.message.reply(reply_msg, mention_author=False)
+
     else:
       # Handle the case when the channel was not found
       log(f"Channel with ID {channel_id} not found")

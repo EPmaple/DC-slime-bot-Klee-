@@ -171,7 +171,7 @@ async def zoom(ctx, member):
         if ctx.channel.id in const.BOT_CHANNELS:
             member_id = members.id_search(ctx.message, member)
             reply_msg = helpers.add_zoom(member_id, 1)
-            await ctx.send(reply_msg)
+            await ctx.message.reply(reply_msg, mention_author=False)
 
     except Exception as err:
         log(f'ERROR in zoom(): {err}')
@@ -213,7 +213,7 @@ async def zoomadd(ctx, number, username):
             member = username.strip()
             member_id = members.id_search(ctx.message, member)
             reply_msg = helpers.add_zoom(member_id, int(number))
-            await ctx.send(reply_msg)
+            await ctx.message.reply(reply_msg, mention_author=False)
 
     except Exception as err:
         log(f'ERROR in zoomadd(): {err}')

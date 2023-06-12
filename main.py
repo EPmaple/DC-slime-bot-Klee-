@@ -108,14 +108,9 @@ async def message(message):
                     except KeyError:
                         reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 
-                try:
-                    await message.channel.send(reply_msg)
-                except discord.errors.HTTPException:
-                    with open(f"failed_msg.txt", "a") as f:
-                        f.write(f"{reply_msg}\n")
-                    print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-                    os.system('kill 1')
-                    os.system("python restarter.py")
+                #because we only have the message, we can get_context(message) to obtain ctx
+                ctx = await client.get_context(message)
+                await ctx.message.reply(reply_msg, mention_author=False)
 
     except Exception as err:
         log(f'{utcTimestamp()} ERROR in message(): {err}')
