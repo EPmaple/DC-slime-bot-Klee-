@@ -221,3 +221,32 @@ async def checkHistory(client):
   except Exception as err:
     log(f'ERROR in checkHistory(): {err}')
     handleError(err)
+
+#########################################################################
+
+"""
+def word_checker(wordlist):
+    def check_string(string):
+        for word in wordlist:
+            if word in string:
+                return True
+        return False
+    return check_string
+
+# Example usage
+my_wordlist = ['apple', 'banana', 'orange']
+checker = word_checker(my_wordlist)
+
+print(checker('I love apples'))  # True
+print(checker('I have a pear'))  # False
+
+checker = word_checker(['.u'])
+checker(message)
+
+def word_checker(wordlist):
+    def check_string(message):
+        #initialization
+        member_id = members.UNKNOWN
+        if is 
+    return check_string
+"""

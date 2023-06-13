@@ -88,17 +88,17 @@ async def message(message):
                 return
             
             #using the previously defined function to check whether the phrase
-            # "?u" is in message.content
-            # ?u = MENTION_ULTRA_ROLE
-
-            if is_any_word_in_string(['?u'], message.content):
+            if is_any_word_in_string(['.u'], message.content):
 
                 member_id = members.UNKNOWN
 
-                # Accepts message in the form '?u user', or 'user ?u'; where 'user' can also be in the form of 'me', or @mention
+                # Accepts message in the form '.u user', or 'user .u'; where 'user' can also be in the form of 'me', or @mention
                 words = message.content.split()
-                if len(words) > 1:
-                    name_part = words[1] if is_any_word_in_string(['?u'], words[0]) else words[0]
+                if len(words) == 1:
+                  member_id = members.id_search(message, "me")
+                  
+                elif len(words) > 1:
+                    name_part = words[1] if is_any_word_in_string(['.u'], words[0]) else words[0]
                     #log(f'{name_part}')
                     member_id = members.id_search(message, name_part)
                 
@@ -151,6 +151,14 @@ async def message(message):
 ######################################################
 # BOT COMMANDS #
 ######################################################
+#test function for banning by per-member denies
+@client.command()
+async def ban(ctx, username):
+  await kommands.ban(ctx, username, client)
+
+@client.command()
+async def unban(ctx, username):
+  await kommands.unban(ctx, username, client)
 
 #method name doubleping, simply wrapper for minus_slime
 @client.command()
@@ -183,6 +191,11 @@ ex.) !slimeadd 5 john doe
 number parameter will be "5" and the *username parameter 
 will be a tuple containing the strings "john" and "doe"
 """
+
+@client.command(aliases=['u'])
+async def shorthand_ping(ctx, username='me'):
+  await kommands.shorthand_ping(ctx, username)
+
 #for the specified member, add 1 zoom and store the time this zoom was reported
 @client.command()
 async def zoom(ctx, member='me'):
