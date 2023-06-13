@@ -175,7 +175,7 @@ async def checkHistory(client):
     #change to slimeping channel after testing
     #CID_SLIMEPING_CHANNEL
     #CID_BOTTESTING_CHANNEL
-    channel = client.get_channel(const.CID_BOTTESTING_CHANNEL)
+    channel = client.get_channel(const.CID_SLIMEPING_CHANNEL)
     if channel:
       async for message in channel.history(limit=300, after=time_obj, before=current):
           #for now, only set to catch all pings
@@ -221,4 +221,3 @@ async def checkHistory(client):
   except Exception as err:
     log(f'ERROR in checkHistory(): {err}')
     handleError(err)
-
