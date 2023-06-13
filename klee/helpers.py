@@ -221,4 +221,4 @@ async def checkHistory(client):
   except Exception as err:
     log(f'ERROR in checkHistory(): {err}')
     handleError(err)
-  
+

@@ -86,9 +86,39 @@ async def message(message):
             log(f'[chat] {message.author.display_name}: {message.content}')
             if message.author == client.user:  #make sure is not responding to message from the bot
                 return
+            
+            #using the previously defined function to check whether the phrase
+            # "?u" is in message.content
+            # ?u = MENTION_ULTRA_ROLE
+
+            if is_any_word_in_string(['?u'], message.content):
+
+                member_id = members.UNKNOWN
+
+                # Accepts message in the form '?u user', or 'user ?u'; where 'user' can also be in the form of 'me', or @mention
+                words = message.content.split()
+                if len(words) > 1:
+                    name_part = words[1] if is_any_word_in_string(['?u'], words[0]) else words[0]
+                    #log(f'{name_part}')
+                    member_id = members.id_search(message, name_part)
+                
+                reply_msg = ''
+                if member_id == members.UNKNOWN:
+                    reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
+                else:
+                    member_mention = f'<@{member_id}>'
+                    try:
+                        helpers.add_slime(member_id, 1)
+                        reply_msg = f'{const.MENTION_SLIMEPINGTEST_ROLE} {member_mention} Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
+                    except KeyError:
+                        reply_msg = f'{const.MENTION_SLIMEPINGTEST_ROLE} {member_mention} Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
+
+                #because we only have the message, we can get_context(message) to obtain ctx
+                ctx = await client.get_context(message)
+                await ctx.message.reply(reply_msg, mention_author=False)
 
             #@ultra or @altra
-            if is_any_word_in_string(const.PING_MENTIONS, message.content):
+            elif is_any_word_in_string(const.PING_MENTIONS, message.content):
 
                 member_id = members.UNKNOWN
 
