@@ -170,7 +170,7 @@ async def zoom(ctx, member):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
             member_id = members.id_search(ctx.message, member)
-            member_mention = f'<@{member_id}>'
+            member_mention = f'<@{member_id}>' if not member_id.startswith('alt') else ''
             reply_msg = helpers.add_zoom(member_id, 1)
             reply_msg = f'{reply_msg} {member_mention}>'
             is_ping_member = member_id != str(ctx.author.id)
@@ -216,7 +216,7 @@ async def zoomadd(ctx, number, username):
         if ctx.channel.id in const.BOT_CHANNELS:
             member = username.strip()
             member_id = members.id_search(ctx.message, member)
-            member_mention = f'<@{member_id}>'
+            member_mention = f'<@{member_id}>' if not member_id.startswith('alt') else ''
             reply_msg = helpers.add_zoom(member_id, int(number))
             reply_msg = f'{reply_msg} {member_mention}>'
             is_ping_member = member_id != str(ctx.author.id)
@@ -331,7 +331,7 @@ async def slime_ping(message_ctx, username):
       if member_id == members.UNKNOWN:
         reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
       else:
-        member_mention = f'<@{member_id}>'
+        member_mention = f'<@{member_id}>' if not member_id.startswith('alt') else ''
         role_mention = f'{const.MENTION_ULTRA_ROLE}' if channel_id != const.CID_BOTTESTING_CHANNEL else f'{const.MENTION_SLIMEPINGTEST_ROLE}'
         mentionsFlag = discord.AllowedMentions(users=False, roles=True, replied_user=False)
         try:
