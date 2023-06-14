@@ -193,8 +193,8 @@ will be a tuple containing the strings "john" and "doe"
 """
 
 @client.command(aliases=['u'])
-async def shorthand_ping(ctx, username='me'):
-  await kommands.shorthand_ping(ctx, username)
+async def ultra(ctx, username='me'):
+  await kommands.slime_ping(ctx, username)
 
 #for the specified member, add 1 zoom and store the time this zoom was reported
 @client.command()

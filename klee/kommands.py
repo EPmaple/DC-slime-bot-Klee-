@@ -320,9 +320,9 @@ async def slimeseason(ctx):
 
 #########################################################################
 
-async def shorthand_ping(ctx, username):
+async def slime_ping(ctx, username):
   try:
-    if ctx.channel.id in const.BOT_CHANNELS:  #make sure tempremove could only be executed from certain channels
+    if ctx.channel.id in const.BOT_CHANNELS:
       channel = ctx.channel
       member_id = members.UNKNOWN
       
@@ -330,7 +330,7 @@ async def shorthand_ping(ctx, username):
       member_id = members.id_search(ctx.message, member)
 
       if member_id == members.UNKNOWN:
-        reply_msg = ('Uh, Klee does not know this name, and therefore cannot tempremove this person... (๑•̆ ૩•̆)')
+        reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
       else:
         member_mention = f'<@{member_id}>'
         try:
