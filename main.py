@@ -109,9 +109,9 @@ async def message(message):
                     member_mention = f'<@{member_id}>'
                     try:
                         helpers.add_slime(member_id, 1)
-                        reply_msg = f'{const.MENTION_SLIMEPINGTEST_ROLE} {member_mention} Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
+                        reply_msg = f'{const.MENTION_ULTRA_ROLE} {member_mention} Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
                     except KeyError:
-                        reply_msg = f'{const.MENTION_SLIMEPINGTEST_ROLE} {member_mention} Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
+                        reply_msg = f'{const.MENTION_ULTRA_ROLE} {member_mention} Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 
                 #because we only have the message, we can get_context(message) to obtain ctx
                 ctx = await client.get_context(message)
