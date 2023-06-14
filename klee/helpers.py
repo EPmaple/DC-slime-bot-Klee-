@@ -20,100 +20,103 @@ def read_txt():
 #########################################################################
 
 def add_slimes(member_id, number):
-  if member_id in db['slimes']: #if member id already in replit database,
-    db['slimes'][member_id] += int(number)
-    AGE_members['slimes'][member_id] += int(number)
+  if member_id in db: #if member id already in replit database,
+    db[member_id]['slimes'] += int(number)
+    AGE_members[member_id]['slimes'] += int(number)
   else: #if member id was not in replit database
-    db['slimes'][member_id] = int(number)
-    AGE_members['slimes'][member_id] = int(number)
+    db[member_id]['slimes'] = int(number)
+    AGE_members[member_id]['slimes'] = int(number)
 
 #########################################################################
 
-#helper method, takes in member id and the number of slimes want to be added
-#can use negative numbers to subtract slimes
+#helper method, takes in member id and the number of zooms want to be added
 def add_zoom(member_id, number):
-    if member_id == 0:
-        return 'Uh, Klee does not know this name...(◕︿◕✿)'
+  if member_id == 0:
+    return 'Uh, Klee does not know this name...(◕︿◕✿)'
 
-    member_idz = member_id + 'z'
-    member_idzt = member_idz + 't'
+  #retrieves the data dictionaries related to this member, if none is found, return {}
+  member_data = AGE_members.get(member_id, {})
+  original_count = member_data.get('zooms', 0)
+  original_zoom_times = member_data.get('zoomtime', [])
 
-    original_count = zoom_member.get(member_idz, 0)
-    original_zoom_times = zoom_time.get(member_idzt, [])
+  try:
+    # clamp to 0 if subtracting more than the actual current count
+    new_count = max(0, original_count + number)
 
-    try:
-        # clamp to 0 if subtracting more than the actual current count
-        new_count = max(0, original_count + number)
+    # database.to_primitive will convert an ObservedList to a list
+    # and leave a list as a list
+    new_zoom_times = database.to_primitive(original_zoom_times).copy()
 
-        # database.to_primitive will convert an ObservedList to a list
-        # and leave a list as a list
-        new_zoom_times = database.to_primitive(original_zoom_times).copy()
+    # add timestamps if new zooms were added
+    while len(new_zoom_times) < new_count:
+      new_zoom_times += [f'{utcTimestamp()}']
+    # remove timestamps if zooms were subtracted
+    while len(new_zoom_times) > new_count:
+      del new_zoom_times[-1]
 
-        # add timestamps if new zooms were added
-        while len(new_zoom_times) < new_count:
-            new_zoom_times += [f'{utcTimestamp()}']
-        # remove timestamps if zooms were subtracted
-        while len(new_zoom_times) > new_count:
-            del new_zoom_times[-1]
-
-        # perform the actual updates
-        db[member_idz] = new_count
-        zoom_member[member_idz] = db[member_idz]
-        if member_idzt in db:
-          # If the value is in the db, it is of type ObservedList.
-          # The type we are setting is a list. In order to override
-          # the underlying list of an ObservedList, we must call
-          # ObservedList.set_value
-          db[member_idzt].set_value(new_zoom_times)
-        else:
-          db[member_idzt] = new_zoom_times
-        zoom_time[member_idzt] = db[member_idzt]
-
-    except Exception as err:
-        log(f'ERROR in message(): {err}')
-        handleError(err)
-
-        # update failed, reset back to original
-        db[member_idz] = original_count
-        zoom_member[member_idz] = db[member_idz]
-        if member_idzt in db:
-          # If the value is in the db, it is of type ObservedList.
-          # The type we are setting is a list. In order to override
-          # the underlying list of an ObservedList, we must call
-          # ObservedList.set_value
-          db[member_idzt].set_value(original_zoom_times)
-        else:
-          db[member_idzt] = original_zoom_times
-        zoom_time[member_idzt] = db[member_idzt]
-
-        return f'Klee failed to modify zoom count (◕︿◕✿), {members.get_name(member_id)} remains at {original_count} zooms.'
-
-    # rolling 7 day window for punish-ability
-    days = 7
-    window = datetime.utcnow().replace(microsecond=0) - timedelta(days=days)
-    count_in_window = sum(dt_from_timestamp(d) >= window for d in zoom_time[member_idzt])
-
-    ret = f'The number of times {members.get_name(member_id)} zoomed has been changed from {original_count} to {new_count}.'
-    ret += f'\nZooms in the last {days} days: {count_in_window}.'
-    if new_count == 0:
-      ret += '\nGood job not zooming this season!! ヾ(๑ㆁᗜㆁ๑)ﾉ”'
-    elif count_in_window == 0:
-      ret += '\nYou\'re remedying your zooming ways, way to go!! ヾ(๑ㆁᗜㆁ๑)ﾉ”'
+    #perform the actual updates
+    db[member_id]['zooms'] = new_count
+    AGE_members[member_id]['zooms'] = db[member_id]['zooms']
+    if member_id in db:
+      # If the value is in the db, it is of type ObservedList.
+      # The type we are setting is a list. In order to override
+      # the underlying list of an ObservedList, we must call
+      # ObservedList.set_value
+      db[member_id]['zoomtime'].set_value(new_zoom_times)
     else:
-      ret += '\nヽ( `д´*)ノ Why did you zoom ?!'
+      db[member_id]['zoomtime'] = new_zoom_times
+    AGE_members[member_id]['zoomtime'] = db[member_id]['zoomtime']
 
-    return ret
+  except Exception as err:
+    log(f'ERROR in message(): {err}')
+    handleError(err)
+
+    # update failed, reset back to original
+    db[member_id]['zooms'] = original_count
+    AGE_members[member_id]['zooms'] = db[member_id]['zooms']
+    if member_id in db:
+      # If the value is in the db, it is of type ObservedList.
+      # The type we are setting is a list. In order to override
+      # the underlying list of an ObservedList, we must call
+      # ObservedList.set_value
+      db[member_id]['zoomtime'].set_value(original_zoom_times)
+    else:
+      db[member_id]['zoomtime'] = original_zoom_times
+    AGE_members[member_id]['zoomtime'] = db[member_id]['zoomtime']
+
+    return f'Klee failed to modify zoom count (◕︿◕✿), {members.get_name(member_id)} remains at {original_count} zooms.'
+    
+  # rolling 7 day window for punish-ability
+  days = 7
+  window = datetime.utcnow().replace(microsecond=0) - timedelta(days=days)
+  count_in_window = sum(dt_from_timestamp(d) >= window for d in AGE_members[member_id]['zoomtime'])
+
+  ret = f'The number of times {members.get_name(member_id)} zoomed has been changed from {original_count} to {new_count}.'
+  ret += f'\nZooms in the last {days} days: {count_in_window}.'
+  if new_count == 0:
+    ret += '\nGood job not zooming this season!! ヾ(๑ㆁᗜㆁ๑)ﾉ”'
+  elif count_in_window == 0:
+    ret += '\nYou\'re remedying your zooming ways, way to go!! ヾ(๑ㆁᗜㆁ๑)ﾉ”'
+  else:
+    ret += '\nヽ( `д´*)ノ Why did you zoom ?!'
+
+  return ret
 
 #########################################################################
 
 #helper method
 def list_member_slime_count():
-    slime_sum = sum(AGE_members.values())
-    slime_message = {}
-    for member_id in members.id_list():
-        # set name:slime_count to message dict
-        slime_message[members.get_name(member_id)] = AGE_members[member_id]
-    return (slime_sum, slime_message)
+  slime_sum = 0
+  for member_id in AGE_members:
+    ind_slimes = AGE_members[member_id]['slimes']
+    slime_sum += ind_slimes
+
+  slime_msg = {}
+  for member_id in members.id_list():
+    # set name:slime_count to message dict
+    slime_msg[members.get_name(member_id)] = AGE_members[member_id]['slimes']
+
+  return (slime_sum, slime_message)
 
 #########################################################################
 

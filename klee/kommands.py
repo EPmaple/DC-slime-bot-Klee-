@@ -15,7 +15,7 @@ async def slimerank(ctx):
       #dict is made up of pairs of id:count
       dictionary = {}
       for member_id in AGE_members:
-        dictionary[member_id] = AGE_members[member_id]
+        dictionary[member_id] = AGE_members[member_id]['slimes']
         
 # Sort the dictionary by values in descending order
       sorted_dict = sorted(dictionary.items(), key=lambda x: x[1], reverse=True)
@@ -63,7 +63,7 @@ async def slimerank(ctx):
         third_name += [members.get_name(z)]
 
       await ctx.send(
-                f'The current first is {first_name} with {AGE_members[x]} slimes! Second is {second_name} with {AGE_members[y]} slimes, and third is {third_name} with {AGE_members[z]} slimes! They are the best! ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾'
+                f'The current first is {first_name} with {AGE_members[x]['slimes']} slimes! Second is {second_name} with {AGE_members[y]['slimes']} slimes, and third is {third_name} with {AGE_members[z]['slimes']} slimes! They are the best! ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾'
             )
   except Exception as err:
     log(f'ERROR in slimerank(): {err}')
@@ -84,13 +84,11 @@ async def doubleping(ctx, username):
                 )
                 return
 
-            original = AGE_members[member_id]
+            original = AGE_members[member_id]['slimes']
             helpers.add_slime(member_id, -1)
-            reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been subtracted by Klee (๑‵●‿●‵๑), going from {original} to {AGE_members[member_id]}'
-
+            reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been subtracted by Klee (๑‵●‿●‵๑), going from {original} to {AGE_members[member_id]['slimes']}'
             
             await ctx.send(reply_msg)
-
 
     except Exception as err:
         log(f'ERROR in doubleping(): {err}')
@@ -103,7 +101,7 @@ async def slimeinfo(ctx):
         if ctx.channel.id in const.BOT_CHANNELS:
             self_member_id = str(ctx.author.id)
             await ctx.send(
-                f'Klee knows that you have summoned {AGE_members[self_member_id]} slimes so far this season! You are the best!'
+                f'Klee knows that you have summoned {AGE_members[self_member_id]['slimes']} slimes so far this season! You are the best!'
             )
 
     except Exception as err:
@@ -151,10 +149,10 @@ async def slimeadd(ctx, number, username):
                 )
                 return
 
-            original = AGE_members[member_id]
+            original = AGE_members[member_id]['slimes']
             helpers.add_slime(member_id, number)
 
-            reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]}'
+            reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]['slimes']}'
 
             await ctx.send(reply_msg)
 
@@ -181,16 +179,14 @@ async def zoominfo(ctx, member='me'):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
             member_id = members.id_search(ctx.message, member)
-            member_idz = member_id + 'z'
-            member_idzt = member_id + 'zt'
 
-            if zoom_member[member_idz] == 0:
+            if zoom_member[member_id] == 0:
                 replymsg = 'Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”'
                 await ctx.send(replymsg)
             #after checking that the member has zoomed
             else:
-                replymsg = f'Klee has written down with my crayolas that {members.get_name(member_id)} has zoomed {zoom_member[member_idz]} times this season, and at the following times:\n'
-                for i in zoom_time[member_idzt]:
+                replymsg = f'Klee has written down with my crayolas that {members.get_name(member_id)} has zoomed {zoom_member[member_id]} times this season, and at the following times:\n'
+                for i in zoom_time[member_id]:
                     replymsg += f'{i} \n'
                 replymsg += 'щ(゜ロ゜щ) Wahh! Why you zoomed!'
                 await ctx.send(replymsg)
@@ -224,6 +220,7 @@ async def zoomseason(ctx):
     if ctx.channel.id in const.BOT_CHANNELS:
       zoom_sum, zoom_message = helpers.total_zoom()
       await ctx.send(f'Seasonal zoom count: {zoom_sum}.\n\nMember zoom counts: {zoom_message}')
+      
   except Exception as err:
     log(f'ERROR in zoomseason(): {err}')
     handleError(err)
@@ -307,3 +304,15 @@ async def slimeseason(ctx):
   except Exception as err:
     log(f'ERROR in total(): {err}')
     raise err
+"""
+for member_id in db:
+  if member_id.endswith('z'):
+    zooms = db[member_id]
+    db[member_id[:-1]]['zooms'] = zooms
+  elif member_id.endswith('zt'):
+    zoom_time = db[member_id]
+    db[member_id[:-2]]['zoomtime'] = zoom_time
+  elif member_id[-1].isdigit():
+    slimes = db[member_id]
+    db[member_id]['slimes'] = slimes
+  """
