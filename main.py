@@ -87,8 +87,8 @@ async def message(message):
             if message.author == client.user:  #make sure is not responding to message from the bot
                 return
             
-            #using the previously defined function to check whether the phrase
-            if is_any_word_in_string(['.u'], message.content):
+            # '.u' or '.u user'
+            if message.content == '.u' or message.content.startswith('.u '):
 
                 member_id = members.UNKNOWN
 
@@ -117,7 +117,7 @@ async def message(message):
                 ctx = await client.get_context(message)
                 await ctx.message.reply(reply_msg, mention_author=False)
 
-            #@ultra or @altra
+            # @ultra or @altra
             elif is_any_word_in_string(const.PING_MENTIONS, message.content):
 
                 member_id = members.UNKNOWN
