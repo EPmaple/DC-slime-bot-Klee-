@@ -1,5 +1,5 @@
 from . import const, members, helpers
-from .helpers import is_any_word_in_string, utcTimestamp
+from .helpers import is_any_word_in_string, utcTimestamp, add_slime
 from .logging import log, handleError
 from .stats import AGE_members, zoom_member, zoom_time
 
@@ -156,11 +156,13 @@ async def slimeadd(ctx, number, username):
 
             reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]}'
 
-            await ctx.send(reply_msg)
+            await ctx.message.reply(reply_msg, mention_author=False)
+            #await ctx.send(reply_msg)
 
     except Exception as err:
         log(f'ERROR in add(): {err}')
         handleError(err)
+
 
 #########################################################################
 
@@ -169,7 +171,7 @@ async def zoom(ctx, member):
         if ctx.channel.id in const.BOT_CHANNELS:
             member_id = members.id_search(ctx.message, member)
             reply_msg = helpers.add_zoom(member_id, 1)
-            await ctx.send(reply_msg)
+            await ctx.message.reply(reply_msg, mention_author=False)
 
     except Exception as err:
         log(f'ERROR in zoom(): {err}')
@@ -211,7 +213,7 @@ async def zoomadd(ctx, number, username):
             member = username.strip()
             member_id = members.id_search(ctx.message, member)
             reply_msg = helpers.add_zoom(member_id, int(number))
-            await ctx.send(reply_msg)
+            await ctx.message.reply(reply_msg, mention_author=False)
 
     except Exception as err:
         log(f'ERROR in zoomadd(): {err}')
@@ -306,4 +308,91 @@ async def slimeseason(ctx):
     
   except Exception as err:
     log(f'ERROR in total(): {err}')
+    raise err
+
+#########################################################################
+
+async def shorthand_ping(ctx, username):
+  try:
+    if ctx.channel.id in const.BOT_CHANNELS:  #make sure tempremove could only be executed from certain channels
+      channel = ctx.channel
+      member_id = members.UNKNOWN
+      
+      member = username.strip()
+      member_id = members.id_search(ctx.message, member)
+
+      if member_id == members.UNKNOWN:
+        reply_msg = ('Uh, Klee does not know this name, and therefore cannot tempremove this person... (๑•̆ ૩•̆)')
+      else:
+        member_mention = f'<@{member_id}>'
+        try:
+          helpers.add_slime(member_id, 1)
+          reply_msg = f'{const.MENTION_SLIMEPINGTEST_ROLE} {member_mention} Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
+        except KeyError:
+          reply_msg = f'{const.MENTION_SLIMEPINGTEST_ROLE} {member_mention} Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
+
+      await ctx.message.reply(reply_msg, mention_author=False)
+
+      
+  except Exception as err:
+    log(f'ERROR in total(): {err}')
+    raise err
+
+#########################################################################
+
+#add in number 
+async def ban(ctx, username, client):
+  try:
+    if ctx.channel.id in const.BOT_CHANNELS:  #make sure tempremove could only be executed from certain channels
+      
+      channel = client.get_channel(const.MAIN_CHANNEL)
+      
+      username = username.strip()
+      member_id = members.id_search(ctx.message, username)
+      if member_id == members.UNKNOWN:
+        await ctx.send('Uh, Klee does not know this name, and therefore cannot tempremove this person... (๑•̆ ૩•̆)')
+        return
+
+      # Get the member object from the member ID
+      member = ctx.guild.get_member(member_id)
+      # Get the existing channel permissions
+      overwrites = channel.overwrites
+      # Create or modify the permission overwrite for the member
+      overwrites[member] = discord.PermissionOverwrite(view_channel=False)
+      log(f'{member_id},{member}')
+      # Apply the updated channel permissions
+      await channel.edit(overwrites=overwrites)
+      log('passed3')
+
+      await ctx.send(f"The view_channel permission for {member.name} has been removed.")
+  except Exception as err:
+    log(f'ERROR in ban(): {err}')
+    raise err
+
+
+
+async def unban(ctx, username, client):
+  try:
+    if ctx.channel.id in const.BOT_CHANNELS:  #make sure tempremove could only be executed from certain channels
+      channel = client.get_channel(const.CID_SLIMEPING_CHANNEL)
+
+      username = username.strip()
+      member_id = members.id_search(ctx.message, username)
+
+      if member_id == members.UNKNOWN:
+        await ctx.send('Uh, Klee does not know this name, and therefore cannot tempremove this person... (๑•̆ ૩•̆)')
+        return
+
+      # Get the member object from the member ID
+      member = ctx.guild.get_member(member_id)
+      # Get the existing channel permissions
+      overwrites = channel.overwrites
+      # Create or modify the permission overwrite for the member
+      overwrites[member] = discord.PermissionOverwrite(view_channel=True)
+      # Apply the updated channel permissions
+      await channel.edit(overwrites=overwrites)
+
+      await ctx.send(f"The view_channel permission for {member.name} has been restored.")
+  except Exception as err:
+    log(f'ERROR in unban: {err}')
     raise err
