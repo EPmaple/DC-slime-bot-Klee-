@@ -320,14 +320,13 @@ async def slimeseason(ctx):
 
 #########################################################################
 
-async def slime_ping(ctx, username):
+async def slime_ping(message_ctx, username):
   try:
-    if ctx.channel.id in const.BOT_CHANNELS:
-      channel = ctx.channel
-      member_id = members.UNKNOWN
-      
+    channel_id = message_ctx.channel.id
+    if channel_id in const.BOT_CHANNELS:
+
       member = username.strip()
-      member_id = members.id_search(ctx.message, member)
+      member_id = members.id_search(message_ctx, member)
 
       if member_id == members.UNKNOWN:
         reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
@@ -339,9 +338,8 @@ async def slime_ping(ctx, username):
         except KeyError:
           reply_msg = f'{const.MENTION_ULTRA_ROLE} {member_mention} Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 
-      await ctx.message.reply(reply_msg, mention_author=False)
+      await message_ctx.reply(reply_msg, allowed_mentions=mentionsFlag)
 
-      
   except Exception as err:
     log(f'ERROR in total(): {err}')
     raise err

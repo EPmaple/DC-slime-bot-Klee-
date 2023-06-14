@@ -90,32 +90,9 @@ async def message(message):
             # '.u' or '.u user'
             if message.content == '.u' or message.content.startswith('.u '):
 
-                member_id = members.UNKNOWN
-
-                # Accepts message in the form '.u user', or 'user .u'; where 'user' can also be in the form of 'me', or @mention
-                words = message.content.split()
-                if len(words) == 1:
-                  member_id = members.id_search(message, "me")
-                  
-                elif len(words) > 1:
-                    name_part = words[1] if is_any_word_in_string(['.u'], words[0]) else words[0]
-                    #log(f'{name_part}')
-                    member_id = members.id_search(message, name_part)
-                
-                reply_msg = ''
-                if member_id == members.UNKNOWN:
-                    reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
-                else:
-                    member_mention = f'<@{member_id}>'
-                    try:
-                        helpers.add_slime(member_id, 1)
-                        reply_msg = f'{const.MENTION_ULTRA_ROLE} {member_mention} Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
-                    except KeyError:
-                        reply_msg = f'{const.MENTION_ULTRA_ROLE} {member_mention} Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
-
-                #because we only have the message, we can get_context(message) to obtain ctx
-                ctx = await client.get_context(message)
-                await ctx.message.reply(reply_msg, mention_author=False)
+                words = message.content.split(' ', 1)  #split into two words max
+                username = 'me' if len(words) == 1 else words[1]
+                await kommands.slime_ping(message, username)
 
             # @ultra or @altra
             elif is_any_word_in_string(const.PING_MENTIONS, message.content):
@@ -194,7 +171,7 @@ will be a tuple containing the strings "john" and "doe"
 
 @client.command(aliases=['u'])
 async def ultra(ctx, username='me'):
-  await kommands.slime_ping(ctx, username)
+  await kommands.slime_ping(ctx.message, username)
 
 #for the specified member, add 1 zoom and store the time this zoom was reported
 @client.command()
