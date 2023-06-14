@@ -19,13 +19,13 @@ def read_txt():
 
 #########################################################################
 
-def add_slime(member_id, number):
-    if member_id in db:  #if member id already in replit database,
-        db[member_id] += int(number)
-        AGE_members[member_id] += int(number)
-    else:  #if member id was not in replit database
-        db[member_id] = int(number)
-        AGE_members[member_id] = int(number)
+def add_slimes(member_id, number):
+  if member_id in db['slimes']: #if member id already in replit database,
+    db['slimes'][member_id] += int(number)
+    AGE_members['slimes'][member_id] += int(number)
+  else: #if member id was not in replit database
+    db['slimes'][member_id] = int(number)
+    AGE_members['slimes'][member_id] = int(number)
 
 #########################################################################
 
