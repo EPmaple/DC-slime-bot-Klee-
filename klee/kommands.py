@@ -172,7 +172,7 @@ async def zoom(ctx, member):
             member_id = members.id_search(ctx.message, member)
             member_mention = f'<@{member_id}>' if not member_id.startswith('alt') else ''
             reply_msg = helpers.add_zoom(member_id, 1)
-            reply_msg = f'{reply_msg} {member_mention}>'
+            reply_msg = f'{reply_msg} {member_mention}'
             is_ping_member = member_id != str(ctx.author.id)
             mentionsFlag = discord.AllowedMentions(users=is_ping_member, replied_user=False)
             await ctx.message.reply(reply_msg, allowed_mentions=mentionsFlag)
@@ -218,7 +218,7 @@ async def zoomadd(ctx, number, username):
             member_id = members.id_search(ctx.message, member)
             member_mention = f'<@{member_id}>' if not member_id.startswith('alt') else ''
             reply_msg = helpers.add_zoom(member_id, int(number))
-            reply_msg = f'{reply_msg} {member_mention}>'
+            reply_msg = f'{reply_msg} {member_mention}'
             is_ping_member = member_id != str(ctx.author.id)
             mentionsFlag = discord.AllowedMentions(users=is_ping_member, replied_user=False)
             await ctx.message.reply(reply_msg, allowed_mentions=mentionsFlag)
