@@ -115,12 +115,10 @@ async def message(message):
                     except KeyError:
                         reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 
-                #because we only have the message, we can get_context(message) to obtain ctx
-                ctx = await client.get_context(message)
-                await ctx.message.reply(reply_msg, mention_author=False)
+                await message.reply(reply_msg, mention_author=False)
 
     except Exception as err:
-        log(f'{utcTimestamp()} ERROR in message(): {err}')
+        log(f'ERROR in message(): {err}')
         handleError(err)
 
 

@@ -332,17 +332,19 @@ async def slime_ping(message_ctx, username):
         reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
       else:
         member_mention = f'<@{member_id}>'
+        role_mention = f'{const.MENTION_ULTRA_ROLE}' if channel_id != const.CID_BOTTESTING_CHANNEL else f'{const.MENTION_SLIMEPINGTEST_ROLE}'
+        mentionsFlag = discord.AllowedMentions(users=False, roles=True, replied_user=False)
         try:
           helpers.add_slime(member_id, 1)
-          reply_msg = f'{const.MENTION_ULTRA_ROLE} {member_mention} Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
+          reply_msg = f'{role_mention} {member_mention} Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
         except KeyError:
-          reply_msg = f'{const.MENTION_ULTRA_ROLE} {member_mention} Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
+          reply_msg = f'{role_mention} {member_mention} Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 
       await message_ctx.reply(reply_msg, allowed_mentions=mentionsFlag)
 
   except Exception as err:
-    log(f'ERROR in total(): {err}')
-    raise err
+    log(f'ERROR in slime_ping(): {err}')
+    handleError(err)
 
 #########################################################################
 
