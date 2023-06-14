@@ -170,8 +170,12 @@ async def zoom(ctx, member):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
             member_id = members.id_search(ctx.message, member)
+            member_mention = f'<@{member_id}>'
             reply_msg = helpers.add_zoom(member_id, 1)
-            await ctx.message.reply(reply_msg, mention_author=False)
+            reply_msg = f'{reply_msg} {member_mention}>'
+            is_ping_member = member_id != str(ctx.author.id)
+            mentionsFlag = discord.AllowedMentions(users=is_ping_member, replied_user=False)
+            await ctx.message.reply(reply_msg, allowed_mentions=mentionsFlag)
 
     except Exception as err:
         log(f'ERROR in zoom(): {err}')
@@ -212,8 +216,12 @@ async def zoomadd(ctx, number, username):
         if ctx.channel.id in const.BOT_CHANNELS:
             member = username.strip()
             member_id = members.id_search(ctx.message, member)
+            member_mention = f'<@{member_id}>'
             reply_msg = helpers.add_zoom(member_id, int(number))
-            await ctx.message.reply(reply_msg, mention_author=False)
+            reply_msg = f'{reply_msg} {member_mention}>'
+            is_ping_member = member_id != str(ctx.author.id)
+            mentionsFlag = discord.AllowedMentions(users=is_ping_member, replied_user=False)
+            await ctx.message.reply(reply_msg, allowed_mentions=mentionsFlag)
 
     except Exception as err:
         log(f'ERROR in zoomadd(): {err}')
