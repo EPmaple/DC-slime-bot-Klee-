@@ -1,5 +1,5 @@
 from . import const, members, helpers
-from .helpers import is_any_word_in_string, utcTimestamp
+from .helpers import is_any_word_in_string, utcTimestamp, add_slime
 from .logging import log, handleError
 from .stats import AGE_members, zoom_member, zoom_time
 
@@ -158,11 +158,13 @@ async def slimeadd(ctx, number, username):
 
             reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]["slimes"]}'
 
-            await ctx.send(reply_msg)
+            await ctx.message.reply(reply_msg, mention_author=False)
+            #await ctx.send(reply_msg)
 
     except Exception as err:
         log(f'ERROR in add(): {err}')
         handleError(err)
+
 
 #########################################################################
 
@@ -316,7 +318,7 @@ async def slimeseason(ctx):
   except Exception as err:
     log(f'ERROR in total(): {err}')
     raise err
-    
+
 #########################################################################
 
 async def slime_ping(message_ctx, username):
@@ -336,6 +338,7 @@ async def slime_ping(message_ctx, username):
         try:
           helpers.add_slime(member_id, 1)
           reply_msg = f'{role_mention} {member_mention} Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]["slimes"]} slimes for {members.get_name(member_id)}!'
+
         except KeyError:
           reply_msg = f'{role_mention} {member_mention} Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 
@@ -346,8 +349,10 @@ async def slime_ping(message_ctx, username):
     handleError(err)
 
 #########################################################################
+
 """
 ban-permission functions in test
+
 
 #add in number 
 async def ban(ctx, username, client):
@@ -460,4 +465,3 @@ for member_id in id_list():
       db[member_id]['zooms'] = 0
       db[member_id]['zoomtime'] = []
   """
-
