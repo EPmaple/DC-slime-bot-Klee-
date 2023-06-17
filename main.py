@@ -100,7 +100,7 @@ async def message(message):
                 else:
                     try:
                         helpers.add_slime(member_id, 1)
-                        reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
+                        reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]["slimes"]} slimes for {members.get_name(member_id)}!'
                     except KeyError:
                         reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 
@@ -135,8 +135,8 @@ async def slimerank(ctx):
 
 #use to check number of slime counts for self
 @client.command(aliases=['sself', 'me', 'sinfo'])
-async def slimeinfo(ctx):
-    await kommands.slimeinfo(ctx)
+async def seasoninfo(ctx):
+    await kommands.seasoninfo(ctx)
 
 #use to get the approximate number of slimes summoned in the past 24 hours
 #not working correctly

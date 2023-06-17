@@ -19,7 +19,7 @@ def read_txt():
 
 #########################################################################
 
-def add_slimes(member_id, number):
+def add_slime(member_id, number):
   if member_id in db: #if member id already in replit database,
     db[member_id]['slimes'] += int(number)
     AGE_members[member_id]['slimes'] += int(number)
@@ -116,7 +116,7 @@ def list_member_slime_count():
     # set name:slime_count to message dict
     slime_msg[members.get_name(member_id)] = AGE_members[member_id]['slimes']
 
-  return (slime_sum, slime_message)
+  return (slime_sum, slime_msg)
 
 #########################################################################
 
@@ -125,7 +125,7 @@ def list_member_slime_count():
 #       zoom_message [dict], list the top zoomers along with their corresponding # of zooms
 def total_zoom():
     # transform to list of tuples of the form (name, count)
-    name_transform = ((members.get_name(k[:-1]), v) for k, v in zoom_member.items() if k[:-1] != '0')
+    name_transform = ((members.get_name(k), v) for k, v in zoom_member.items() if k[:-1] != '0')
     
     # secondary key sort: sort by name
     name_sort = sorted(name_transform, key=itemgetter(0))

@@ -62,9 +62,8 @@ async def slimerank(ctx):
       for z in third:
         third_name += [members.get_name(z)]
 
-      await ctx.send(
-                f'The current first is {first_name} with {AGE_members[x]['slimes']} slimes! Second is {second_name} with {AGE_members[y]['slimes']} slimes, and third is {third_name} with {AGE_members[z]['slimes']} slimes! They are the best! ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾'
-            )
+      await ctx.send(f'The current first is {first_name} with {AGE_members[x]["slimes"]} slimes! Second is {second_name} with {AGE_members[y]["slimes"]} slimes, and third is {third_name} with {AGE_members[z]["slimes"]} slimes! They are the best! ⁽⁽٩(๑˃̶͈̀ ᗨ ˂̶͈́)۶⁾⁾')
+      
   except Exception as err:
     log(f'ERROR in slimerank(): {err}')
     handleError(err)
@@ -86,7 +85,7 @@ async def doubleping(ctx, username):
 
             original = AGE_members[member_id]['slimes']
             helpers.add_slime(member_id, -1)
-            reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been subtracted by Klee (๑‵●‿●‵๑), going from {original} to {AGE_members[member_id]['slimes']}'
+            reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been subtracted by Klee (๑‵●‿●‵๑), going from {original} to {AGE_members[member_id]["slimes"]}'
             
             await ctx.send(reply_msg)
 
@@ -96,17 +95,22 @@ async def doubleping(ctx, username):
 
 #########################################################################
 
-async def slimeinfo(ctx):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-            self_member_id = str(ctx.author.id)
-            await ctx.send(
-                f'Klee knows that you have summoned {AGE_members[self_member_id]['slimes']} slimes so far this season! You are the best!'
-            )
+async def seasoninfo(ctx):
+  try: 
+    if ctx.channel.id in const.BOT_CHANNELS:
+      self_member_id = str(ctx.author.id)
+      slime_msg = f'{AGE_members[self_member_id]["slimes"]} slimes'
+      """
+      if AGE_members[self_member_id]["zooms"] == 0:
+        zoom_msg = f'zoomed {AGE_members[self_member_id]["zooms"]} time/s'
+      else:
+        zoom_msg = f'zoomed {AGE_members[self_member_id]["zooms"]} time/s at the following time: {list(AGE_members[self_member_id]["zoomtime"])}'
+"""
+      await ctx.send(f'Klee\'s best friend, Dodoco knows you have summoned {slime_msg}.')
 
-    except Exception as err:
-        log(f'ERROR in sself(): {err}')
-        handleError(err)
+  except Exception as err:
+    log(f'ERROR in sself(): {err}')
+    handleError(err)
 
 #########################################################################
 
@@ -152,7 +156,7 @@ async def slimeadd(ctx, number, username):
             original = AGE_members[member_id]['slimes']
             helpers.add_slime(member_id, number)
 
-            reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]['slimes']}'
+            reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]["slimes"]}'
 
             await ctx.send(reply_msg)
 
@@ -174,30 +178,32 @@ async def zoom(ctx, member):
         handleError(err)
 
 #########################################################################
-
 async def zoominfo(ctx, member='me'):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-            member_id = members.id_search(ctx.message, member)
+  try:
+    if ctx.channel.id in const.BOT_CHANNELS:
+      member_id = members.id_search(ctx.message, member)
 
-            if zoom_member[member_id] == 0:
-                replymsg = 'Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”'
-                await ctx.send(replymsg)
-            #after checking that the member has zoomed
-            else:
-                replymsg = f'Klee has written down with my crayolas that {members.get_name(member_id)} has zoomed {zoom_member[member_id]} times this season, and at the following times:\n'
-                for i in zoom_time[member_id]:
-                    replymsg += f'{i} \n'
-                replymsg += 'щ(゜ロ゜щ) Wahh! Why you zoomed!'
-                await ctx.send(replymsg)
+      if member == 'me' or member_id == str(ctx.author.id):
+        pronoun = 'you have'
+      else:
+        pronoun = members.get_name(member_id) + ' has'
 
-    except KeyError:
-        await ctx.send(
-            'Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”'
-        )
-    except Exception as err:
-        log(f'ERROR in zoominfo(): {err}')
-        handleError(err)
+      if zoom_member[member_id] == 0:
+        replymsg = f'Klee knows {pronoun} not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”'
+        await ctx.send(replymsg)
+      else:
+        replymsg = f'Klee has written down with my crayolas that {pronoun} zoomed {zoom_member[member_id]} times this season, and at the following times:\n'
+        for i in zoom_time[member_id]:
+          replymsg += f'{i} \n'
+        replymsg += 'щ(゜ロ゜щ) Wahh! Why you zoomed!'
+        await ctx.send(replymsg)
+
+  except KeyError:
+    await ctx.send('Klee knows you have not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”')
+    
+  except Exception as err:
+    log(f'ERROR in zoominfo(): {err}')
+    handleError(err)
 
 #########################################################################
 
@@ -243,29 +249,27 @@ async def gif(ctx):
 #########################################################################
 
 async def clear(ctx):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
+  try:
+    if ctx.channel.id in const.BOT_CHANNELS:
+      #clear slime counts
+      for member_id in AGE_members:
+        db[member_id]['slimes'] = 0
+        AGE_members[member_id]['slimes'] = 0
 
-            for member_id in AGE_members:
-                #clear slime counts
-                db[member_id] = 0
-                AGE_members[member_id] = 0
+      #clear zoom counts
+      for member_id in zoom_member:
+        db[member_id]['zooms'] = 0
+        AGE_members[member_id]['zooms'] = 0
 
-            for member_id in zoom_member:
-                #clear zoom counts
-                db[member_id] = 0
-                zoom_member[member_id] = 0
+      #clear zoom times
+      for member_id in zoom_time:
+        db[member_id]['zoomtime'] = []
+        AGE_members[member_id]['zoomtime'] = []
 
-            for member_id in zoom_time:
-                #clear zoom times
-                db[member_id] = []
-                zoom_time[member_id] = []
-
-            await ctx.send('All slime related records cleared (❁๑ᵒ◡ᵒ๑)')
-
-    except Exception as err:
-        log(f'ERROR in clear(): {err}')
-        handleError(err)
+      await ctx.send('All slime related records cleared (❁๑ᵒ◡ᵒ๑)')
+  except Exception as err:
+    log(f'ERROR in clear(): {err}')
+    handleError(err)
 
 #########################################################################
 
@@ -304,15 +308,32 @@ async def slimeseason(ctx):
   except Exception as err:
     log(f'ERROR in total(): {err}')
     raise err
+    
 """
+AGE_members = {}
+for member_id in members.id_list():
+  AGE_members[member_id] = {}
+  AGE_members[member_id]['slimes'] = 0
+  AGE_members[member_id]['zooms'] = 0
+  AGE_members[member_id]['zoomtime'] = []
+
 for member_id in db:
-  if member_id.endswith('z'):
-    zooms = db[member_id]
-    db[member_id[:-1]]['zooms'] = zooms
-  elif member_id.endswith('zt'):
-    zoom_time = db[member_id]
-    db[member_id[:-2]]['zoomtime'] = zoom_time
-  elif member_id[-1].isdigit():
-    slimes = db[member_id]
-    db[member_id]['slimes'] = slimes
+    if member_id.endswith('z'):
+      if member_id[:-1] in AGE_members:
+        zooms = db[member_id]
+        AGE_members[member_id[:-1]]['zooms'] = zooms
+    elif member_id.endswith('zt'):
+      if member_id[:-2] in AGE_members:
+        zoom_time = db[member_id]
+        AGE_members[member_id[:-2]]['zoomtime'] = list(zoom_time)
+    elif member_id[-1].isdigit():
+      if member_id in AGE_members:
+        slimes = db[member_id]
+        AGE_members[member_id]['slimes'] = slimes
+
+for member_id in AGE_members:
+  db[member_id] = {}
+  db[member_id]['slimes'] = AGE_members[member_id]['slimes']
+  db[member_id]['zooms'] = AGE_members[member_id]['zooms']
+  db[member_id]['zoomtime'] = AGE_members[member_id]['zoomtime']
   """
