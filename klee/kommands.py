@@ -167,15 +167,19 @@ async def slimeadd(ctx, number, username):
 #########################################################################
 
 async def zoom(ctx, member):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-            member_id = members.id_search(ctx.message, member)
-            reply_msg = helpers.add_zoom(member_id, 1)
-            await ctx.send(reply_msg)
+  try:
+    if ctx.channel.id in const.BOT_CHANNELS:
+      member_id = members.id_search(ctx.message, member)
+      member_mention = f'<@{member_id}>' if not member_id.startswith('alt') else ''
+      reply_msg = helpers.add_zoom(member_id, 1)
+      reply_msg = f'{reply_msg} {member_mention}'
+      is_ping_member = member_id != str(ctx.author.id)
+      mentionsFlag = discord.AllowedMentions(users=is_ping_member, replied_user=False)
+      await ctx.message.reply(reply_msg, allowed_mentions=mentionsFlag)
 
-    except Exception as err:
-        log(f'ERROR in zoom(): {err}')
-        handleError(err)
+  except Exception as err:
+    log(f'ERROR in zoom(): {err}')
+    handleError(err)
 
 #########################################################################
 async def zoominfo(ctx, member='me'):
@@ -188,12 +192,12 @@ async def zoominfo(ctx, member='me'):
       else:
         pronoun = members.get_name(member_id) + ' has'
 
-      if zoom_member[member_id] == 0:
+      if AGE_members[member_id]['zooms'] == 0:
         replymsg = f'Klee knows {pronoun} not zoomed yet this season! Keep it up ヾ(๑ㆁᗜㆁ๑)ﾉ”'
         await ctx.send(replymsg)
       else:
-        replymsg = f'Klee has written down with my crayolas that {pronoun} zoomed {zoom_member[member_id]} times this season, and at the following times:\n'
-        for i in zoom_time[member_id]:
+        replymsg = f'Klee has written down with my crayolas that {pronoun} zoomed {AGE_members[member_id]["zooms"]} times this season, and at the following times:\n'
+        for i in AGE_members[member_id]["zoomtime"]:
           replymsg += f'{i} \n'
         replymsg += 'щ(゜ロ゜щ) Wahh! Why you zoomed!'
         await ctx.send(replymsg)
@@ -208,16 +212,20 @@ async def zoominfo(ctx, member='me'):
 #########################################################################
 
 async def zoomadd(ctx, number, username):
-    try:
-        if ctx.channel.id in const.BOT_CHANNELS:
-            member = username.strip()
-            member_id = members.id_search(ctx.message, member)
-            reply_msg = helpers.add_zoom(member_id, int(number))
-            await ctx.send(reply_msg)
+  try:
+    if ctx.channel.id in const.BOT_CHANNELS:
+      member = username.strip()
+      member_id = members.id_search(ctx.message, member)
+      member_mention = f'<@{member_id}>' if not member_id.startswith('alt') else ''
+      reply_msg = helpers.add_zoom(member_id, int(number))
+      reply_msg = f'{reply_msg} {member_mention}'
+      is_ping_member = member_id != str(ctx.author.id)
+      mentionsFlag = discord.AllowedMentions(users=is_ping_member, replied_user=False)
+      await ctx.message.reply(reply_msg, allowed_mentions=mentionsFlag)
 
-    except Exception as err:
-        log(f'ERROR in zoomadd(): {err}')
-        handleError(err)
+  except Exception as err:
+    log(f'ERROR in zoomadd(): {err}')
+    handleError(err)
 
 #########################################################################
 
@@ -225,7 +233,7 @@ async def zoomseason(ctx):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
       zoom_sum, zoom_message = helpers.total_zoom()
-      await ctx.send(f'Seasonal zoom count: {zoom_sum}.\n\nMember zoom counts: {zoom_message}')
+      await ctx.send(f'Seasonal zoom count: {zoom_sum}.\nMember zoom counts: {zoom_message}')
       
   except Exception as err:
     log(f'ERROR in zoomseason(): {err}')
@@ -309,7 +317,101 @@ async def slimeseason(ctx):
     log(f'ERROR in total(): {err}')
     raise err
     
+#########################################################################
+
+async def slime_ping(message_ctx, username):
+  try:
+    channel_id = message_ctx.channel.id
+    if channel_id in const.BOT_CHANNELS:
+
+      member = username.strip()
+      member_id = members.id_search(message_ctx, member)
+
+      if member_id == members.UNKNOWN:
+        reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
+      else:
+        member_mention = f'<@{member_id}>' if not member_id.startswith('alt') else ''
+        role_mention = f'{const.MENTION_ULTRA_ROLE}' if channel_id != const.CID_BOTTESTING_CHANNEL else f'{const.MENTION_SLIMEPINGTEST_ROLE}'
+        mentionsFlag = discord.AllowedMentions(users=False, roles=True, replied_user=False)
+        try:
+          helpers.add_slime(member_id, 1)
+          reply_msg = f'{role_mention} {member_mention} Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]["slimes"]} slimes for {members.get_name(member_id)}!'
+        except KeyError:
+          reply_msg = f'{role_mention} {member_mention} Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
+
+      await message_ctx.reply(reply_msg, allowed_mentions=mentionsFlag)
+
+  except Exception as err:
+    log(f'ERROR in slime_ping(): {err}')
+    handleError(err)
+
+#########################################################################
 """
+ban-permission functions in test
+
+#add in number 
+async def ban(ctx, username, client):
+  try:
+    if ctx.channel.id in const.BOT_CHANNELS:  #make sure tempremove could only be executed from certain channels
+      
+      channel = client.get_channel(const.MAIN_CHANNEL)
+      
+      username = username.strip()
+      member_id = members.id_search(ctx.message, username)
+      if member_id == members.UNKNOWN:
+        await ctx.send('Uh, Klee does not know this name, and therefore cannot tempremove this person... (๑•̆ ૩•̆)')
+        return
+
+      # Get the member object from the member ID
+      member = ctx.guild.get_member(member_id)
+      # Get the existing channel permissions
+      overwrites = channel.overwrites
+      # Create or modify the permission overwrite for the member
+      overwrites[member] = discord.PermissionOverwrite(view_channel=False)
+      log(f'{member_id},{member}')
+      # Apply the updated channel permissions
+      await channel.edit(overwrites=overwrites)
+      log('passed3')
+
+      await ctx.send(f"The view_channel permission for {member.name} has been removed.")
+  except Exception as err:
+    log(f'ERROR in ban(): {err}')
+    raise err
+
+
+
+async def unban(ctx, username, client):
+  try:
+    if ctx.channel.id in const.BOT_CHANNELS:  #make sure tempremove could only be executed from certain channels
+      channel = client.get_channel(const.CID_SLIMEPING_CHANNEL)
+
+      username = username.strip()
+      member_id = members.id_search(ctx.message, username)
+
+      if member_id == members.UNKNOWN:
+        await ctx.send('Uh, Klee does not know this name, and therefore cannot tempremove this person... (๑•̆ ૩•̆)')
+        return
+
+      # Get the member object from the member ID
+      member = ctx.guild.get_member(member_id)
+      # Get the existing channel permissions
+      overwrites = channel.overwrites
+      # Create or modify the permission overwrite for the member
+      overwrites[member] = discord.PermissionOverwrite(view_channel=True)
+      # Apply the updated channel permissions
+      await channel.edit(overwrites=overwrites)
+
+      await ctx.send(f"The view_channel permission for {member.name} has been restored.")
+  except Exception as err:
+    log(f'ERROR in unban: {err}')
+    raise err
+"""
+
+"""
+below is a piece of code used for data restructure of the replit db, which
+happened on EST 06/17/2023
+---can be deleted if no errors are observed afterwards---
+
 AGE_members = {}
 for member_id in members.id_list():
   AGE_members[member_id] = {}
@@ -336,4 +438,26 @@ for member_id in AGE_members:
   db[member_id]['slimes'] = AGE_members[member_id]['slimes']
   db[member_id]['zooms'] = AGE_members[member_id]['zooms']
   db[member_id]['zoomtime'] = AGE_members[member_id]['zoomtime']
+
+for member_id in db:
+  if member_id.startswith('alt'):
+    slimes = db[member_id]
+    db[member_id] = {}
+    db[member_id]['slie']
+
+from klee.members import id_list
+for member_id in id_list():
+  if member_id.startswith('alt'):
+    if member_id in db:
+      slimes = db[member_id]
+      db[member_id] = {}
+      db[member_id]['slimes'] = slimes
+      db[member_id]['zooms'] = 0
+      db[member_id]['zoomtime'] = []
+    else:
+      db[member_id] = {}
+      db[member_id]['slimes'] = slimes
+      db[member_id]['zooms'] = 0
+      db[member_id]['zoomtime'] = []
   """
+
