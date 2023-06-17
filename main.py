@@ -1,11 +1,12 @@
 from klee import const, members, kommands, helpers
-from klee.helpers import is_any_word_in_string, utcTimestamp
+from klee.helpers import is_any_word_in_string, utcTimestamp, checkHistory
 from klee.logging import log, handleError
 from klee.stats import AGE_members
 from keep_alive import keep_alive
 
 from datetime import datetime, timezone
 from discord.ext import commands, tasks
+from replit import db, database
 import discord
 import nest_asyncio
 import os
@@ -43,7 +44,9 @@ async def on_ready():
         await client.change_presence(status = discord.Status.online, \
                             activity = discord.Game(f'counting slimes since {utcTimestamp()} (UTC)'))
         #print(f'{utcTimestamp()} INFO Bot is ready.')
+
         log('INFO Bot is ready.')
+        await checkHistory(client)
 
         failed_msg = helpers.read_txt()
         #if the failed_msg text is not empty, sends the msg to the corresponding channel, and then erase the txt file
@@ -79,12 +82,20 @@ async def on_command_error(ctx, error):
 async def message(message):
     try:
         if message.channel.id in const.BOT_CHANNELS:  #make sure the @ is from the right channel
+            db["timeOfLastMessage"] = str(message.created_at)
             log(f'[chat] {message.author.display_name}: {message.content}')
             if message.author == client.user:  #make sure is not responding to message from the bot
                 return
+            
+            # '.u' or '.u user'
+            if message.content == '.u' or message.content.startswith('.u '):
 
-            #@ultra or @altra
-            if is_any_word_in_string(const.PING_MENTIONS, message.content):
+                words = message.content.split(' ', 1)  #split into two words max
+                username = 'me' if len(words) == 1 else words[1]
+                await kommands.slime_ping(message, username)
+
+            # @ultra or @altra
+            elif is_any_word_in_string(const.PING_MENTIONS, message.content):
 
                 member_id = members.UNKNOWN
 
@@ -104,17 +115,10 @@ async def message(message):
                     except KeyError:
                         reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 
-                try:
-                    await message.channel.send(reply_msg)
-                except discord.errors.HTTPException:
-                    with open(f"failed_msg.txt", "a") as f:
-                        f.write(f"{reply_msg}\n")
-                    print("\n\n\nBLOCKED BY RATE LIMITS\nRESTARTING NOW\n\n\n")
-                    os.system('kill 1')
-                    os.system("python restarter.py")
+                await message.reply(reply_msg, mention_author=False)
 
     except Exception as err:
-        log(f'{utcTimestamp()} ERROR in message(): {err}')
+        log(f'ERROR in message(): {err}')
         handleError(err)
 
 
@@ -122,6 +126,14 @@ async def message(message):
 ######################################################
 # BOT COMMANDS #
 ######################################################
+#test function for banning by per-member denies
+@client.command()
+async def ban(ctx, username):
+  await kommands.ban(ctx, username, client)
+
+@client.command()
+async def unban(ctx, username):
+  await kommands.unban(ctx, username, client)
 
 #method name doubleping, simply wrapper for minus_slime
 @client.command()
@@ -154,6 +166,11 @@ ex.) !slimeadd 5 john doe
 number parameter will be "5" and the *username parameter 
 will be a tuple containing the strings "john" and "doe"
 """
+
+@client.command(aliases=['u'])
+async def ultra(ctx, username='me'):
+  await kommands.slime_ping(ctx.message, username)
+
 #for the specified member, add 1 zoom and store the time this zoom was reported
 @client.command()
 async def zoom(ctx, member='me'):

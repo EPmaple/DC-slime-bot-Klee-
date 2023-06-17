@@ -1,5 +1,5 @@
 from . import const, members, helpers
-from .helpers import is_any_word_in_string, utcTimestamp
+from .helpers import is_any_word_in_string, utcTimestamp, add_slime
 from .logging import log, handleError
 from .stats import AGE_members, zoom_member, zoom_time
 
@@ -158,11 +158,13 @@ async def slimeadd(ctx, number, username):
 
             reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]["slimes"]}'
 
-            await ctx.send(reply_msg)
+            await ctx.message.reply(reply_msg, mention_author=False)
+            #await ctx.send(reply_msg)
 
     except Exception as err:
         log(f'ERROR in add(): {err}')
         handleError(err)
+
 
 #########################################################################
 
@@ -170,8 +172,12 @@ async def zoom(ctx, member):
     try:
         if ctx.channel.id in const.BOT_CHANNELS:
             member_id = members.id_search(ctx.message, member)
+            member_mention = f'<@{member_id}>' if not member_id.startswith('alt') else ''
             reply_msg = helpers.add_zoom(member_id, 1)
-            await ctx.send(reply_msg)
+            reply_msg = f'{reply_msg} {member_mention}'
+            is_ping_member = member_id != str(ctx.author.id)
+            mentionsFlag = discord.AllowedMentions(users=is_ping_member, replied_user=False)
+            await ctx.message.reply(reply_msg, allowed_mentions=mentionsFlag)
 
     except Exception as err:
         log(f'ERROR in zoom(): {err}')
@@ -212,8 +218,12 @@ async def zoomadd(ctx, number, username):
         if ctx.channel.id in const.BOT_CHANNELS:
             member = username.strip()
             member_id = members.id_search(ctx.message, member)
+            member_mention = f'<@{member_id}>' if not member_id.startswith('alt') else ''
             reply_msg = helpers.add_zoom(member_id, int(number))
-            await ctx.send(reply_msg)
+            reply_msg = f'{reply_msg} {member_mention}'
+            is_ping_member = member_id != str(ctx.author.id)
+            mentionsFlag = discord.AllowedMentions(users=is_ping_member, replied_user=False)
+            await ctx.message.reply(reply_msg, allowed_mentions=mentionsFlag)
 
     except Exception as err:
         log(f'ERROR in zoomadd(): {err}')
@@ -308,8 +318,103 @@ async def slimeseason(ctx):
   except Exception as err:
     log(f'ERROR in total(): {err}')
     raise err
-    
+
+
+#########################################################################
+
+async def slime_ping(message_ctx, username):
+  try:
+    channel_id = message_ctx.channel.id
+    if channel_id in const.BOT_CHANNELS:
+
+      member = username.strip()
+      member_id = members.id_search(message_ctx, member)
+
+      if member_id == members.UNKNOWN:
+        reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
+      else:
+        member_mention = f'<@{member_id}>' if not member_id.startswith('alt') else ''
+        role_mention = f'{const.MENTION_ULTRA_ROLE}' if channel_id != const.CID_BOTTESTING_CHANNEL else f'{const.MENTION_SLIMEPINGTEST_ROLE}'
+        mentionsFlag = discord.AllowedMentions(users=False, roles=True, replied_user=False)
+        try:
+          helpers.add_slime(member_id, 1)
+          reply_msg = f'{role_mention} {member_mention} Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
+        except KeyError:
+          reply_msg = f'{role_mention} {member_mention} Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
+
+      await message_ctx.reply(reply_msg, allowed_mentions=mentionsFlag)
+
+  except Exception as err:
+    log(f'ERROR in slime_ping(): {err}')
+    handleError(err)
+
+#########################################################################
 """
+ban-permission functions in test
+
+#add in number 
+async def ban(ctx, username, client):
+  try:
+    if ctx.channel.id in const.BOT_CHANNELS:  #make sure tempremove could only be executed from certain channels
+      
+      channel = client.get_channel(const.MAIN_CHANNEL)
+      
+      username = username.strip()
+      member_id = members.id_search(ctx.message, username)
+      if member_id == members.UNKNOWN:
+        await ctx.send('Uh, Klee does not know this name, and therefore cannot tempremove this person... (๑•̆ ૩•̆)')
+        return
+
+      # Get the member object from the member ID
+      member = ctx.guild.get_member(member_id)
+      # Get the existing channel permissions
+      overwrites = channel.overwrites
+      # Create or modify the permission overwrite for the member
+      overwrites[member] = discord.PermissionOverwrite(view_channel=False)
+      log(f'{member_id},{member}')
+      # Apply the updated channel permissions
+      await channel.edit(overwrites=overwrites)
+      log('passed3')
+
+      await ctx.send(f"The view_channel permission for {member.name} has been removed.")
+  except Exception as err:
+    log(f'ERROR in ban(): {err}')
+    raise err
+
+
+
+async def unban(ctx, username, client):
+  try:
+    if ctx.channel.id in const.BOT_CHANNELS:  #make sure tempremove could only be executed from certain channels
+      channel = client.get_channel(const.CID_SLIMEPING_CHANNEL)
+
+      username = username.strip()
+      member_id = members.id_search(ctx.message, username)
+
+      if member_id == members.UNKNOWN:
+        await ctx.send('Uh, Klee does not know this name, and therefore cannot tempremove this person... (๑•̆ ૩•̆)')
+        return
+
+      # Get the member object from the member ID
+      member = ctx.guild.get_member(member_id)
+      # Get the existing channel permissions
+      overwrites = channel.overwrites
+      # Create or modify the permission overwrite for the member
+      overwrites[member] = discord.PermissionOverwrite(view_channel=True)
+      # Apply the updated channel permissions
+      await channel.edit(overwrites=overwrites)
+
+      await ctx.send(f"The view_channel permission for {member.name} has been restored.")
+  except Exception as err:
+    log(f'ERROR in unban: {err}')
+    raise err
+"""
+
+"""
+below is a piece of code used for data restructure of the replit db, which
+happened on EST 06/17/2023
+---can be deleted if no errors are observed afterwards---
+
 AGE_members = {}
 for member_id in members.id_list():
   AGE_members[member_id] = {}
