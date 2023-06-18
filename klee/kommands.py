@@ -350,6 +350,7 @@ async def slime_ping(message_ctx, username):
 
 #########################################################################
 
+#outputs replymsg/ragna_data to console
 async def website_data(ctx):
   try:
     channel_id = ctx.channel.id
