@@ -350,6 +350,34 @@ async def slime_ping(message_ctx, username):
 
 #########################################################################
 
+#outputs replymsg/ragna_data to console
+async def website_data(ctx):
+  try:
+    channel_id = ctx.channel.id
+    if channel_id in const.BOT_CHANNELS:
+    
+      #data_list = []
+      replymsg = '[\n'
+      id = 0
+      for member_id in AGE_members:
+        member_dict = {}
+        id += 1
+        member_dict['id'] = id
+        member_dict['name'] = members.get_name(member_id)
+        member_dict['slimes'] = AGE_members[member_id]['slimes']
+        member_dict['zooms'] = AGE_members[member_id]['zooms']
+        replymsg += f'{member_dict},\n'
+        #data_list.append(member_dict)
+
+      replymsg += ']'
+      log(replymsg)
+      
+  except Exception as err:
+    log(f'ERROR in websitedata(): {err}')
+    handleError(err)
+    
+#########################################################################
+
 """
 ban-permission functions in test
 
