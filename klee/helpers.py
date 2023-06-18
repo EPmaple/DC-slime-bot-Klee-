@@ -201,6 +201,7 @@ async def checkHistory(client):
               try:
                   add_slime(member_id, 1)
                   reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]["slimes"]} slimes for {members.get_name(member_id)}!'
+
               except KeyError:
                   reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 

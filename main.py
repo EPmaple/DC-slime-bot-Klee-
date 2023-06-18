@@ -44,6 +44,7 @@ async def on_ready():
         await client.change_presence(status = discord.Status.online, \
                             activity = discord.Game(f'counting slimes since {utcTimestamp()} (UTC)'))
         #print(f'{utcTimestamp()} INFO Bot is ready.')
+
         log('INFO Bot is ready.')
         await checkHistory(client)
 
@@ -124,6 +125,14 @@ async def message(message):
 ######################################################
 # BOT COMMANDS #
 ######################################################
+#test function for banning by per-member denies
+@client.command()
+async def ban(ctx, username):
+  await kommands.ban(ctx, username, client)
+
+@client.command()
+async def unban(ctx, username):
+  await kommands.unban(ctx, username, client)
 
 #test function for banning by per-member denies
 @client.command()
