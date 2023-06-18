@@ -170,6 +170,10 @@ will be a tuple containing the strings "john" and "doe"
 async def ultra(ctx, username='me'):
   await kommands.slime_ping(ctx.message, username)
 
+@client.command(aliases=['wd'])
+async def website_data(ctx):
+  await kommands.website_data(ctx)
+
 #for the specified member, add 1 zoom and store the time this zoom was reported
 @client.command()
 async def zoom(ctx, member='me'):
