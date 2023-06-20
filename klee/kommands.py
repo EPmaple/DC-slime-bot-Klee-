@@ -360,6 +360,7 @@ async def website_data(ctx):
       replymsg = '[\n'
       id = 0
       for member_id in AGE_members:
+        #if not(AGE_members[member_id]['slimes'] == 0 and AGE_members[member_id]['zooms'] == 0):
         member_dict = {}
         id += 1
         member_dict['id'] = id
@@ -367,7 +368,6 @@ async def website_data(ctx):
         member_dict['slimes'] = AGE_members[member_id]['slimes']
         member_dict['zooms'] = AGE_members[member_id]['zooms']
         replymsg += f'{member_dict},\n'
-        #data_list.append(member_dict)
 
       replymsg += ']'
       log(replymsg)

@@ -126,6 +126,7 @@ async def message(message):
 # BOT COMMANDS #
 ######################################################
 #test function for banning by per-member denies
+"""
 @client.command()
 async def ban(ctx, username):
   await kommands.ban(ctx, username, client)
@@ -133,7 +134,7 @@ async def ban(ctx, username):
 @client.command()
 async def unban(ctx, username):
   await kommands.unban(ctx, username, client)
-
+"""
 #test function for banning by per-member denies
 @client.command()
 async def ban(ctx, username):
