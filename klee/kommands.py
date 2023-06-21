@@ -1,7 +1,7 @@
 from . import const, members, helpers
 from .helpers import is_any_word_in_string, utcTimestamp, add_slime
 from .logging import log, handleError
-from .stats import AGE_members, zoom_member, zoom_time
+from .stats import AGE_members
 
 from datetime import datetime, timedelta
 from replit import db
@@ -106,7 +106,7 @@ async def seasoninfo(ctx):
       else:
         zoom_msg = f'zoomed {AGE_members[self_member_id]["zooms"]} time/s at the following time: {list(AGE_members[self_member_id]["zoomtime"])}'
 """
-      await ctx.send(f'Klee\'s best friend, Dodoco knows you have summoned {slime_msg}.')
+      await ctx.send(f'Klee\'s best friend, Dodoco ૮꒰ ˶• ༝ •˶꒱ა knows you have summoned {slime_msg}.')
 
   except Exception as err:
     log(f'ERROR in sself(): {err}')

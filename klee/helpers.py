@@ -1,6 +1,6 @@
 from . import members, const, kommands
 from .logging import log, handleError
-from .stats import AGE_members, zoom_member, zoom_time
+from .stats import AGE_members
 
 from datetime import datetime, timedelta
 from operator import itemgetter
@@ -124,6 +124,30 @@ def list_member_slime_count():
 #return zoom_sum [int], total # of zoom
 #       zoom_message [dict], list the top zoomers along with their corresponding # of zooms
 def total_zoom():
+  # transform to list of tuples of the form (name, count)
+  name_transform = []
+  for member_id in AGE_members:
+    tuple = (members.get_name(member_id), AGE_members[member_id]['zooms'])
+    name_transform.append(tuple)
+
+  # secondary key sort: sort by name
+  name_sort = sorted(name_transform, key=itemgetter(0))
+
+  # primary key sort: sort by count, descending
+  value_sort = sorted(name_sort, key=itemgetter(1), reverse=True)
+
+  # at this point the list will be sorted by count first.
+  # for any members with matching counts, the members will be in alphabetical order.
+  # for example: [('traffyboi', 3), ('aile', 2), ('vent', 2)]
+
+  # back to dictionary
+  zoom_message = {k: v for k, v in value_sort}
+  zoom_sum = sum(zoom_message.values())
+
+  return (zoom_sum, zoom_message)
+    
+"""
+def total_zoom():
     # transform to list of tuples of the form (name, count)
     name_transform = ((members.get_name(k), v) for k, v in zoom_member.items() if k[:-1] != '0')
     
@@ -142,7 +166,7 @@ def total_zoom():
     zoom_sum = sum(zoom_message.values())
 
     return (zoom_sum, zoom_message)
-
+"""
 #########################################################################
 
 def is_any_word_in_string(wordlist, string):
@@ -178,7 +202,7 @@ async def checkHistory(client):
     #change to slimeping channel after testing
     #CID_SLIMEPING_CHANNEL
     #CID_BOTTESTING_CHANNEL
-    channel = client.get_channel(const.CID_SLIMEPING_CHANNEL)
+    channel = client.get_channel(const.CID_BOTTESTING_CHANNEL)
     if channel:
       async for message in channel.history(limit=300, after=time_obj, before=current):
           #for now, only set to catch all pings
@@ -200,7 +224,7 @@ async def checkHistory(client):
           else:
               try:
                   add_slime(member_id, 1)
-                  reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]["slimes"]} slimes for {members.get_name(member_id)}!'
+                  reply_msg = f"(ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]['slimes']} slimes for {members.get_name(member_id)}! Sorry for not responding earlier, Klee stayed up late watching the circus' midnight show and feels a bit tired."
 
               except KeyError:
                   reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'

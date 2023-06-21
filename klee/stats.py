@@ -43,7 +43,7 @@ def local_db():
 AGE_members = local_db()
 
 
-
+"""
 # zoom_dictionaries INIT construction
 def zoom_member():
   zoom_member = {}  # key=member_id, value=# of times zoomed
@@ -68,3 +68,4 @@ def zoom_time():
 
 zoom_time = zoom_time()
 
+"""
