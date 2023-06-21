@@ -261,18 +261,17 @@ async def gif(ctx):
 async def clear(ctx):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
-      #clear slime counts
+      
       for member_id in AGE_members:
+        #clear slime counts
         db[member_id]['slimes'] = 0
         AGE_members[member_id]['slimes'] = 0
 
-      #clear zoom counts
-      for member_id in zoom_member:
+        #clear zoom counts
         db[member_id]['zooms'] = 0
         AGE_members[member_id]['zooms'] = 0
 
-      #clear zoom times
-      for member_id in zoom_time:
+        #clear zoom times
         db[member_id]['zoomtime'] = []
         AGE_members[member_id]['zoomtime'] = []
 
