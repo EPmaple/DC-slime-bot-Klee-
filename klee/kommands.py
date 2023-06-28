@@ -336,7 +336,7 @@ async def slime_ping(message_ctx, username):
         klee_response = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
       else:
 
-        if re.match('^me\b', member_text, re.IGNORECASE):
+        if re.match('^me\\b', member_text, re.IGNORECASE):
           try:
             author_name = members.get_name(member_id)
           except KeyError:
