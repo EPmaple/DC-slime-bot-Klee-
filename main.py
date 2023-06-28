@@ -46,7 +46,7 @@ async def on_ready():
         #print(f'{utcTimestamp()} INFO Bot is ready.')
 
         log('INFO Bot is ready.')
-        await checkHistory(client)
+        #await checkHistory(client)
 
         failed_msg = helpers.read_txt()
         #if the failed_msg text is not empty, sends the msg to the corresponding channel, and then erase the txt file
@@ -82,7 +82,7 @@ async def on_command_error(ctx, error):
 async def message(message):
     try:
         if message.channel.id in const.BOT_CHANNELS:  #make sure the @ is from the right channel
-            db["timeOfLastMessage"] = str(message.created_at)
+            #db["timeOfLastMessage"] = str(message.created_at)
             log(f'[chat] {message.author.display_name}: {message.content}')
             if message.author == client.user:  #make sure is not responding to message from the bot
                 return
