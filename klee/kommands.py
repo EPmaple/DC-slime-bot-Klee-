@@ -6,6 +6,7 @@ from .stats import AGE_members
 from datetime import datetime, timedelta
 from replit import db
 import discord
+import re
 
 #########################################################################
 async def slimerank(ctx):
@@ -325,22 +326,33 @@ async def slime_ping(message_ctx, username):
     channel_id = message_ctx.channel.id
     if channel_id in const.BOT_CHANNELS:
 
-      member = username.strip()
-      member_id = members.id_search(message_ctx, member)
+      role_mention = f'{const.MENTION_ULTRA_ROLE}' if channel_id != const.CID_BOTTESTING_CHANNEL else f'{const.MENTION_SLIMEPINGTEST_ROLE}'
+      
+      member_text = username.strip()
+      member_id = members.id_search(message_ctx, member_text)
 
       if member_id == members.UNKNOWN:
-        reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
+        echo_msg = f'{role_mention} {member_text}'
+        klee_response = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
       else:
-        member_mention = f'<@{member_id}>' if not member_id.startswith('alt') else ''
-        role_mention = f'{const.MENTION_ULTRA_ROLE}' if channel_id != const.CID_BOTTESTING_CHANNEL else f'{const.MENTION_SLIMEPINGTEST_ROLE}'
-        mentionsFlag = discord.AllowedMentions(users=False, roles=True, replied_user=False)
+
+        if re.match('^me\b', member_text, re.IGNORECASE)
+          try:
+            author_name = members.get_name(member_id)
+          except KeyError:
+            author_name = message_ctx.author.display_name
+          echo_msg = f'{role_mention} {author_name}: {member_text}'
+        else:
+          echo_msg = f'{role_mention} {member_text}'
+
         try:
           helpers.add_slime(member_id, 1)
-          reply_msg = f'{role_mention} {member_mention} Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]["slimes"]} slimes for {members.get_name(member_id)}!'
-
+          klee_response = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]["slimes"]} slimes for {members.get_name(member_id)}!'
         except KeyError:
-          reply_msg = f'{role_mention} {member_mention} Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
+          klee_response = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 
+      reply_msg = f'{echo_msg}\n{klee_response}'
+      mentionsFlag = discord.AllowedMentions(users=False, roles=True, replied_user=False)
       await message_ctx.reply(reply_msg, allowed_mentions=mentionsFlag)
 
   except Exception as err:
