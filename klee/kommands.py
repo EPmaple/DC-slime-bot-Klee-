@@ -351,7 +351,7 @@ async def slime_ping(message_ctx, username):
         except KeyError:
           klee_response = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 
-      reply_msg = f'{echo_msg}\n{klee_response}'
+      reply_msg = f'{echo_msg} \n{klee_response}'
       mentionsFlag = discord.AllowedMentions(users=False, roles=True, replied_user=False)
       await message_ctx.reply(reply_msg, allowed_mentions=mentionsFlag)
 
