@@ -382,6 +382,7 @@ async def website_data(ctx):
 
       replymsg += ']'
       log(replymsg)
+      await ctx.send('Website data successfully printed in replit console.')
       
   except Exception as err:
     log(f'ERROR in websitedata(): {err}')
