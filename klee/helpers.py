@@ -190,8 +190,7 @@ def dt_from_timestamp(timestamp):
 #because we want to access a channel of which the client is in, thus take in a parameter, the client object, as an argument
 async def checkHistory(client):
   try:
-    #to get timeOfLastMessage from replit db
-    timeOfLastMessage = db["timeOfLastMessage"]
+    timeOfLastMessage = read_timestamp()
     
     # Convert the string to a datetime object
     # "%Y-%m-%d %H:%M:%S" is the format specifier that matches the string representation of UTC time
@@ -234,18 +233,32 @@ async def checkHistory(client):
     else:
       # Handle the case when the channel was not found
       log(f"Channel with ID {channel_id} not found")
-          
-  except KeyError:
-    #we will have a KeyError only when we have not ran this function before; therefore, this is a step of initialization
-    #Circular reference error: trying to set a date to replit db, which is not json serializable => do str of the datetime instead
-    db["timeOfLastMessage"] = str(datetime.utcnow())
-    channel = client.get_channel(const.CID_SLIMEPING_CHANNEL)
-    if channel:
-      await channel.send('checkHistory function initialized')
-    else:
-      # Handle the case when the channel was not found
-      log(f"Channel with ID {channel_id} not found")
     
   except Exception as err:
     log(f'ERROR in checkHistory(): {err}')
+    handleError(err)
+
+#########################################################################
+
+# import os; os.getcwd(); to find out current relative directory
+#default relative path is: '/home/runner/Slime-bot-for-DC'
+file_path = "timestamp.py"
+
+def save_timestamp(timestamp):
+  try:
+    with open(file_path, "w") as file:
+      file.write(timestamp)
+  except Exception as err:
+    log(f'{utcTimestamp()} ERROR save_timestamp(): {err}')
+    handleError(err)
+
+
+def read_timestamp():
+  try:
+    with open(file_path, "r") as file:
+      timestamp = file.read()
+      #log(f"the following is an attempt to get timestamp: {timestamp}")
+    return timestamp
+  except Exception as err:
+    log(f'{utcTimestamp()} ERROR read_timestamp(): {err}')
     handleError(err)

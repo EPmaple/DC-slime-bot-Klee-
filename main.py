@@ -45,8 +45,9 @@ async def on_ready():
                             activity = discord.Game(f'counting slimes since {utcTimestamp()} (UTC)'))
         #print(f'{utcTimestamp()} INFO Bot is ready.')
 
+        await checkHistory(client)
         log('INFO Bot is ready.')
-        #await checkHistory(client)
+        
 
         failed_msg = helpers.read_txt()
         #if the failed_msg text is not empty, sends the msg to the corresponding channel, and then erase the txt file
@@ -92,6 +93,7 @@ async def message(message):
 
                 words = message.content.split(' ', 1)  #split into two words max
                 username = 'me' if len(words) == 1 else words[1]
+                helpers.save_timestamp(str(message.created_at))
                 await kommands.slime_ping(message, username)
 
             # @ultra or @altra
@@ -115,6 +117,7 @@ async def message(message):
                     except KeyError:
                         reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 
+                helpers.save_timestamp(str(message.created_at))
                 await message.reply(reply_msg, mention_author=False)
 
     except Exception as err:
