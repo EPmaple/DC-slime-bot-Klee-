@@ -46,7 +46,7 @@ async def on_ready():
         #print(f'{utcTimestamp()} INFO Bot is ready.')
 
         log('INFO Bot is ready.')
-        await checkHistory(client)
+        #await checkHistory(client)
 
         failed_msg = helpers.read_txt()
         #if the failed_msg text is not empty, sends the msg to the corresponding channel, and then erase the txt file
@@ -82,7 +82,7 @@ async def on_command_error(ctx, error):
 async def message(message):
     try:
         if message.channel.id in const.BOT_CHANNELS:  #make sure the @ is from the right channel
-            db["timeOfLastMessage"] = str(message.created_at)
+            #db["timeOfLastMessage"] = str(message.created_at)
             log(f'[chat] {message.author.display_name}: {message.content}')
             if message.author == client.user:  #make sure is not responding to message from the bot
                 return
@@ -111,7 +111,7 @@ async def message(message):
                 else:
                     try:
                         helpers.add_slime(member_id, 1)
-                        reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]} slimes for {members.get_name(member_id)}!'
+                        reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]["slimes"]} slimes for {members.get_name(member_id)}!'
                     except KeyError:
                         reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 
@@ -122,11 +122,11 @@ async def message(message):
         handleError(err)
 
 
-
 ######################################################
 # BOT COMMANDS #
 ######################################################
 #test function for banning by per-member denies
+"""
 @client.command()
 async def ban(ctx, username):
   await kommands.ban(ctx, username, client)
@@ -134,6 +134,7 @@ async def ban(ctx, username):
 @client.command()
 async def unban(ctx, username):
   await kommands.unban(ctx, username, client)
+"""
 
 #method name doubleping, simply wrapper for minus_slime
 @client.command()
@@ -147,8 +148,8 @@ async def slimerank(ctx):
 
 #use to check number of slime counts for self
 @client.command(aliases=['sself', 'me', 'sinfo'])
-async def slimeinfo(ctx):
-    await kommands.slimeinfo(ctx)
+async def seasoninfo(ctx):
+    await kommands.seasoninfo(ctx)
 
 #use to get the approximate number of slimes summoned in the past 24 hours
 #not working correctly
@@ -170,6 +171,10 @@ will be a tuple containing the strings "john" and "doe"
 @client.command(aliases=['u'])
 async def ultra(ctx, username='me'):
   await kommands.slime_ping(ctx.message, username)
+
+@client.command(aliases=['wd'])
+async def website_data(ctx):
+  await kommands.website_data(ctx)
 
 #for the specified member, add 1 zoom and store the time this zoom was reported
 @client.command()
@@ -219,7 +224,6 @@ async def ping(ctx):
 @commands.check(in_slime_channel)
 async def slimeseason(ctx):
   await kommands.slimeseason(ctx)
-
 
 ######################################################
 # TASKS #

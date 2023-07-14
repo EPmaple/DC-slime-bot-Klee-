@@ -1,4 +1,5 @@
 from . import members
+from .logging import log, handleError
 
 from replit import db
 
@@ -6,39 +7,65 @@ from replit import db
 # INIT PART 1 #
 ######################################################
 
-# initialize AGE_members slime count to 0
-AGE_members = {}
-for x in members.id_list():
-    AGE_members[x] = 0
+def local_db():
+  try:
+    # initialize AGE_members slime counts and zoom counts to 0
+    AGE_members = {}
+    for member_id in members.id_list():
+      AGE_members[member_id] = {}
+      AGE_members[member_id]['slimes'] = 0
+      AGE_members[member_id]['zooms'] = 0
+      AGE_members[member_id]['zoomtime'] = []
+  
+    # member_count is a dictionary containing all ids (string) of the members
+    member_data = db.keys()
+  
+    #member_id and db_member_id are strings of id, ex. "12345124124"
+  #beware of KeyError, as db['zooms'][something] requires db['zooms'] = {} to be established beforehand in replit db
+    for member_id in members.id_list():
+      #to handle the case when a new member is added to the member_list but has not been registered by replit db yet, thus initialize the new member's data in replit db
+      if member_id not in member_data:
+        db[member_id]['slimes'] = 0
+        db[member_id]['zooms'] = 0
+        db[member_id]['zoomtime'] = []
+        
+      else:
+        AGE_members[member_id]['slimes'] = db[member_id]['slimes']
+        AGE_members[member_id]['zooms'] = db[member_id]['zooms']
+        AGE_members[member_id]['zoomtime'] = db[member_id]['zoomtime']
 
-# member_count is a dictionary containing all ids (string) of the members
-member_count = db.keys()
+    return AGE_members
 
-for member_id in AGE_members:
-    for db_member_id in member_count:
-        if member_id == db_member_id:  #if both ids match
-            AGE_members[member_id] = db[
-                db_member_id]  #AGE_members is now a dictionary with keys(ids) to values(slimes counts)
-        elif member_id not in member_count:
-            db[member_id] = 0
+  except Exception as err:
+    log(f'ERROR in zoominfo(): {err}')
+    handleError(err)
 
+AGE_members = local_db()
+
+
+"""
 # zoom_dictionaries INIT construction
-zoom_member = {}  # key=member_id, value=# of times zoomed
-zoom_time = {}  # key=member_id, value=specific time for when the player zoomed
+def zoom_member():
+  zoom_member = {}  # key=member_id, value=# of times zoomed
 
-# to initialize both zoom dictionaries from data store in replit db
-for db_member_id in member_count:
+  # to initialize both zoom dictionaries from data store in replit db
+  for member_id in AGE_members:
     #for member_id that were from replit db
-    if db_member_id.endswith('z'):
-        #if the member_id ends with substring z
-        zoom_member[db_member_id] = db[db_member_id]
-        #initialize a key-value pair for that member_id to the number of times s/he zoomed
+    zoom_member[member_id] = AGE_members[member_id]['zooms']
+    #initialize a key-value pair for that member_id to the number of times s/he zoomed
+  return zoom_member
 
-for member_idz in zoom_member:
+zoom_member = zoom_member()
+
+def zoom_time():
+  zoom_time = {}  # key=member_id, value=specific time for when the player zoomed
+
+  for member_id in zoom_member:
     #going off the zoom dictionary that was created above, which has all who have zoomed
-    member_idzt = member_idz + 't'
-    #add a substring t for different condition check
-    for db_member_id in member_count:
-        if member_idzt == db_member_id:
-            zoom_time[member_idzt] = db[db_member_id]
-            #the value in this case is an array, which stores the specific times a player was reported zooming; and the key is the member_id + zt
+    zoom_time[member_id] = AGE_members[member_id]['zoomtime']
+    #the value in this case is an array, which stores the specific times a player was reported zooming; and the key is the member_id + zt
+  return zoom_time
+
+zoom_time = zoom_time()
+
+"""
