@@ -1,7 +1,7 @@
 from . import const, members, helpers
-from .helpers import is_any_word_in_string, utcTimestamp, add_slime
+from .helpers import is_any_word_in_string, utcTimestamp, add_slime, update_timestamp
 from .logging import log, handleError
-from .stats import AGE_members
+from .stats import AGE_members, slime_records
 
 from datetime import datetime, timedelta
 from replit import db
@@ -85,7 +85,7 @@ async def doubleping(ctx, username):
                 return
 
             original = AGE_members[member_id]['slimes']
-            helpers.add_slime(member_id, -1)
+            helpers.add_slime(member_id, -1, ctx.message)
             reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been subtracted by Klee (๑‵●‿●‵๑), going from {original} to {AGE_members[member_id]["slimes"]}'
             
             await ctx.send(reply_msg)
@@ -155,7 +155,7 @@ async def slimeadd(ctx, number, username):
                 return
 
             original = AGE_members[member_id]['slimes']
-            helpers.add_slime(member_id, number)
+            helpers.add_slime(member_id, number, ctx.message)
 
             reply_msg = f'The number of slimes {members.get_name(member_id)} has summoned has been added by Klee (⋆˘ᗜ˘⋆✿), going from {original} to {AGE_members[member_id]["slimes"]}'
 
@@ -262,19 +262,19 @@ async def gif(ctx):
 async def clear(ctx):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:
-      
+      first_keys = {
+        'slimes': 0,
+        'slimelist': [],
+        'zooms': 0,
+        'zoomtime': []
+      }
       for member_id in AGE_members:
-        #clear slime counts
-        db[member_id]['slimes'] = 0
-        AGE_members[member_id]['slimes'] = 0
+        for key, value in first_keys.items():
+          AGE_members[member_id][key] = value
+          db[member_id][key] = value
 
-        #clear zoom counts
-        db[member_id]['zooms'] = 0
-        AGE_members[member_id]['zooms'] = 0
-
-        #clear zoom times
-        db[member_id]['zoomtime'] = []
-        AGE_members[member_id]['zoomtime'] = []
+      slime_records = {}
+      db['slime_records'] = {}
 
       await ctx.send('All slime related records cleared (❁๑ᵒ◡ᵒ๑)')
   except Exception as err:
@@ -345,11 +345,8 @@ async def slime_ping(message_ctx, username):
         else:
           echo_msg = f'{role_mention} {member_text}'
 
-        try:
-          helpers.add_slime(member_id, 1)
-          klee_response = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]["slimes"]} slimes for {members.get_name(member_id)}!'
-        except KeyError:
-          klee_response = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
+        helpers.add_slime(member_id, 1, message_ctx)
+        klee_response = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]["slimes"]} slimes for {members.get_name(member_id)}!'
 
       reply_msg = f'{echo_msg} \n{klee_response} '
       mentionsFlag = discord.AllowedMentions(users=False, roles=True, replied_user=False)
@@ -361,14 +358,24 @@ async def slime_ping(message_ctx, username):
 
 #########################################################################
 
+async def update_timestamp(ctx):
+  try:
+    helpers.update_timestamp()
+    await ctx.send("Klee has dutifully updated timestamp.py! (๑˘︶˘๑)")
+  except Exception as err:
+    log(f'ERROR in update_timestamp(): {err}')
+    handleError(err)
+
+#########################################################################
+
 #outputs replymsg/ragna_data to console
 async def website_data(ctx):
   try:
     channel_id = ctx.channel.id
     if channel_id in const.BOT_CHANNELS:
-    
-      #data_list = []
-      replymsg = '[\n'
+
+      personal_slimelists = '[\n'
+      personal_slime_records = '[\n'
       id = 0
       for member_id in AGE_members:
         #if not(AGE_members[member_id]['slimes'] == 0 and AGE_members[member_id]['zooms'] == 0):
@@ -378,14 +385,25 @@ async def website_data(ctx):
         member_dict['name'] = members.get_name(member_id)
         member_dict['slimes'] = AGE_members[member_id]['slimes']
         member_dict['zooms'] = AGE_members[member_id]['zooms']
-        replymsg += f'{member_dict},\n'
+        personal_slime_records += f'{member_dict},\n'
 
-      replymsg += ']'
-      log(replymsg)
+        #to turn ObservedList into normal list
+        personal_slimelist = list(AGE_members[member_id]['slimelist'])
+        personal_slimelists += f'{member_dict["name"]}: {personal_slimelist},\n'
+
+      personal_slime_records += ']'
+      personal_slimelists += ']'
+
+      seasonal_slime_records = '[\n'
+      for key, value in slime_records.items():
+        seasonal_slime_records += f'{key, value},\n'
+      seasonal_slime_records += ']'
+      
+      log(f'The following is personal_slime_records:\n {personal_slime_records}\n The following is personal_slimelists:\n{personal_slimelists}\n The following is seasonal_slime_records:\n{seasonal_slime_records}')
       await ctx.send('Website data successfully printed in replit console.')
       
   except Exception as err:
-    log(f'ERROR in websitedata(): {err}')
+    log(f'ERROR in website_data(): {err}')
     handleError(err)
 
 #########################################################################
@@ -451,57 +469,3 @@ async def unban(ctx, username, client):
     log(f'ERROR in unban: {err}')
     raise err
 """
-
-"""
-below is a piece of code used for data restructure of the replit db, which
-happened on EST 06/17/2023
----can be deleted if no errors are observed afterwards---
-
-AGE_members = {}
-for member_id in members.id_list():
-  AGE_members[member_id] = {}
-  AGE_members[member_id]['slimes'] = 0
-  AGE_members[member_id]['zooms'] = 0
-  AGE_members[member_id]['zoomtime'] = []
-
-for member_id in db:
-    if member_id.endswith('z'):
-      if member_id[:-1] in AGE_members:
-        zooms = db[member_id]
-        AGE_members[member_id[:-1]]['zooms'] = zooms
-    elif member_id.endswith('zt'):
-      if member_id[:-2] in AGE_members:
-        zoom_time = db[member_id]
-        AGE_members[member_id[:-2]]['zoomtime'] = list(zoom_time)
-    elif member_id[-1].isdigit():
-      if member_id in AGE_members:
-        slimes = db[member_id]
-        AGE_members[member_id]['slimes'] = slimes
-
-for member_id in AGE_members:
-  db[member_id] = {}
-  db[member_id]['slimes'] = AGE_members[member_id]['slimes']
-  db[member_id]['zooms'] = AGE_members[member_id]['zooms']
-  db[member_id]['zoomtime'] = AGE_members[member_id]['zoomtime']
-
-for member_id in db:
-  if member_id.startswith('alt'):
-    slimes = db[member_id]
-    db[member_id] = {}
-    db[member_id]['slie']
-
-from klee.members import id_list
-for member_id in id_list():
-  if member_id.startswith('alt'):
-    if member_id in db:
-      slimes = db[member_id]
-      db[member_id] = {}
-      db[member_id]['slimes'] = slimes
-      db[member_id]['zooms'] = 0
-      db[member_id]['zoomtime'] = []
-    else:
-      db[member_id] = {}
-      db[member_id]['slimes'] = slimes
-      db[member_id]['zooms'] = 0
-      db[member_id]['zoomtime'] = []
-  """

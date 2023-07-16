@@ -1,6 +1,6 @@
 from . import members, const, kommands
 from .logging import log, handleError
-from .stats import AGE_members
+from .stats import AGE_members, seasonal_slimesum_f, slime_records
 
 from datetime import datetime, timedelta
 from operator import itemgetter
@@ -19,13 +19,50 @@ def read_txt():
 
 #########################################################################
 
-def add_slime(member_id, number):
-  if member_id in db: #if member id already in replit database,
-    db[member_id]['slimes'] += int(number)
+#helper method
+def list_member_slime_count():
+  slime_sum = seasonal_slimesum_f()
+
+  slime_msg = {}
+  for member_id in members.id_list():
+    # set name:slime_count to message dict
+    slime_msg[members.get_name(member_id)] = AGE_members[member_id]['slimes']
+
+  return (slime_sum, slime_msg)
+
+#########################################################################
+
+def add_slime(member_id, number, message):
+  try:
+    # Time object stringified
+    summoned_time = str(message.created_at)
+    current_slimesum = seasonal_slimesum_f()
+
+    #POSITIVE
+    if int(number) > 0:
+      for i in range(int(number)):
+        slime_id = str(current_slimesum + i)
+        AGE_members[member_id]['slimelist'].append(slime_id)
+        slime_records[slime_id] = {'time': summoned_time, 'member_id': member_id}
+          
+    #NEGATIVE
+    elif int(number) < 0:
+      for i in range(abs(int(number))):
+        slime_id = AGE_members[member_id]['slimelist'].pop()
+        #db[member_id]['slimelist'].pop()
+        del slime_records[slime_id]
+
+    #To update db
     AGE_members[member_id]['slimes'] += int(number)
-  else: #if member id was not in replit database
-    db[member_id]['slimes'] = int(number)
-    AGE_members[member_id]['slimes'] = int(number)
+    db[member_id]['slimes'] += int(number)
+    db[member_id]['slimelist'] = AGE_members[member_id]['slimelist']
+    db['slime_records'] = slime_records
+
+    saved = db[member_id]['slimelist']
+  
+  except Exception as err:
+    log(f'ERROR in add_slime(): {err}')
+    handleError(err)
 
 #########################################################################
 
@@ -68,7 +105,7 @@ def add_zoom(member_id, number):
     AGE_members[member_id]['zoomtime'] = db[member_id]['zoomtime']
 
   except Exception as err:
-    log(f'ERROR in message(): {err}')
+    log(f'ERROR in add_zoom(): {err}')
     handleError(err)
 
     # update failed, reset back to original
@@ -104,22 +141,6 @@ def add_zoom(member_id, number):
 
 #########################################################################
 
-#helper method
-def list_member_slime_count():
-  slime_sum = 0
-  for member_id in AGE_members:
-    ind_slimes = AGE_members[member_id]['slimes']
-    slime_sum += ind_slimes
-
-  slime_msg = {}
-  for member_id in members.id_list():
-    # set name:slime_count to message dict
-    slime_msg[members.get_name(member_id)] = AGE_members[member_id]['slimes']
-
-  return (slime_sum, slime_msg)
-
-#########################################################################
-
 #helper function
 #return zoom_sum [int], total # of zoom
 #       zoom_message [dict], list the top zoomers along with their corresponding # of zooms
@@ -146,7 +167,7 @@ def total_zoom():
 
   return (zoom_sum, zoom_message)
     
-"""
+""" Previous version by Traf
 def total_zoom():
     # transform to list of tuples of the form (name, count)
     name_transform = ((members.get_name(k), v) for k, v in zoom_member.items() if k[:-1] != '0')
@@ -184,6 +205,34 @@ def dt_from_timestamp(timestamp):
 
 #########################################################################
 
+# import os; os.getcwd(); to find out current relative directory
+#default relative path is: '/home/runner/Slime-bot-for-DC'
+file_path = "timestamp.py"
+
+def read_timestamp():
+  try:
+    with open(file_path, "r") as file:
+      timestamp = file.read()
+      #log(f"the following is an attempt to get timestamp: {timestamp}")
+    return timestamp
+  except Exception as err:
+    log(f'{utcTimestamp()} ERROR read_timestamp(): {err}')
+    handleError(err)
+
+# Input timestamp is: str(msg.created_at)
+def update_timestamp(timestamp='current'):
+  try:
+    # Meaning default to current, and no string timestamp is passed in
+    if timestamp == 'current':
+      timestamp = str(datetime.utcnow()) # Time object of format "%Y-%m-%d %H:%M:%S.%f", stringified
+
+    with open(file_path, "w") as file:
+      file.write(timestamp)
+  except Exception as err:
+    log(f'{utcTimestamp()} ERROR update_timestamp(): {err}')
+    handleError(err)
+#########################################################################
+
 ######
 #Potential issue resolved: let's say that right after Klee has processed the histories and she gets disconnected, we may need to worry about Klee re-processing those same histories again. But since Klee itself will await a message to discord to show that those histories are taken care of, db["timeOfLastMessage"] is updated, so we have updated our considering range and avoid the issue of double counting those messages again
 ######
@@ -193,7 +242,7 @@ async def checkHistory(client):
     timeOfLastMessage = read_timestamp()
     
     # Convert the string to a datetime object
-    # "%Y-%m-%d %H:%M:%S" is the format specifier that matches the string representation of UTC time
+    # "%Y-%m-%d %H:%M:%S.%f" is the format specifier that matches the string representation of UTC time
     time_obj = datetime.strptime(timeOfLastMessage, "%Y-%m-%d %H:%M:%S.%f")
     
     current = datetime.utcnow()
@@ -222,12 +271,13 @@ async def checkHistory(client):
               reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
           else:
               try:
-                  add_slime(member_id, 1)
+                  add_slime(member_id, 1, message)
                   reply_msg = f"(ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]['slimes']} slimes for {members.get_name(member_id)}! Sorry for not responding earlier, Klee stayed up late watching the circus' midnight show and feels a bit tired."
 
               except KeyError:
                   reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 
+          update_timestamp()
           await ctx.message.reply(reply_msg, mention_author=False)
 
     else:
@@ -238,27 +288,3 @@ async def checkHistory(client):
     log(f'ERROR in checkHistory(): {err}')
     handleError(err)
 
-#########################################################################
-
-# import os; os.getcwd(); to find out current relative directory
-#default relative path is: '/home/runner/Slime-bot-for-DC'
-file_path = "timestamp.py"
-
-def save_timestamp(timestamp):
-  try:
-    with open(file_path, "w") as file:
-      file.write(timestamp)
-  except Exception as err:
-    log(f'{utcTimestamp()} ERROR save_timestamp(): {err}')
-    handleError(err)
-
-
-def read_timestamp():
-  try:
-    with open(file_path, "r") as file:
-      timestamp = file.read()
-      #log(f"the following is an attempt to get timestamp: {timestamp}")
-    return timestamp
-  except Exception as err:
-    log(f'{utcTimestamp()} ERROR read_timestamp(): {err}')
-    handleError(err)

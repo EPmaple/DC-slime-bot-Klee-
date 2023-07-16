@@ -1,5 +1,6 @@
 from . import members
 from .logging import log, handleError
+from collections import deque
 
 from replit import db
 
@@ -7,65 +8,81 @@ from replit import db
 # INIT PART 1 #
 ######################################################
 
+# Define the keys and their corresponding default values
+keys = {
+    'slimes': 0,
+    'slimelist': [],
+    'zooms': 0,
+    'zoomtime': []
+}
+
+######################################################
+
+# Can handle the case: new member_id in member_list but not in replit db
 def local_db():
   try:
-    # initialize AGE_members slime counts and zoom counts to 0
+    # Initialization
     AGE_members = {}
+    # member_data is a dictionary containing all ids (string) of the members
+    member_data = db.keys()
+    
     for member_id in members.id_list():
       AGE_members[member_id] = {}
-      AGE_members[member_id]['slimes'] = 0
-      AGE_members[member_id]['zooms'] = 0
-      AGE_members[member_id]['zoomtime'] = []
-  
-    # member_count is a dictionary containing all ids (string) of the members
-    member_data = db.keys()
-  
-    #member_id and db_member_id are strings of id, ex. "12345124124"
-  #beware of KeyError, as db['zooms'][something] requires db['zooms'] = {} to be established beforehand in replit db
-    for member_id in members.id_list():
-      #to handle the case when a new member is added to the member_list but has not been registered by replit db yet, thus initialize the new member's data in replit db
+      # keys.items() returns an iterable containing tuples, 1st element of tuple is key, 2nd element of tuple is value
+
+      # No data in replit db, set data to default
       if member_id not in member_data:
-        db[member_id]['slimes'] = 0
-        db[member_id]['zooms'] = 0
-        db[member_id]['zoomtime'] = []
-        
-      else:
-        AGE_members[member_id]['slimes'] = db[member_id]['slimes']
-        AGE_members[member_id]['zooms'] = db[member_id]['zooms']
-        AGE_members[member_id]['zoomtime'] = db[member_id]['zoomtime']
+        for key, value in keys.items():
+          AGE_members[member_id][key] = value
+          db[member_id][key] = value
+      # There is data in db
+      else: 
+        for key, value in keys.items():
+          try:
+            AGE_members[member_id][key] = db[member_id][key]
+          #beware of KeyError, as db['zooms'][something] requires db['zooms'] = {} to be established beforehand in replit db
+          except KeyError:
+            AGE_members[member_id][key] = value
+            db[member_id][key] = value
 
     return AGE_members
 
   except Exception as err:
-    log(f'ERROR in zoominfo(): {err}')
+    log(f'ERROR in local_db(): {err}')
     handleError(err)
 
 AGE_members = local_db()
 
+######################################################
 
-"""
-# zoom_dictionaries INIT construction
-def zoom_member():
-  zoom_member = {}  # key=member_id, value=# of times zoomed
-
-  # to initialize both zoom dictionaries from data store in replit db
+def seasonal_slimesum_f():
+  slime_sum = 0
   for member_id in AGE_members:
-    #for member_id that were from replit db
-    zoom_member[member_id] = AGE_members[member_id]['zooms']
-    #initialize a key-value pair for that member_id to the number of times s/he zoomed
-  return zoom_member
+    ind_slimes = AGE_members[member_id]['slimes']
+    slime_sum += ind_slimes
 
-zoom_member = zoom_member()
+  return slime_sum
 
-def zoom_time():
-  zoom_time = {}  # key=member_id, value=specific time for when the player zoomed
+######################################################
 
-  for member_id in zoom_member:
-    #going off the zoom dictionary that was created above, which has all who have zoomed
-    zoom_time[member_id] = AGE_members[member_id]['zoomtime']
-    #the value in this case is an array, which stores the specific times a player was reported zooming; and the key is the member_id + zt
-  return zoom_time
+#secondkeys = ['time', 'member_id']
 
-zoom_time = zoom_time()
+def get_slime_records():
+  try:
+    slime_records = {} # Initialization
+    slime_dbrecords = db['slime_records'] # Of format Observed Dictionary
+    #log(slime_dbrecords) ObservedDict(value={'1': ObservedDict(value={'time': '1237123', 'member_id': '1242132'})})
+    
+    for key, value in slime_dbrecords.items():
+      slime_records[key] = dict(value) # convert from ObservedDict to dict
+      #log(slime_records) # {'1': {'time': '1237123', 'member_id': '1242132'}}
 
-"""
+    return slime_records
+    
+  except Exception as err:
+    log(f'ERROR in get_slime_records(): {err}')
+    handleError(err)
+
+slime_records = get_slime_records()
+
+######################################################

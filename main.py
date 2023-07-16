@@ -93,7 +93,7 @@ async def message(message):
 
                 words = message.content.split(' ', 1)  #split into two words max
                 username = 'me' if len(words) == 1 else words[1]
-                helpers.save_timestamp(str(message.created_at))
+                helpers.update_timestamp(str(message.created_at))
                 await kommands.slime_ping(message, username)
 
             # @ultra or @altra
@@ -112,12 +112,12 @@ async def message(message):
                     reply_msg = 'Uh, Klee does not know this name, and therefore cannot add this slime to anyone...'
                 else:
                     try:
-                        helpers.add_slime(member_id, 1)
+                        helpers.add_slime(member_id, 1, message)
                         reply_msg = f'Woah! It is a slime!  (ﾉ>ω<)ﾉ  Klee has counted {AGE_members[member_id]["slimes"]} slimes for {members.get_name(member_id)}!'
                     except KeyError:
                         reply_msg = f'Klee has added the slime on {utcTimestamp()}.  ( ๑>ᴗ<๑ )  Please private message maple to have this member added.'
 
-                helpers.save_timestamp(str(message.created_at))
+                helpers.update_timestamp(str(message.created_at))
                 await message.reply(reply_msg, mention_author=False)
 
     except Exception as err:
@@ -174,6 +174,10 @@ will be a tuple containing the strings "john" and "doe"
 @client.command(aliases=['u'])
 async def ultra(ctx, username='me'):
   await kommands.slime_ping(ctx.message, username)
+
+@client.command(aliases=['ts'])
+async def update_timestamp(ctx):
+  await kommands.update_timestamp(ctx)
 
 @client.command(aliases=['wd'])
 async def website_data(ctx):
