@@ -54,7 +54,7 @@ def add_slime(member_id, number, message):
 
     #To update db
     AGE_members[member_id]['slimes'] += int(number)
-    db[member_id]['slimes'] += int(number)
+    db[member_id]['slimes'] = AGE_members[member_id]['slimes']
     db[member_id]['slimelist'] = AGE_members[member_id]['slimelist']
     db['slime_records'] = slime_records
 
