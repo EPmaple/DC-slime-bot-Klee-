@@ -8,4 +8,5 @@ from the repl.it database and display them in discord channels, are allowed thro
 Data collect by the bot are: slime counts, slime summoned times, zoom counts, zoom times, of each member of the group
 
 Libraries used are: discord.py, replit, datetime, etc.
+
 Development and maintenance time: from Jan-2021, to Sep-2023
