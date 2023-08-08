@@ -10,3 +10,5 @@ Data collect by the bot are: slime counts, slime summoned times, zoom counts, zo
 Libraries used are: discord.py, replit, datetime, etc.
 
 Development and maintenance time: from Jan-2021, to Sep-2023
+
+Link to repl.it: https://replit.com/@TonyCen/1122022-slime-bot-for-DC#main.py
