@@ -374,32 +374,48 @@ async def website_data(ctx):
     channel_id = ctx.channel.id
     if channel_id in const.BOT_CHANNELS:
 
-      personal_slimelists = '[\n'
-      personal_slime_records = '[\n'
+      slime_lists = '{\n'
+      season_data = '[\n'
       id = 0
       for member_id in AGE_members:
         #if not(AGE_members[member_id]['slimes'] == 0 and AGE_members[member_id]['zooms'] == 0):
+        ############## to initialize season_data ##################
         member_dict = {}
         id += 1
         member_dict['id'] = id
         member_dict['name'] = members.get_name(member_id)
         member_dict['slimes'] = AGE_members[member_id]['slimes']
         member_dict['zooms'] = AGE_members[member_id]['zooms']
-        personal_slime_records += f'{member_dict},\n'
-
-        #to turn ObservedList into normal list
-        personal_slimelist = list(AGE_members[member_id]['slimelist'])
-        personal_slimelists += f'{member_dict["name"]}: {personal_slimelist},\n'
-
-      personal_slime_records += ']'
-      personal_slimelists += ']'
-
-      seasonal_slime_records = '[\n'
-      for key, value in slime_records.items():
-        seasonal_slime_records += f'{key, value},\n'
-      seasonal_slime_records += ']'
+        season_data += f'{member_dict},\n'
+        ############## to initialize season_data ##################
       
-      log(f'The following is personal_slime_records:\n {personal_slime_records}\n The following is personal_slimelists:\n{personal_slimelists}\n The following is seasonal_slime_records:\n{seasonal_slime_records}')
+        ############## to initialize slime_lists ##################
+        #to turn ObservedList into normal list
+        slime_list = list(AGE_members[member_id]['slimelist'])
+        slime_lists += f'"{member_dict["name"]}": {slime_list},\n'
+        ############## to initialize slime_lists ##################
+      
+      slime_lists += '}'
+      season_data += ']'
+      
+      ############## to initialize slime_records ##################
+      function_slime_records = '{\n'
+      for key, value in slime_records.items():
+        # to escape '{' and '}', do '{{' and '}}'
+        function_slime_records += f'{key}: {value},\n'
+      function_slime_records += '}'
+      ############## to initialize slime_records ##################
+
+      output_msg = f'season_data = {season_data}\n'
+      output_msg += '\n################################################################\n################################################################\n\n'
+      output_msg += f'slime_lists = {slime_lists}\n'
+      output_msg += '\n################################################################\n################################################################\n\n'
+      output_msg += f'slime_records = {function_slime_records}'
+      
+      file_path = 'info/website_data.py'
+      with open(file_path, "w") as file:
+        file.write(output_msg)
+      
       await ctx.send('Website data successfully printed in replit console.')
       
   except Exception as err:
@@ -407,6 +423,7 @@ async def website_data(ctx):
     handleError(err)
 
 #########################################################################
+
 
 """
 ban-permission functions in test
