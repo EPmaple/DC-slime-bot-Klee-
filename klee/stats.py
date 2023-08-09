@@ -30,8 +30,9 @@ def local_db():
       AGE_members[member_id] = {}
       # keys.items() returns an iterable containing tuples, 1st element of tuple is key, 2nd element of tuple is value
 
-      # No data in replit db, set data to default
+      # No data in replit db, initialize dictionary for db[member_id], then set data to default
       if member_id not in member_data:
+        db[member_id] = {}
         for key, value in keys.items():
           AGE_members[member_id][key] = value
           db[member_id][key] = value

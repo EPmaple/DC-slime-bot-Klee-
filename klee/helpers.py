@@ -41,8 +41,11 @@ def add_slime(member_id, number, message):
     #POSITIVE
     if int(number) > 0:
       for i in range(int(number)):
-        slime_id = str(current_slimesum + i)
+        #print(f'what i is: {i}')
+        slime_id = str(current_slimesum + i + 1)
+        #print(f'what slime_id is: {slime_id}')
         AGE_members[member_id]['slimelist'].append(slime_id)
+        #print(f'what local slimelist is after {i}: {AGE_members[member_id]["slimelist"]}')
         slime_records[slime_id] = {'time': summoned_time, 'member_id': member_id}
           
     #NEGATIVE
