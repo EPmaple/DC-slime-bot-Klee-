@@ -435,14 +435,14 @@ async def ban(ctx, username, client):
         return
       member_name = members.get_name(member_id)
       # Get the member object from the member ID
-      member_obj = client.get_user(int(member_id))
+      member_obj = ctx.guild.get_member(int(member_id))
       # Set channel permission
       log(f'Banning {member_name}...')
-      await ctx.send(f'ヽ( `д´*)ノ Klee thinks {member.name} deserved a timeout!!!')
+      await ctx.send(f'ヽ( `д´*)ノ Klee thinks {member_name} deserved a timeout!!!')
       await channel.set_permissions(member_obj, view_channel=False, reason='Klee-timeout-ban')
   except Exception as err:
     log(f'ERROR in ban(): {err}')
-    raise err
+    handleError(err)
 
 
 async def unban(ctx, username, client):
@@ -456,11 +456,11 @@ async def unban(ctx, username, client):
         return
       member_name = members.get_name(member_id)
       # Get the member object from the member ID
-      member_obj = client.get_user(int(member_id))
+      member_obj = ctx.guild.get_member(int(member_id))
       # Set channel permission
       log(f'Unbanning {member_name}...')
       await channel.set_permissions(member_obj, overwrite=None, reason='Klee-timeout-unban')
-      await ctx.send(f'Klee hopes you\'re remedying your zooming ways, {member.name}!! ヾ(๑ㆁᗜㆁ๑)ﾉ”')
+      await ctx.send(f'Klee hopes you\'re remedying your zooming ways, {member_name}!! ヾ(๑ㆁᗜㆁ๑)ﾉ”')
   except Exception as err:
     log(f'ERROR in unban: {err}')
-    raise err
+    handleError(err)
