@@ -424,65 +424,43 @@ async def website_data(ctx):
 
 #########################################################################
 
-
-"""
-ban-permission functions in test
-
-
-#add in number 
 async def ban(ctx, username, client):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:  #make sure tempremove could only be executed from certain channels
-      
       channel = client.get_channel(const.MAIN_CHANNEL)
-      
       username = username.strip()
       member_id = members.id_search(ctx.message, username)
       if member_id == members.UNKNOWN:
-        await ctx.send('Uh, Klee does not know this name, and therefore cannot tempremove this person... (๑•̆ ૩•̆)')
+        await ctx.send('Uh, Klee does not know this name, and therefore cannot timeout this person... (๑•̆ ૩•̆)')
         return
-
+      member_name = members.get_name(member_id)
       # Get the member object from the member ID
-      member = ctx.guild.get_member(member_id)
-      # Get the existing channel permissions
-      overwrites = channel.overwrites
-      # Create or modify the permission overwrite for the member
-      overwrites[member] = discord.PermissionOverwrite(view_channel=False)
-      log(f'{member_id},{member}')
-      # Apply the updated channel permissions
-      await channel.edit(overwrites=overwrites)
-      log('passed3')
-
-      await ctx.send(f"The view_channel permission for {member.name} has been removed.")
+      member_obj = client.get_user(int(member_id))
+      # Set channel permission
+      log(f'Banning {member_name}...')
+      await ctx.send(f'ヽ( `д´*)ノ Klee thinks {member.name} deserved a timeout!!!')
+      await channel.set_permissions(member_obj, view_channel=False, reason='Klee-timeout-ban')
   except Exception as err:
     log(f'ERROR in ban(): {err}')
     raise err
 
 
-
 async def unban(ctx, username, client):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:  #make sure tempremove could only be executed from certain channels
-      channel = client.get_channel(const.CID_SLIMEPING_CHANNEL)
-
+      channel = client.get_channel(const.MAIN_CHANNEL)
       username = username.strip()
       member_id = members.id_search(ctx.message, username)
-
       if member_id == members.UNKNOWN:
-        await ctx.send('Uh, Klee does not know this name, and therefore cannot tempremove this person... (๑•̆ ૩•̆)')
+        await ctx.send('Uh, Klee does not know this name, and therefore cannot untimeout this person... (๑•̆ ૩•̆)')
         return
-
+      member_name = members.get_name(member_id)
       # Get the member object from the member ID
-      member = ctx.guild.get_member(member_id)
-      # Get the existing channel permissions
-      overwrites = channel.overwrites
-      # Create or modify the permission overwrite for the member
-      overwrites[member] = discord.PermissionOverwrite(view_channel=True)
-      # Apply the updated channel permissions
-      await channel.edit(overwrites=overwrites)
-
-      await ctx.send(f"The view_channel permission for {member.name} has been restored.")
+      member_obj = client.get_user(int(member_id))
+      # Set channel permission
+      log(f'Unbanning {member_name}...')
+      await channel.set_permissions(member_obj, overwrite=None, reason='Klee-timeout-unban')
+      await ctx.send(f'Klee hopes you\'re remedying your zooming ways, {member.name}!! ヾ(๑ㆁᗜㆁ๑)ﾉ”')
   except Exception as err:
     log(f'ERROR in unban: {err}')
     raise err
-"""
