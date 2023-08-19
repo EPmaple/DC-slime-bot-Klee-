@@ -424,43 +424,47 @@ async def website_data(ctx):
 
 #########################################################################
 
-async def ban(ctx, username, client):
+async def ban(ctx, message_obj, username, client_obj):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:  #make sure tempremove could only be executed from certain channels
-      channel = client.get_channel(const.MAIN_CHANNEL)
+      slimeping_channel = client_obj.get_channel(const.MAIN_CHANNEL)
       username = username.strip()
       member_id = members.id_search(ctx.message, username)
       if member_id == members.UNKNOWN:
-        await ctx.send('Uh, Klee does not know this name, and therefore cannot timeout this person... (๑•̆ ૩•̆)')
+        await message_obj.reply('Uh, Klee does not know this name, and therefore cannot timeout this person... (๑•̆ ૩•̆)')
         return
       member_name = members.get_name(member_id)
       # Get the member object from the member ID
-      member_obj = ctx.guild.get_member(int(member_id))
+      member_obj = ctx.guild.get_member(int(member_id)) or await ctx.guild.fetch_member(int(member_id))
       # Set channel permission
-      log(f'Banning {member_name}...')
-      await ctx.send(f'ヽ( `д´*)ノ Klee thinks {member_name} deserved a timeout!!!')
-      await channel.set_permissions(member_obj, view_channel=False, reason='Klee-timeout-ban')
+      log(f'Banning {ctx.guild} :: {member_name} :: {member_obj} ...')
+      await message_obj.reply(f'ヽ( `д´*)ノ Klee thinks {member_name} deserves a timeout!!!')
+      if ctx.channel.id != slimeping_channel.id:
+        await slimeping_channel.send(f'ヽ( `д´*)ノ Klee thinks {member_name} deserved a timeout!!!')
+      await slimeping_channel.set_permissions(member_obj, view_channel=False, reason='Klee-timeout-ban')
   except Exception as err:
     log(f'ERROR in ban(): {err}')
     handleError(err)
 
 
-async def unban(ctx, username, client):
+async def unban(ctx, message_obj, username, client_obj):
   try:
     if ctx.channel.id in const.BOT_CHANNELS:  #make sure tempremove could only be executed from certain channels
-      channel = client.get_channel(const.MAIN_CHANNEL)
+      slimeping_channel = client_obj.get_channel(const.MAIN_CHANNEL)
       username = username.strip()
       member_id = members.id_search(ctx.message, username)
       if member_id == members.UNKNOWN:
-        await ctx.send('Uh, Klee does not know this name, and therefore cannot untimeout this person... (๑•̆ ૩•̆)')
+        await message_obj.reply('Uh, Klee does not know this name, and therefore cannot untimeout this person... (๑•̆ ૩•̆)')
         return
       member_name = members.get_name(member_id)
       # Get the member object from the member ID
-      member_obj = ctx.guild.get_member(int(member_id))
+      member_obj = ctx.guild.get_member(int(member_id)) or await ctx.guild.fetch_member(int(member_id))
       # Set channel permission
-      log(f'Unbanning {member_name}...')
-      await channel.set_permissions(member_obj, overwrite=None, reason='Klee-timeout-unban')
-      await ctx.send(f'Klee hopes you\'re remedying your zooming ways, {member_name}!! ヾ(๑ㆁᗜㆁ๑)ﾉ”')
+      log(f'Unbanning {ctx.guild} :: {member_name} :: {member_obj} ...')
+      await slimeping_channel.set_permissions(member_obj, overwrite=None, reason='Klee-timeout-unban')
+      await message_obj.reply(f'Klee hopes you\'re remedying your zooming ways, {member_name}!! ヾ(๑ㆁᗜㆁ๑)ﾉ”')
+      if ctx.channel.id != slimeping_channel.id:
+        await slimeping_channel.send(f'Klee hopes you\'re remedying your zooming ways, {member_name}!! ヾ(๑ㆁᗜㆁ๑)ﾉ”')
   except Exception as err:
     log(f'ERROR in unban: {err}')
     handleError(err)
