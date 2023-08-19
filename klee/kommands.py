@@ -426,7 +426,7 @@ async def website_data(ctx):
 
 async def ban(ctx, message_obj, username, client_obj):
   try:
-    if ctx.channel.id in const.BOT_CHANNELS:  #make sure tempremove could only be executed from certain channels
+    if ctx.channel.id in {const.MAIN_CHANNEL}:  #make sure ban/unban can only be executed from specific channel
       slimeping_channel = client_obj.get_channel(const.MAIN_CHANNEL)
       username = username.strip()
       member_id = members.id_search(ctx.message, username)
@@ -449,7 +449,7 @@ async def ban(ctx, message_obj, username, client_obj):
 
 async def unban(ctx, message_obj, username, client_obj):
   try:
-    if ctx.channel.id in const.BOT_CHANNELS:  #make sure tempremove could only be executed from certain channels
+    if ctx.channel.id in {const.MAIN_CHANNEL}:  #make sure ban/unban can only be executed from specific channel
       slimeping_channel = client_obj.get_channel(const.MAIN_CHANNEL)
       username = username.strip()
       member_id = members.id_search(ctx.message, username)
