@@ -166,3 +166,4 @@ cython_debug/
 log/
 /failed_msg.txt
 /timestamp.py
+/info/website_data.py
