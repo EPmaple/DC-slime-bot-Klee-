@@ -162,6 +162,7 @@ cython_debug/
 .idea/
 
 # KLEE PROJECT-SPECIFIC IGNORE LIST
+.backup/
 .upm/
 log/
 /failed_msg.txt
